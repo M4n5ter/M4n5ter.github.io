@@ -1,7 +1,6 @@
 [book]
 authors = ["M4n5ter"]
-language = "en"
-multilingual = false
+language = "zh-CN"
 src = "src"
 title = "M4n5ter Blog"
 
