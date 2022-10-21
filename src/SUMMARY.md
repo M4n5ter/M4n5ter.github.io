@@ -1,5 +1,5 @@
 # Summary
 
 - [Intro](./intro.md)
-- RUST
+- [RUST](./rust.md)
   - [Tower](./rust_tower.md)
