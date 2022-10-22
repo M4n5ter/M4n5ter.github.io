@@ -19,6 +19,11 @@ jobs:
         with:
           mdbook-version: 'latest'
 
+      - name: Setup mdbook-katex
+        uses: magicgh/mdbook-katex-action@v1
+        with:
+          version: 'latest'
+
       - run: mdbook build
 
       - name: Deploy
