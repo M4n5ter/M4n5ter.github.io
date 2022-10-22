@@ -1,3 +1,5 @@
+### 简介
+
 Tower 是一个专注于对网络编程进行抽象的框架，将网络编程中的各行为进行抽象从而提高代码复用率。
 
 Tower 最核心的抽象为 Service trait，其接受一个 request 进行处理，成功则返回 response，否则返回 error。
@@ -656,7 +658,5 @@ where
 ### 结论
 
 Tower 将网络编程中常见的行为抽象为统一的 Service，对外的接口非常统一，并且可以相互叠加，而且是异步式，是一个扩展性非常强大的框架，值得学习一下。
-
-
 
 # 摘自[https://zhuanlan.zhihu.com/p/548090197](https://zhuanlan.zhihu.com/p/548090197)
