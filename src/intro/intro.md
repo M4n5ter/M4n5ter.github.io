@@ -4,4 +4,4 @@
 
 
 
-<img title="" src="https://raw.fastgit.org/M4n5ter/m4n5ter.github.io/main/assets/smile.jpg" alt="">
+![](img/smile.jpg)
