@@ -787,6 +787,7 @@ where
 <p>这样的处理实际会拖累整体的效率，如果某个 request 所需要的 Service 实际是 ready 的，但是可能为了等待其他的 Service 而延缓调用。但是为了兼容 Tower 的核心 API 不得不这么处理，毕竟 poll_ready 会与 request 相关的 Service 只有这一个。</p>
 <h3 id="结论"><a class="header" href="#结论">结论</a></h3>
 <p>Tower 将网络编程中常见的行为抽象为统一的 Service，对外的接口非常统一，并且可以相互叠加，而且是异步式，是一个扩展性非常强大的框架，值得学习一下。</p>
+<h1 id="摘自httpszhuanlanzhihucomp548090197"><a class="header" href="#摘自httpszhuanlanzhihucomp548090197">摘自<a href="https://zhuanlan.zhihu.com/p/548090197">https://zhuanlan.zhihu.com/p/548090197</a></a></h1>
 
                     <div id="giscus-container"></div>
                 </main>
