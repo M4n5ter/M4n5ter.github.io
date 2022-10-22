@@ -9,4 +9,6 @@
     - [问题及解决方案](./issues/docker/docker_issues.md)
   - [mysql](./issues/mysql/mysql.md)
     - [问题及解决方案](./issues/mysql/mysql_issues.md)
+  - [gitea](./issues/gitea/gitea.md)
+    - [问题及解决方案](./issues/gitea/gitea_issues.md)
 - [Math](./math/math.md)
