@@ -274,7 +274,7 @@ where
 <p>在官方文档提供了两种 Balance 服务</p>
 <ul>
 <li>p2c：根据p2c算法 (Power of Two Random Choices) 实现，提供一种简单而大概的 service 选择方法，一般在无法精确每个 service 的负载时使用。</li>
-<li>pool：实现了一个动态大小的服务池 (service pool)，通过追踪每个 service 的 <code>poll_ready</code> 成功的次数来估计每个 service 的负载状况。（虽然这个模块还存在于官方文档之上，但是已经从最近的源码上移除了，显然官方打算移除这个模块，参见<a href="https://link.zhihu.com/?target=https%3A//github.com/tower-rs/tower/pull/658">#658</a>。</li>
+<li>pool：实现了一个动态大小的服务池 (service pool)，通过追踪每个 service 的 <code>poll_ready</code> 成功的次数来估计每个 service 的负载状况。（虽然这个模块还存在于官方文档之上，但是已经从最近的源码上移除了，显然官方打算移除这个模块，参见<a href="https://github.com/tower-rs/tower/pull/658">#658</a>。</li>
 </ul>
 <p>这里选择p2c算法进行分析。p2c 并非是一种挑选最优的算法，而是一种避免选到最坏的算法。其随机从所有 service 中选取两个，比较两个 service 的负载，选择较小的那个 service，从而保证避免选到负载最重的 service。这个算法在 nginx 中就有所运用。</p>
 <p>Balance 内部通过 ready_cache 模块维护一个 Pending 队列和一个 Ready map，当 Service 陷入 Pending 状态时，则加入 Pending 队列中，新加入的 Service 一开始也是加入到 Pending 队列中。可以通过调用 <code>promote_pending_to_ready</code> 函数遍历所有的 Pending Service 将已经 Ready 的 Service 加入到 Ready map 中。</p>
