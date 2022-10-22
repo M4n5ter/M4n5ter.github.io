@@ -1,0 +1,858 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>Math - M4n5ter Blog</title>
+    <!-- Custom HTML head -->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="icon" href="../favicon.svg">
+    <link rel="shortcut icon" href="../favicon.png">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/general.css">
+    <link rel="stylesheet" href="../css/chrome.css">
+    <link rel="stylesheet" href="../css/print.css" media="print">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../fonts/fonts.css">
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../highlight.css">
+    <link rel="stylesheet" href="../tomorrow-night.css">
+    <link rel="stylesheet" href="../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../theme/style3.css">
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../rust/rust.html"><strong aria-hidden="true">2.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../rust/rust_tower.html"><strong aria-hidden="true">2.1.</strong> Tower</a></li></ol></li><li class="chapter-item expanded "><a href="../math/math.html" class="active"><strong aria-hidden="true">3.</strong> Math</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+            <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/sunface/m4n5ter.github.io/edit/main/src/math/math.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <p>$\because\ e^y = x \rightarrow y = \ln x \ \therefore\ e^{\ln x} = x \ \therefore\ e^{\ln x^x} = x^x $</p>
+<p>$\huge (uv)^{(n)} = \Sigma^n_{k=0} C^k_n u^{(n-k)}v^{(k)}$</p>
+<p>$\forall 表示任取$</p>
+<h1 id="等价无穷小替换"><a class="header" href="#等价无穷小替换">等价无穷小替换</a></h1>
+<p>$\lim\limits_{x\to0}\frac{\tan x - x}{x^2\sin x} = \lim\limits_{x\to0}\frac{\tan x -x}{x^3}$</p>
+<p>此处 $\sin x$ 可以替换为 $x$，$\tan x$ 不可替换为 $x$。</p>
+<p>因为等价无穷小替换的前提是分子或分母是一些项的乘积，而这里分子不是一些项的乘积，所以分子处不能使用等价无穷小替换；而分母满足条件，可以使用等价无穷小替换</p>
+<h1 id="微分公式"><a class="header" href="#微分公式">微分公式</a></h1>
+<p>$$
+\huge dy = f'(x)dx
+$$</p>
+<h1 id="复合函数的微分"><a class="header" href="#复合函数的微分">复合函数的微分</a></h1>
+<p>$$
+\huge y = f(u), , u = g(x) ,\Rightarrow du=g'(x)dx
+\
+dy = y'_xdx = f'(u)g'(x)dx = f'(u)du \
+\Downarrow \ dy = f'(u)du
+$$</p>
+<blockquote>
+<p>从上面俩可以得出 <strong>“微分形式不变性”</strong></p>
+</blockquote>
+<h1 id="微分在近似计算中的应用"><a class="header" href="#微分在近似计算中的应用">微分在近似计算中的应用</a></h1>
+<p>$\Delta y = f(x_0+\Delta x) - f(x_0)$   <strong>精确值</strong></p>
+<p>$dy = f'(x_0)\Delta x$                          <strong>近似值</strong></p>
+<p>$\Delta y \approx dy$ </p>
+<p>$\therefore f(x_0 + \Delta x) \approx f'(x_0)\Delta x + f(x_0)$</p>
+<blockquote>
+<p>例：半径 1 cm 球，镀铜 0.01 cm，求镀的铜的体积</p>
+</blockquote>
+<p>$$
+V = \frac{4}{3}\pi r^3, ,,,, r_0 = 1, \Delta r = 0.01 \
+V' = 4\pi r^2 
+$$</p>
+<p>目的是求 $\Delta V$,  $\Delta V$ 是精确值。</p>
+<p>$\Delta V \approx 4\pi r^2|_{r=1}\Delta r = 4\pi \times 0.01 = 0.04\pi \approx 0.13(cm^3)$</p>
+<p>要求质量的话再乘以密度即可。</p>
+<h2 id="近似计算中的常用公式"><a class="header" href="#近似计算中的常用公式">近似计算中的常用公式</a></h2>
+<p>$\LARGE x \to 0 $
+$\normalsize (1),,,, \Large (1+x)^\alpha \approx 1 + \alpha x$
+$\normalsize (2),,,, \Large sinx \approx x$</p>
+<p>$\normalsize (3),,,, \Large tanx \approx x$</p>
+<p>$\normalsize (4),,,, \Large e^x \approx 1 + x $</p>
+<p>$\normalsize (5),,,, \Large \ln(1+x) \approx x$</p>
+<p><strong>意义：</strong></p>
+<p><strong>1. 左边的失去计算器没一个好算的，但是右边的都好算。</strong></p>
+<p><strong>2. 精确度高</strong></p>
+<h1 id="微分中值定理"><a class="header" href="#微分中值定理">微分中值定理</a></h1>
+<h2 id="拉格朗日中值定理"><a class="header" href="#拉格朗日中值定理">拉格朗日中值定理</a></h2>
+<blockquote>
+<ol>
+<li>
+<p>$[a,b],,连续$</p>
+</li>
+<li>
+<p>$(a,b),,可导$</p>
+</li>
+</ol>
+<p>$(a,b),,$至少有一点 $\xi$ 满足:</p>
+<p>$f(b) - f(a) = f'(\xi)(b-a) \Rightarrow f'(\xi) = \frac{f(b)-f(a)}{b-a}$</p>
+</blockquote>
+<h2 id="罗尔中值定理"><a class="header" href="#罗尔中值定理">罗尔中值定理</a></h2>
+<blockquote>
+<ol>
+<li>
+<p>$[a,b],,连续$</p>
+</li>
+<li>
+<p>$(a,b),,可导$</p>
+</li>
+<li>
+<p>$f(a) = f(b)$</p>
+</li>
+</ol>
+<p>则至少有一个$\xi \in (a,b). f'(\xi) = 0$</p>
+</blockquote>
+<p>罗尔中值定理是拉格朗日中值定理的一种特殊情况。</p>
+<p>从以上可以再推出一个定理：</p>
+<p>$$
+\large f(x) 在区间, I ,连续且可导,同时导数恒为,0,,f(x) = C,(C, 为常数)
+$$</p>
+<h2 id="柯西中值定理"><a class="header" href="#柯西中值定理">柯西中值定理</a></h2>
+<blockquote>
+<p>$若有,f(x),和,F(x)$</p>
+<ol>
+<li>
+<p>$[a,b],,连续$</p>
+</li>
+<li>
+<p>$(a,b),,可导$</p>
+</li>
+<li>
+<p>$\forall x \in (a,b) 且 F'(x) \neq 0$</p>
+</li>
+</ol>
+<p>$至少有一点 \xi 满足,\frac{f(b)-f(a)}{F(b)-F(a)} = \frac{f'(\xi)}{F'(\xi)}$</p>
+</blockquote>
+<p><strong>柯西中值定理是这几个中值定理里面最一般化的。</strong></p>
+<p><strong>柯西中值定理中将 $F(x)=x$ 时即可推出拉格朗日中值定理</strong></p>
+<p><strong>拉格朗日中值定理中将 $f(a)=f(b)$ 即可推出罗尔中值定理</strong></p>
+<h1 id="洛必达法则"><a class="header" href="#洛必达法则">洛必达法则</a></h1>
+<blockquote>
+<ol>
+<li>
+<p>$x\to a时, f(x)\to 0,,F(x)\to 0$</p>
+</li>
+<li>
+<p>$在,a,的去心邻域内,f'(x),,F'(x),存在且,F'(x)\neq 0$</p>
+</li>
+<li>
+<p>$\lim\limits_{x\to a}\frac{f'(x)}{F'(x)}存在(或\infty)$</p>
+</li>
+</ol>
+<p>$则,,\lim\limits_{x\to a}\frac{f(x)}{F(x)} = \lim\limits_{x\to a}\frac{f'(x)}{F'(x)}$</p>
+</blockquote>
+<blockquote>
+<ol>
+<li>
+<p>$x\to \infty时, f(x)\to 0,,F(x)\to 0$</p>
+</li>
+<li>
+<p>$在,a,的去心邻域内,f'(x),,F'(x),存在且,F'(x)\neq 0$</p>
+</li>
+<li>
+<p>$\lim\limits_{x\to a}\frac{f'(x)}{F'(x)}存在(或\infty)$</p>
+</li>
+</ol>
+<p>$则,,\lim\limits_{x\to a}\frac{f(x)}{F(x)} = \lim\limits_{x\to a}\frac{f'(x)}{F'(x)}$</p>
+</blockquote>
+<p>$\frac{0}{0},,\frac{\infty}{\infty},,0\cdot\infty,\infty-\infty,, 0^0,,1^\infty,,\infty^0$</p>
+<p><strong>上面这几种情况都可以通过转换成 $\frac{0}{0}或\frac{\infty}{\infty}$ 的形式来使用洛必达法则</strong></p>
+<p>例如:</p>
+<p>$0\cdot\infty的情况:$</p>
+<p>$\large \lim\limits_{x\to0^+}x^n \ln x,(n&gt;0) = \lim\limits_{x\to0^+}\frac{lnx}{\frac{1}{x^n}} = \lim\limits_{x\to0^+}\frac{\frac{1}{x}}{-n\cdot x^{-n-1}} = \lim\limits_{x\to0^+}-\frac{1}{nx^{-n}} = \lim\limits_{x\to0^+}-\frac{x^n}{n} = 0$</p>
+<p><strong>2 种技巧：</strong></p>
+<ul>
+<li>
+<p>等价无穷小替换</p>
+</li>
+<li>
+<p>适当的将项(<strong>常数或者趋于常数</strong>)朝外挪</p>
+</li>
+</ul>
+<p>比如$\large\lim\limits_{x\to0}\frac{x^2-\tan x}{\cos x\sin x}中,\cos x 趋于,0，所以可以转换成,,1\cdot \lim\limits_{x\to0}\frac{x^2-\tan x}{\sin x}$</p>
+<h1 id="泰勒公式"><a class="header" href="#泰勒公式">泰勒公式</a></h1>
+<p>$$
+f(x),在,x_0,处有,n,阶导，\exist x_0的一个邻域,则有:\
+f(x)=f(x_0) + \frac{f'(x_0)}{1!}(x-x_0) + \frac{f''(x_0)}{2!}(x-x_0)^2 +\ldots+\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n +R_n(x)\
+Rn(x) = \circ(\small{(x-x_0)^n})，即是高阶无穷小 \
+Rn(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}, \xi,介于,x_0,与,x,之间 
+$$</p>
+<h1 id="麦克劳林公式"><a class="header" href="#麦克劳林公式">麦克劳林公式</a></h1>
+<p>一般用的比较多的是泰勒公式在 $x_0 = 0$ 处展开,那么就有了麦克劳林公式：</p>
+<p>$$
+x_0 = 0,,f(x) = f(0) + \frac{f'(0)}{1!}x + \frac{f''(0)}{2!}x^2+\ldots+
+\frac{f^{(n)}(0)}{n!}x^n + \frac{f^{(n+1)}(\theta x)}{(n+1)!}x^{n+1},,\
+0&lt;\theta&lt;1
+$$</p>
+<h2 id="用麦克劳林公式解释等价无穷小"><a class="header" href="#用麦克劳林公式解释等价无穷小">用麦克劳林公式解释等价无穷小</a></h2>
+<blockquote>
+<p>解释 $e^x-1 \sim x$</p>
+</blockquote>
+<p>$$
+f(x)=e^x,f'(x)=f''(x)=\ldots=f^{(n)}(x)=e^x,f^{(n+1)}(\theta x) = e^{\theta x}\</p>
+<p>\because e^x=1+x+\frac{1}{2!}x^2+\frac{1}{3!}x^3 +\ldots+\frac{1}{n!}x^n+\frac{e^{\theta x}}{(n+1)!}x^{n+1},
+0&lt;\theta&lt;1\
+e^x \approx 1+x+\frac{1}{2!}x^2+\frac{1}{3!}x^3 +\ldots+\frac{1}{n!}x^n\</p>
+<p>\therefore 当,x\to0,时，x^2,以及更高次可以忽略不计，就有了\
+e^x\sim1+x \Rightarrow e^x-1 \sim x
+$$</p>
+<h1 id="不定积分"><a class="header" href="#不定积分">不定积分</a></h1>
+<p>$$
+\Large \int f(x)dx = F(x) + C \
+f(x),为被积函数，dx,为积分变量。
+$$</p>
+<p>$$
+F'(x) = f(x)\
+F(x)为原函数,f(x)为导函数
+$$</p>
+<p>求谁的原函数，谁就是被积函数。</p>
+<h2 id="积分表求导表"><a class="header" href="#积分表求导表">积分表/求导表</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>积分表</th><th>求导表</th></tr></thead><tbody>
+<tr><td>$\int kdx=kx+C$</td><td>$(kx)'=k$</td></tr>
+<tr><td>$\int x^udx=\frac{x^{u+1}}{u+1}+C$</td><td>$(x^u)'=ux^{u-1}$</td></tr>
+<tr><td>$\int\frac{1}{x}dx=\ln|x|+C$</td><td>$(\ln x)'=\frac{1}{x}$</td></tr>
+<tr><td>$\int\frac{dx}{1+x^2}=\arctan x+C$</td><td>$x&gt;0,(\arctan x)'=\frac{1}{1+x^2}$</td></tr>
+<tr><td>$\int\frac{dx}{\sqrt{1-x^2}}=\arcsin x+C$</td><td>$(\arcsin x)'=\frac{1}{\sqrt{1-x^2}}$</td></tr>
+<tr><td>$\int\cos xdx=\sin x+C$</td><td>$(\sin x)'=\cos x$</td></tr>
+<tr><td>$\int\sin xdx=-\cos x+C$</td><td>$(\cos x)'=-\sin x$</td></tr>
+<tr><td>$\int \tan xdx=-\ln|\cos x|+C$</td><td></td></tr>
+<tr><td>$\int \cot xdx=\ln|\sin x|+C$</td><td></td></tr>
+<tr><td>$\int \csc xdx=\ln|\tan\frac{x}{2}|+C=\ln|\csc x-\cot x|+C$</td><td></td></tr>
+<tr><td>$\int\sec xdx=\ln|\sec x+\tan x|+V$</td><td></td></tr>
+<tr><td>$\int\frac{dx}{a^2+x^2}=\frac{1}{a}\arctan\frac{x}{a}+C$</td><td></td></tr>
+<tr><td>$\int\frac{dx}{x^2-a^2}=\frac{1}{2a}\ln|\frac{x-a}{x+a}|+C$</td><td></td></tr>
+<tr><td>$\int\frac{dx}{\cos^2x}=\int\sec^2xdx=\tan x+C$</td><td>$(\tan x)'=\frac1{\cos^2x}$</td></tr>
+<tr><td>$\int\frac{dx}{\sin^2x}=\int\csc^2dx=-\cot x+C$</td><td>$(\cot x)'=-(\csc^2x)$</td></tr>
+<tr><td>$\int\sec x\tan xdx=\sec x+C$</td><td>$(\sec x)'=\sec x\tan x$</td></tr>
+<tr><td>$\int\csc^2\cot x dx=-\csc x+C$</td><td>$(\csc x)' = -\csc x\cot x$</td></tr>
+<tr><td>$\int e^xdx=e^x+C$</td><td>$(e^x)'=e^x$</td></tr>
+<tr><td>$\int a^xdx=\frac{a^x}{\ln a}+C$</td><td>$(a^x)'=a^x\ln a$</td></tr>
+</tbody></table>
+</div>
+<h2 id="第二类换元积分法一般的替换模式"><a class="header" href="#第二类换元积分法一般的替换模式">第二类换元积分法一般的替换模式</a></h2>
+<ol>
+<li>
+<p>$\sqrt{a^2-x^2},,,,x=a\sin t,(此处都需要加上t取值范围),,,,\sqrt{a^2-a^2\sin^2t}=\sqrt{a^2\cos^2t}$</p>
+</li>
+<li>
+<p>$\sqrt{x^2-a^2},,,,x=a\sec t,,,,\sqrt{a^2\sec^2t-a^2}=\sqrt{a^2\tan^2t}$</p>
+</li>
+<li>
+<p>$\sqrt{x^2+a^2},,,,x=a\tan t,,,,\sqrt{a^2\tan^2t+a^2}=\sqrt{a^2\sec^2t}$</p>
+</li>
+</ol>
+<h1 id="分部积分法"><a class="header" href="#分部积分法">分部积分法</a></h1>
+<p>$$
+\int udv=uv-\int vdu
+$$</p>
+<p>向 $d$ 后面拿的优先级：</p>
+<ol>
+<li>
+<p>$e^x$</p>
+</li>
+<li>
+<p>$\sin \cos$</p>
+</li>
+<li>
+<p>$x^n$</p>
+</li>
+</ol>
+<p>用分部积分做题很少有一次分部积分公式就搞定的，基本上要2次及以上。</p>
+<p><strong>用分部积分法解题的常见现象，要求的东西分部积分求着求着又出现了：</strong></p>
+<p>$$
+看系数\begin{cases}
++1 说明做错了 \Rightarrow检查\
+其它 \Rightarrow基本没问题，把左右两边一样的合并
+\end{cases}
+$$</p>
+<blockquote>
+<p>使用分部积分法求 $\ln x原函数$</p>
+</blockquote>
+<p>$\int\ln xdx=x\ln x-\int xd\ln x=x\ln x-\int1dx=x\ln x-x+C$</p>
+<h1 id="微积分基本公式"><a class="header" href="#微积分基本公式">微积分基本公式</a></h1>
+<p>$$
+[\int^{\phi(x)}_{\psi(x)}f(t)dt]'=f({\phi(x)})\phi'(x)-f({\psi(x)})\psi'(x)
+$$</p>
+<h1 id="定积分基本公式"><a class="header" href="#定积分基本公式">定积分基本公式</a></h1>
+<h2 id="牛顿-莱布尼茨公式"><a class="header" href="#牛顿-莱布尼茨公式">牛顿-莱布尼茨公式</a></h2>
+<p>$$
+F(x)是f(x)的原函数。\
+\int^b_af(x)dx=F(x)|^b_a=F(b)-F(a)
+$$</p>
+<h2 id="定积分换元法"><a class="header" href="#定积分换元法">定积分换元法</a></h2>
+<p><strong>定理：</strong></p>
+<p>$$
+\begin{align*}
+&amp;x=\phi(t) \
+&amp;1),,,,\phi(\alpha)=a,\phi(\beta)=b \
+&amp;\int_a^bf(x)dx=\int_\alpha^\beta f({\phi(t)})\phi(t)dt
+\end{align*}
+$$</p>
+<ol>
+<li>
+<p>引入换元函数</p>
+</li>
+<li>
+<p>上下限也跟变</p>
+</li>
+</ol>
+<p><strong>例题：</strong></p>
+<p>$$
+\begin{align*}
+&amp;1)\int_0^a\sqrt{a^2-x^2},dx,,(a&gt;0)\
+&amp;解:\
+&amp;x=a\sin t,,dx=a\cos t,dt,,x=0\to t=0,,x=a\to t=\frac{\pi}{2}\
+&amp;\therefore \int_0^a\sqrt{a^2-x^2},dx\
+&amp;=\int_0^{\frac{\pi}{2}}\sqrt{a^2-a^2\sin^2t}
+,a\cos t,dt\&amp;=\int_0^{\frac{\pi}{2}}a^2\cos^2t,dt\
+&amp;=\frac{1}{2}\int_0^{\frac{\pi}{2}}a^2+a^2\cos 2t,dt\
+&amp;=\frac{\pi}{4}a^2
+\end{align*}
+$$</p>
+<blockquote>
+<p>特殊结论</p>
+</blockquote>
+<p>$$
+\begin{align*}
+&amp;[-a,a],,,,f(x)为偶函数时，\int_{-a}^af(x)dx=2\int_0^af(x)dx\</p>
+<p>&amp;[-a,a],,,,f(x)为奇函数时，\int_{-a}^af(x)dx=0
+\end{align*}
+$$</p>
+<h1 id="一阶线性微分方程"><a class="header" href="#一阶线性微分方程">一阶线性微分方程</a></h1>
+<p>$$
+\frac{dy}{dx} + P(x)y = Q(x) \
+(Q(x)=0表示齐次)\
+齐次、非齐次通用公式：\
+\huge\Downarrow\
+\huge y=e^{-\int P(x)dx}(\int Q(x)e^{\int P(x)dx}dx+C)
+$$</p>
+<h1 id="常系数线性齐次微分方程"><a class="header" href="#常系数线性齐次微分方程">常系数线性齐次微分方程</a></h1>
+<h2 id="二阶常系数线性齐次微分方程"><a class="header" href="#二阶常系数线性齐次微分方程">二阶常系数线性齐次微分方程</a></h2>
+<p>$$
+\begin{align*}
+&amp;y'' + py' + qy = 0 \
+&amp;y称为其通解 \
+&amp; 做法是将其转化为特征方程 \Longrightarrow r^2 + pr + q =0 \
+&amp;\begin{cases}
+① \Delta=p^2-4q &gt; 0,r_1=\frac{-p+\sqrt{\Delta}}{2}, r_2=\frac{-p-\sqrt{\Delta}}{2}, 
+&amp;y=C_1e^{r_1x} + C_2e^{r_2x}\
+② \Delta=p^2-4q = 0,r_1=r_2=\frac{-p}{2}, &amp;y=(C_1+C_2x)e^{r_1x} \
+③ \Delta=p^2-4q &lt; 0,r_1=\alpha+\beta i,r_2=\alpha-\beta i, &amp;y=e^{\alpha x}
+(C_1\cos \beta x + C_2\sin \beta x)
+\end{cases}</p>
+<p>\end{align*}
+$$</p>
+<h1 id="无穷级数"><a class="header" href="#无穷级数">无穷级数</a></h1>
+<h2 id="常数项级数"><a class="header" href="#常数项级数">常数项级数</a></h2>
+<blockquote>
+<p>等比（几何）级数</p>
+</blockquote>
+<p>$$
+\large a+aq+aq^2+aq^3+\cdot\cdot\cdot+aq^{n-1}+\cdot\cdot\cdot
+$$</p>
+<p>$$
+\begin{align*}
+&amp;S_n为前n项和 \</p>
+<p>&amp;①|q|\neq 1 ,,,, S_n=\frac{a(1-q^n)}{1-q}
+\begin{cases}
+|q|&lt;1 \lim\limits_{n\to\infty}S_n=\frac{a}{1-q} \
+|q|&gt;1 \lim\limits_{n\to\infty}S_n发散\
+\end{cases} \
+&amp;②|q|=1
+\begin{cases}
+q=1 发散\
+q=-1 发散\
+\end{cases}\</p>
+<p>&amp;结论: 
+\begin{cases}
+|q|&lt;1 收敛\
+|q|\geq1发散
+\end{cases}
+\end{align*}
+$$</p>
+<blockquote>
+<p>性质1)</p>
+<p>$$
+\large \sum^\infty_{n=1}U_n收敛于S, \sum^\infty_{n=1}kU_n收敛于kS
+$$</p>
+</blockquote>
+<blockquote>
+<p>性质2)</p>
+<p>$$
+\large \sum^\infty_{n=1}U_n和\sum^\infty_{n=1}V_n分别收敛于 S 和\sigma.\
+\sum^\infty_{n=1}(U_n\pm V_n)也收敛.和S\pm\sigma</p>
+</blockquote>
+<blockquote>
+<p>$$</p>
+</blockquote>
+<p>正推可以，反推不可以。</p>
+<blockquote>
+<p>性质3)</p>
+<p>$$
+去掉、加上或改变有限项，敛散性不变（注意不是和不变）
+$$</p>
+</blockquote>
+<blockquote>
+<p>性质4)</p>
+<p>$$
+\large \sum U_n收敛，任意加括号得级数也收敛，且和不变。
+$$</p>
+</blockquote>
+<p>正推可以，反推不可以</p>
+<p><strong>但是，加括号后发散的，原级数一定发散</strong></p>
+<blockquote>
+<p>性质5)</p>
+<p>$$
+\begin{align*}
+\large \sum &amp;U_n收敛，U_n \to 0.\
+\because &amp;U_n=S_n-S_{n-1} \
+&amp;S_n \to S \
+&amp;S_{n-1} \to S \
+\therefore &amp;U_n \to 0
+\end{align*}
+$$</p>
+</blockquote>
+<p>正推可以，反推不可以</p>
+<p>性质5的逆否命题（为真）做题时很有用</p>
+<blockquote>
+<p>$$
+U_n \nrightarrow 0,\sum U_n 发散
+$$</p>
+</blockquote>
+<h2 id="调和级数"><a class="header" href="#调和级数">调和级数</a></h2>
+<p>调和级数是个发散的级数，因为项跟项之间的和增大的速度大于后面项趋于0的速度</p>
+<p>例子:</p>
+<p>$$
+1+\frac1{2}+\frac1{3}+\cdot\cdot\cdot+\frac1{n}+\cdot\cdot\cdot是发散的
+$$</p>
+<h2 id="正项级数"><a class="header" href="#正项级数">正项级数</a></h2>
+<p>$U_n \geq 0$</p>
+<p>$S_1\leq S_2\leq S_3,\cdot\cdot\cdot$</p>
+<p>${S_n} \geq 0$</p>
+<blockquote>
+<p><strong>定理1</strong></p>
+<p>$$
+\begin{align*}
+&amp;前提都是正项级数\
+&amp;\sum U_n 收敛 \Leftrightarrow {S_n}有界\
+\end{align*}
+$$</p>
+</blockquote>
+<blockquote>
+<p><strong>定理2</strong></p>
+<p>$$
+\begin{align*}
+\sum U_n,\sum V_n是正项级数，且U_n \leq V_n
+\begin{cases}
+\sum V_n 收敛 \to \sum U_n 收敛\
+\sum U_n 发散 \to \sum V_n 发散\
+\end{cases}
+\end{align*}
+$$</p>
+</blockquote>
+<h3 id="p一级数"><a class="header" href="#p一级数">P一级数</a></h3>
+<p>$$
+1+\frac{1}{2^p}+\frac{1}{3^p}+\cdot\cdot\cdot\frac{1}{n^p}+\cdot\cdot\cdot
+$$</p>
+<p>结论：</p>
+<p>$$
+① p \leq1,发散\
+② p &gt;1,收敛
+$$</p>
+<p>$$
+\frac{1}{k^p}=\int^k_{k-1}\frac1{k^p}dx\leq\int^k_{k-1}\frac1{x^p}dx
+$$</p>
+<p>$$
+S_n=1+\sum^n_{k=2}\frac1{k^p}\leq 1+\sum^n_{k-1}\frac1{x^p}dx=1+\int^n_1\frac1{x^p}dx
+=1+\frac1{p-1}(1-\frac1{n^{p-1}})&lt;1+\frac1{p-1}\</p>
+<p>\therefore S_n 有界
+$$</p>
+<h3 id="正项级数的比较审敛法"><a class="header" href="#正项级数的比较审敛法">正项级数的比较审敛法</a></h3>
+<h4 id="极限改进的比较审敛法"><a class="header" href="#极限改进的比较审敛法">极限改进的比较审敛法：</a></h4>
+<p>$\sum U_n和\sum V_n都是正项级数$</p>
+<blockquote>
+<p>定理1：</p>
+<p>$$
+\lim\limits_{n\to\infty}\frac{U_n}{V_n}=l,(0\leq l &lt; +\infty) \Rightarrow
+\sum V_n 收敛，\sum U_n 收敛
+$$</p>
+</blockquote>
+<blockquote>
+<p>定理2：</p>
+<p>$$
+\lim\limits_{n\to \infty}\frac{U_n}{V_n}=l &gt; 0 或 +\infty \Rightarrow
+\sum V_n 发散，\sum U_n 发散
+$$</p>
+</blockquote>
+<h3 id="正项级数的比值审敛法"><a class="header" href="#正项级数的比值审敛法">正项级数的比值审敛法</a></h3>
+<blockquote>
+<p>定理</p>
+<p>$$
+\lim\limits_{n\to\infty}\frac{U_{n+1}}{U_n}=\rho\
+\rho &lt; 1 收敛，\rho &gt; 1 (包含+\infty)发散
+$$</p>
+<p>缺点是 $\rho = 1$时无法判断，优点是不需要跟比较审敛法一样找一个比较对象</p>
+</blockquote>
+<h3 id="正向级数的根值审敛法柯西判别法"><a class="header" href="#正向级数的根值审敛法柯西判别法">正向级数的根值审敛法（柯西判别法）</a></h3>
+<blockquote>
+<p>定理</p>
+<p>$$
+\lim\limits_{n\to\infty}\sqrt[n]{U_n}=\rho \
+\begin{align*}
+1)&amp; \rho &lt; 1 收敛 \
+2)&amp; \rho &gt; 1 发散 \
+3)&amp; \rho = 1 无法确定（同比值审敛法，本方法失效）
+\end{align*}
+$$</p>
+</blockquote>
+<h2 id="交错级数"><a class="header" href="#交错级数">交错级数</a></h2>
+<p>$$
+\begin{align*}
+&amp;U_n \geq 0\
+&amp;U_1-U_2+U_3-U_4+\cdot\cdot\cdot \
+&amp;-U_1+U_2-U_3+U_4+\cdot\cdot\cdot \
+\sum^\infty_{n=1}(-1)^{n-1}U_n
+\end{align*}
+$$</p>
+<blockquote>
+<p>莱布尼茨定理</p>
+<p>$$
+\begin{align*}
+&amp;1) U_n \geq U_{n+1}\
+&amp;2) \lim\limits_{n\to\infty} U_n = 0\
+则级数收敛，S \leq U_1,并且余项|r_n|\leq U_{n+1}
+\end{align*}
+$$</p>
+</blockquote>
+<h2 id="任意项级数"><a class="header" href="#任意项级数">任意项级数</a></h2>
+<p>$$
+\begin{align*}
+&amp;任意项级数：U_1+U_2+U_3+\cdot\cdot\cdot&amp; (U_n正负不知道)\
+&amp;正项级数：|U_1|+|U_2|+|U_3|+\cdot\cdot\cdot&amp; (绝对值级数)\
+\end{align*}
+$$</p>
+<blockquote>
+<p>定理：</p>
+<p>$$
+\sum^{+\infty}<em>{n=1}|U_n|收敛，则\sum^{+\infty}</em>{n=1}U_n也收敛
+$$</p>
+</blockquote>
+<p>$$
+\begin{align*}
+&amp;绝对收敛： \sum |U_n|收敛，称\sum U_n绝对收敛 \
+&amp;条件收敛： \sum U_n收敛，\sum |U_n|发散，\sum U_n是条件收敛
+\end{align*}
+$$</p>
+<blockquote>
+<p>定理：</p>
+<p>$$
+\sum^{+\infty}_{n=1}U_n=U_1+U_2+U_3+\cdot\cdot\cdot是任意项级数\</p>
+</blockquote>
+<p>\lim\limits_{n\to +\infty}|\frac{U_n+1}{U_n}|=l \longleftarrow
+正项级数的比值审敛法\
+①: l &lt; 1 时，\sum U_n(绝对)收敛\
+②：l &gt; 1 (+\infty)时，\sum U_n 发散
+③：l = 1 时，本方法无法判断</p>
+<blockquote>
+<p>$$</p>
+</blockquote>
+<h2 id="幂级数"><a class="header" href="#幂级数">幂级数</a></h2>
+<p>$$
+1+x+x^2+x^3+\cdot\cdot\cdot+x^n+\cdot\cdot\cdot
+\begin{cases}
+|x|&lt;1时，收敛域(-1,1),和是\frac{a}{1-q}=\frac1{1-x}\
+|x| \geq 1 时，发散域(-\infty,-1]\cup[1,+\infty)
+\end{cases}
+$$</p>
+<blockquote>
+<p>定理（阿贝尔定理）</p>
+<p>$$
+\sum^{+\infty}_{n=0}a_nx^n,
+\begin{cases}
+如果x=x_0时收敛，则|x|&lt;|x_0|时幂级数绝对收敛\
+如果x=x_0时收敛，则|x|&gt;|x_0|时幂级数发散
+\end{cases}
+$$</p>
+</blockquote>
+<blockquote>
+<p>推论：</p>
+<p>$$
+收敛情况
+\begin{cases}
+①:x=0时收敛,例如\sum n!x^n\
+②:x\in(-\infty,+\infty)时收敛,例如\sum \frac{x^n}{n!}\
+③:|x|&lt;R绝对收敛(但是在-R跟R这两个端点的情况就需要另外讨论)\
+\end{cases}
+$$</p>
+</blockquote>
+<p>$$
+\begin{align*}
+&amp;(R&gt;0)R叫作收敛半径，(-R,R)叫收敛区间\
+&amp;[-R,R),[-R,R],(-R,R),(-R,R]这四种叫收敛域\
+&amp;收敛区间不包括端点，收敛域需要在讨论完端点的情况后决定是否将端点加进来
+\end{align*}
+$$</p>
+<h3 id="如何求-r"><a class="header" href="#如何求-r">如何求 R?</a></h3>
+<blockquote>
+<p>定理</p>
+<p>$$
+\begin{align*}
+&amp;\lim\limits_{n\to\infty}|\frac{a_{n+1}}{a_n}|=\rho\
+&amp;R=
+\begin{cases}
+\frac1{\rho},,,,&amp;\rho\neq0\
++\infty,,,,&amp;\rho=0\
+0,,,,&amp;\rho=+\infty
+\end{cases}
+&amp;其实可以只记R=\frac1{\rho}
+\end{align*}
+$$</p>
+</blockquote>
+<h3 id="幂级数的运算"><a class="header" href="#幂级数的运算">幂级数的运算</a></h3>
+<p>$$
+\begin{align*}
+&amp;性质1)\sum^{+\infty}<em>{n=0}a_nx^n的和函数S(x)在收敛域I上是连续的 \
+&amp;性质2)\sum^{+\infty}</em>{n=0}a_nx^n的和函数S(x)在收敛域I上是可积的,例如\int^x_0S(t)dt&amp;=
+\int^x_0 \sum^{+\infty}<em>{n=0}(a_nt^n)dt \
+&amp;&amp;=\sum^{+\infty}</em>{n=0}\int^x_0 a_nt^ndt ,,,\
+&amp;逐项求积分后与原幂级数的收敛半径相同，但收敛域就需要重新考察端点情况 \
+&amp;性质3),,S(x)在(-R,R)内可导,S'(x)=(\sum^{+\infty}<em>{n=0}a_nx^n)'=
+\sum^{+\infty}</em>{n=0}(a_nx^n)'=\sum^{+\infty}_{n=0}na_nx^{n-1}\
+&amp;逐项求导后与原幂级数的收敛半径相同，但收敛域就需要重新考察端点情况 \
+\end{align*}
+$$</p>
+<h3 id="函数展成幂级数"><a class="header" href="#函数展成幂级数">函数展成幂级数</a></h3>
+<blockquote>
+<p>直接展开法：</p>
+<p>就是直接用麦克劳林公式展开</p>
+</blockquote>
+<blockquote>
+<p>间接展开法:</p>
+<p>就是利用已有的进行展开，做题一般都用这个</p>
+<p>记忆：</p>
+<p>$$
+\begin{align*}
+①&amp;e^x=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdot\cdot\cdot+\frac{x^n}{n!}+
+\cdot\cdot\cdot (-\infty&lt;x&lt;+\infty) \
+②&amp;\sin x = x-\frac{x^3}{3!}+\frac{x^5}{5!}-\frac{x^7}{7!}+\cdot\cdot\cdot+
+(-1)^n\frac{x^{2n+1}}{(2n+1)!}+\cdot\cdot\cdot(-\infty&lt;x&lt;+\infty)\
+③&amp;\frac1{1-x}=1+x+x^2+x^3+\cdot\cdot\cdot+x^n+\cdot\cdot\cdot(-1&lt;x&lt;1)\
+④&amp;\frac1{1+x}=1-x+x^2-x^3+\cdot\cdot\cdot+(-1)^nx^n+\cdot\cdot\cdot(-1&lt;x&lt;1)\
+&amp;0到x求积分\huge\Downarrow \
+⑤&amp;\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}+\cdot\cdot\cdot+
+\frac{(-1)^{n-1}}{n}x^n+\cdot\cdot\cdot(-1&lt;x\leq1)\
+⑥&amp;\cos x=1-\frac{x^2}{2!}+\frac{x^4}{4!}-\frac{x^6}{6!}+\cdot\cdot\cdot+
+(-1)^n\frac{x^{2n}}{(2n)!}+\cdot\cdot\cdot(-\infty&lt;x&lt;+\infty)\
+⑦&amp;a^x=1+x\ln a + \frac{x^2(\ln a)^2}{2!}+ \frac{x^3(\ln a)^3}{3!}+
+\cdot\cdot\cdot+ \frac{x^n(\ln a)^n}{n!}+\cdot\cdot\cdot(-\infty&lt;x&lt;+\infty)\
+⑧&amp;\frac{1}{1+x^2}=1-x^2+x^4-x^6+x^8+(-1)^nx^{2n}+\cdot\cdot\cdot(-1&lt;x&lt;1)\
+⑨&amp;\arctan x=x-\frac{x^3}{3}+\frac{x^5}{5}-\frac{x^7}{7}+\cdot\cdot\cdot+
+(-1)^n\frac{x^{2n+1}}{2n+1}+\cdot\cdot\cdot(-1\leq x\leq1)
+\end{align*}
+$$</p>
+</blockquote>
+<h1 id="向量和解析几何"><a class="header" href="#向量和解析几何">向量和解析几何</a></h1>
+<h2 id="平面夹角"><a class="header" href="#平面夹角">平面夹角</a></h2>
+<p>$$
+n_1(A_1,B_1,C_1),n_2(A_2,B_2,C_2)为两平面各自的法向量。\
+\cos\theta=\frac{|A_1A_2+B_1B_2+C_1C_2|}{\sqrt{A_1^2+B_1^2+C_1^2}\sqrt{A_2^2+B_2^2+C_2^2}}
+\begin{cases}
+①：垂直, A_1A_2+B_1B_2+C_1C_2=0\</p>
+<p>②：平行或重合,\frac{A_1}{A_2}=\frac{B_1}{B_2}=\frac{C_1}{C_2} \
+\end{cases}
+$$</p>
+<h2 id="距离公式"><a class="header" href="#距离公式">距离公式</a></h2>
+<p>$$
+P_0(x_0,y_0,z_0),Ax+By+Cz+D=0 \
+d=\frac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}
+$$</p>
+
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../rust/rust_tower.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../rust/rust_tower.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        </nav>
+
+    </div>
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+    <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "math/math.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../assets/custom.js"></script>
+    <script type="text/javascript" src="../assets/bigPicture.js"></script>
+</body>
+
+</html>

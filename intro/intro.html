@@ -11,28 +11,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff" />
 
-    <link rel="icon" href="favicon.svg">
-    <link rel="shortcut icon" href="favicon.png">
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/general.css">
-    <link rel="stylesheet" href="css/chrome.css">
-    <link rel="stylesheet" href="css/print.css" media="print">
+    <link rel="icon" href="../favicon.svg">
+    <link rel="shortcut icon" href="../favicon.png">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/general.css">
+    <link rel="stylesheet" href="../css/chrome.css">
+    <link rel="stylesheet" href="../css/print.css" media="print">
     <!-- Fonts -->
-    <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../fonts/fonts.css">
     <!-- Highlight.js Stylesheets -->
-    <link rel="stylesheet" href="highlight.css">
-    <link rel="stylesheet" href="tomorrow-night.css">
-    <link rel="stylesheet" href="ayu-highlight.css">
+    <link rel="stylesheet" href="../highlight.css">
+    <link rel="stylesheet" href="../tomorrow-night.css">
+    <link rel="stylesheet" href="../ayu-highlight.css">
 
     <!-- Custom theme stylesheets -->
-    <link rel="stylesheet" href="theme/style3.css">
+    <link rel="stylesheet" href="../theme/style3.css">
 </head>
 
 <body>
     <!-- Provide site root to javascript -->
     <script type="text/javascript">
-        var path_to_root = "";
+        var path_to_root = "../";
         var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
     </script>
 
@@ -76,7 +76,7 @@
 
     <nav id="sidebar" class="sidebar" aria-label="Table of contents">
         <div class="sidebar-scrollbox">
-            <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html" class="active"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="rust.html"><strong aria-hidden="true">2.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="rust_tower.html"><strong aria-hidden="true">2.1.</strong> Tower</a></li></ol></li></ol>
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../intro/intro.html" class="active"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../rust/rust.html"><strong aria-hidden="true">2.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../rust/rust_tower.html"><strong aria-hidden="true">2.1.</strong> Tower</a></li></ol></li><li class="chapter-item expanded "><a href="../math/math.html"><strong aria-hidden="true">3.</strong> Math</a></li></ol>
         </div>
         <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
     </nav>
@@ -113,13 +113,13 @@
                 <h1 class="menu-title">M4n5ter Blog</h1>
 
                 <div class="right-buttons">
-                    <a href="print.html" title="Print this book" aria-label="Print this book">
+                    <a href="../print.html" title="Print this book" aria-label="Print this book">
                         <i id="print-button" class="fa fa-print"></i>
                     </a>
                     <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
                         <i id="git-repository-button" class="fa fa-github"></i>
                     </a>
-                    <a href="https://github.com/sunface/m4n5ter.github.io/edit/main/src/intro.md" title="Suggest an edit" aria-label="Suggest an edit">
+                    <a href="https://github.com/sunface/m4n5ter.github.io/edit/main/src/intro/intro.md" title="Suggest an edit" aria-label="Suggest an edit">
                         <i id="git-edit-button" class="fa fa-edit"></i>
                     </a>
                 </div>
@@ -181,7 +181,7 @@
 
                 <nav class="nav-wrapper" aria-label="Page navigation">
                     <!-- Mobile navigation buttons -->
-                    <a rel="next" href="rust.html" class="mobile-nav-chapters next"
+                    <a rel="next" href="../rust/rust.html" class="mobile-nav-chapters next"
                         title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -191,7 +191,7 @@
         </div>
 
         <nav class="nav-wide-wrapper" aria-label="Page navigation">
-            <a rel="next" href="rust.html" class="nav-chapters next" title="Next chapter"
+            <a rel="next" href="../rust/rust.html" class="nav-chapters next" title="Next chapter"
                 aria-label="Next chapter" aria-keyshortcuts="Right">
                 <i class="fa fa-angle-right"></i>
             </a>
@@ -202,20 +202,20 @@
     <script type="text/javascript">
         window.playground_copyable = true;
     </script>
-    <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-    <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-    <script src="book.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../book.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-        var pagePath = "intro.md"
+        var pagePath = "intro/intro.md"
     </script>
 
 
     <!-- Custom JS scripts -->
-    <script type="text/javascript" src="assets/custom.js"></script>
-    <script type="text/javascript" src="assets/bigPicture.js"></script>
+    <script type="text/javascript" src="../assets/custom.js"></script>
+    <script type="text/javascript" src="../assets/bigPicture.js"></script>
 </body>
 
 </html>
