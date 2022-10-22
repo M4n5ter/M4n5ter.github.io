@@ -110,7 +110,7 @@ where
 在官方文档提供了两种 Balance 服务
 
 - p2c：根据p2c算法 (Power of Two Random Choices) 实现，提供一种简单而大概的 service 选择方法，一般在无法精确每个 service 的负载时使用。
-- pool：实现了一个动态大小的服务池 (service pool)，通过追踪每个 service 的 `poll_ready` 成功的次数来估计每个 service 的负载状况。（虽然这个模块还存在于官方文档之上，但是已经从最近的源码上移除了，显然官方打算移除这个模块，参见[#658](https://link.zhihu.com/?target=https%3A//github.com/tower-rs/tower/pull/658)。
+- pool：实现了一个动态大小的服务池 (service pool)，通过追踪每个 service 的 `poll_ready` 成功的次数来估计每个 service 的负载状况。（虽然这个模块还存在于官方文档之上，但是已经从最近的源码上移除了，显然官方打算移除这个模块，参见[#658](https://github.com/tower-rs/tower/pull/658)。
 
 这里选择p2c算法进行分析。p2c 并非是一种挑选最优的算法，而是一种避免选到最坏的算法。其随机从所有 service 中选取两个，比较两个 service 的负载，选择较小的那个 service，从而保证避免选到负载最重的 service。这个算法在 nginx 中就有所运用。
 
