@@ -4,6 +4,10 @@ var initAll = function () {
         return;
     }
 
+    if (path.endsWith("/intro.html")) {
+        window.location = "https://m4n5ter.github.io/"
+    }
+
     var images = document.querySelectorAll("main img")
     Array.prototype.forEach.call(images, function (img) {
         img.addEventListener("click", function () {
