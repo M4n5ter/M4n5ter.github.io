@@ -16,4 +16,24 @@
 
 ## 我的 rust 相关 vscode 拓展以及配置
 
-![]
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention1.png?raw=true)
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention2.png?raw=true)
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention3.png?raw=true)
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention4.png?raw=true)
+
+
+
+以及一些设置:
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_1.png?raw=true)
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_2.png?raw=true)
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_3.png?raw=true)
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_4.png?raw=true)
+
+![](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_5.png?raw=true)
