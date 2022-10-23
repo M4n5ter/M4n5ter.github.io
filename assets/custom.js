@@ -5,7 +5,7 @@ var initAll = function () {
     }
 
     if (path.endsWith("/intro.html")) {
-        window.location = "https://m4n5ter.github.io/"
+        window.location = "https://m4n5ter.github.io/";
     }
 
     var images = document.querySelectorAll("main img")
