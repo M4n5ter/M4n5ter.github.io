@@ -8,7 +8,7 @@ title = "M4n5ter Blog"
 additional-css = ["theme/style3.css"]
 additional-js = ["assets/custom.js", "assets/bigPicture.js"]
 git-repository-url = "https://github.com/m4n5ter/m4n5ter.github.io"
-edit-url-template = "https://github.com/sunface/m4n5ter.github.io/edit/main/{path}"
+edit-url-template = "https://github.com/m4n5ter/m4n5ter.github.io/edit/main/{path}"
 
 [output.html.fold]
 enable = true

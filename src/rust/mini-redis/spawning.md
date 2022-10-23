@@ -200,3 +200,25 @@ help: to force the async block to take ownership of `v` (and any other
 这种情况会发生是因为默认情况下，变量不会被 **move** 到 async block。这个 `v`  Vector 被 `main` 函数保留了所有权。`println!` 只是借用了 `v`。rust 编译器向我们解释了这一点，甚至提出了修复建议！（rust 编译器还是一如既往的牛逼！尽管它的严格经常会让我很挫败:( ）
 
 按 rust 编译器说的来，在第 7 行处为 async block 加上 `move` ，现在这个 task 就拥有了 v 的所有权而不是借用，并且让它变成了 `'static`。
+
+如果必须同时从多个任务访问单个数据，那么就必须使用 `Arc` 等同步原语共享它。
+
+下面引用的内容我觉得比较难理解：
+
+> Note that the error message talks about the argument type *outliving* the `'static` lifetime. This terminology can be rather confusing because the `'static` lifetime lasts until the end of the program, so if it outlives it, don't you have a memory leak? The explanation is that it is the *type*, not the *value* that must outlive the `'static` lifetime, and the value may be destroyed before its type is no longer valid.
+> 
+> When we say that a value is `'static`, all that means is that it would not be incorrect to keep that value around forever. This is important because the compiler is unable to reason about how long a newly spawned task stays around. We have to make sure that the task is allowed to live forever, so that Tokio can make the task run as long as it needs to.
+> 
+> The article that the info-box earlier links to uses the terminology "bounded by `'static`" rather than "its type outlives `'static`" or "the value is `'static`" to refer to `T: 'static`. These all mean the same thing, but are different from "annotated with `'static`" as in `&'static T`.
+
+留意关于**参数类型**的寿命超过了 `’static` 生命周期的错误信息。这个术语可能会让人很困惑，因为 `'static` 生命周期将会一直存在直到程序结束，所以如果比它寿命还长，确定没有内存泄漏吗？ 关于这个的解释是：它是一个类型，而不是一个必须寿命长过 `'static`' 的值，并且它的值可能会在它的类型失效之前被销毁。
+
+当我们说一个值是 `'static` 的时候，这意味着永远留着它常常是正确的。这非常重要，因为编译器无法推断新生成的任务会保留多长时间。我们不得不确保任务被允许一直存活（仅仅是允许，但不是必须），这样 Tokio 就可以让任务运行它实际需要的时间。
+
+前面的信息框链接到的文章使用术语 **“以 `'static` 为界”** 而不是 **“其类型的寿命超过 `'static` ”** 或 **“其值是 `'static`"** 来指代 `T：'static`。这些都意味着同一件事，但不同于 `&‘static T` 中的 **“用 `'static` 注释”**
+
+
+
+插一句嘴：上面这块儿我是琢磨了很久，但是还有一些内容没完全明白，看来还是有待提升呐～
+
+## `Send` bound
