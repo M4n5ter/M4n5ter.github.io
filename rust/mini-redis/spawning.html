@@ -337,6 +337,7 @@ help: to force the async block to take ownership of `v` (and any other
 <p>前面的信息框链接到的文章使用术语 <strong>“以 <code>'static</code> 为界”</strong> 而不是 <strong>“其类型的寿命超过 <code>'static</code> ”</strong> 或 <strong>“其值是 <code>'static</code>&quot;</strong> 来指代 <code>T：'static</code>。这些都意味着同一件事，但不同于 <code>&amp;‘static T</code> 中的 <strong>“用 <code>'static</code> 注释”</strong></p>
 <p>插一句嘴：上面这块儿我是琢磨了很久，但是还有一些内容没完全明白，看来还是有待提升呐～</p>
 <h2 id="send-bound"><a class="header" href="#send-bound"><code>Send</code> bound</a></h2>
+<p>从 <code>tokio::spawn</code> 生成的任务<strong>必须</strong>实现 <code>Send</code> trait 。这样才能当任务被 <code>.await</code> 后允许 Tokio runtime 在线程之间移动他们。</p>
 
                     <div id="giscus-container"></div>
                 </main>
