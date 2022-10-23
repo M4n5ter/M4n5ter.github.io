@@ -77,7 +77,7 @@
 
     <nav id="sidebar" class="sidebar" aria-label="Table of contents">
         <div class="sidebar-scrollbox">
-            <ol class="chapter"><li class="chapter-item expanded "><a href="intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="rust/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li></ol></li><li class="chapter-item expanded "><a href="issues/issues.html"><strong aria-hidden="true">4.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/docker/docker.html"><strong aria-hidden="true">4.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/docker/docker_issues.html"><strong aria-hidden="true">4.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="issues/mysql/mysql.html"><strong aria-hidden="true">4.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/mysql/mysql_issues.html"><strong aria-hidden="true">4.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="issues/gitea/gitea.html"><strong aria-hidden="true">4.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/gitea/gitea_issues.html"><strong aria-hidden="true">4.3.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="links/links.html"><strong aria-hidden="true">5.</strong> Links</a></li><li class="chapter-item expanded "><a href="math/math.html"><strong aria-hidden="true">6.</strong> Math</a></li></ol>
+            <ol class="chapter"><li class="chapter-item expanded "><a href="intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="rust/tower/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item "><a href="rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="issues/issues.html"><strong aria-hidden="true">4.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/docker/docker.html"><strong aria-hidden="true">4.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/docker/docker_issues.html"><strong aria-hidden="true">4.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="issues/mysql/mysql.html"><strong aria-hidden="true">4.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/mysql/mysql_issues.html"><strong aria-hidden="true">4.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="issues/gitea/gitea.html"><strong aria-hidden="true">4.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="issues/gitea/gitea_issues.html"><strong aria-hidden="true">4.3.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="links/links.html"><strong aria-hidden="true">5.</strong> Links</a></li><li class="chapter-item expanded "><a href="math/math.html"><strong aria-hidden="true">6.</strong> Math</a></li></ol>
         </div>
         <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
     </nav>
@@ -189,6 +189,8 @@
 <p><a href="https://course.rs">rust course</a></p>
 <h3 id="我的-rustlings-521-版本解决方案"><a class="header" href="#我的-rustlings-521-版本解决方案">我的 rustlings 5.2.1 版本解决方案</a></h3>
 <p><a href="https://github.com/M4n5ter/rustlings-solutions">rustlings 5.2.1 解决方案</a></p>
+<h2 id="我的-rust-相关-vscode-拓展以及配置"><a class="header" href="#我的-rust-相关-vscode-拓展以及配置">我的 rust 相关 vscode 拓展以及配置</a></h2>
+<p>![]</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h3 id="简介"><a class="header" href="#简介">简介</a></h3>
 <p>Tower 是一个专注于对网络编程进行抽象的框架，将网络编程中的各行为进行抽象从而提高代码复用率。</p>
@@ -806,6 +808,46 @@ where
 <h3 id="结论"><a class="header" href="#结论">结论</a></h3>
 <p>Tower 将网络编程中常见的行为抽象为统一的 Service，对外的接口非常统一，并且可以相互叠加，而且是异步式，是一个扩展性非常强大的框架，值得学习一下。</p>
 <h1 id="摘自httpszhuanlanzhihucomp548090197"><a class="header" href="#摘自httpszhuanlanzhihucomp548090197">摘自<a href="https://zhuanlan.zhihu.com/p/548090197">https://zhuanlan.zhihu.com/p/548090197</a></a></h1>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<h2 id="介绍"><a class="header" href="#介绍">介绍</a></h2>
+<p><a href="https://github.com/tokio-rs/mini-redis">mini-redis</a> 是一个不完整的使用 <a href="https://github.com/tokio-rs/tokio">tokio</a> 构建的 <a href="https://redis.io/">redis</a> client 和 server 。</p>
+<p>是 tokio 团队提供的一个用于学习 <code>tokio</code> 的稍大的示例项目，接下来将以 <a href="https://github.com/tokio-rs/mini-redis">mini-redis</a> 作为我的第一个用来学习 <code>Rust</code> 的项目。</p>
+<p>该项目的目的即是进行 <code>tokio</code> 教学(<a href="https://tokio.rs/tokio/tutorial">Tokio Tutorial</a>)，所以接下来就跟着 <a href="https://tokio.rs/tokio/tutorial">Tokio Tutorial</a> 走吧～</p>
+<h2 id="开始"><a class="header" href="#开始">开始</a></h2>
+<p><code>Tokio Tutorial</code> 将会带着我们逐步完成 <code>mini-redis</code> 的客户端和服务端。从使用 Rust 进行异步编程的基础知识开始，并从那里开始构建。我们将实现Redis命令的一个子集，但将全面了解Tokio。</p>
+<h2 id="获得帮助"><a class="header" href="#获得帮助">获得帮助</a></h2>
+<p> <code>tokio</code> 的 <a href="https://discord.gg/tokio">Discord</a> 和 <a href="https://github.com/tokio-rs/tokio/discussions">GitHub discussions</a> 是初学者获得帮助的好地方，在那里不用担心提一些“初学者才会提的问题”，大家都是从某个地方开始，很乐意帮忙。</p>
+<h2 id="先决条件"><a class="header" href="#先决条件">先决条件</a></h2>
+<p>在该教程中说明了教程需要读者已经熟悉了 <code>Rust</code> 编程语言，并且推荐了 <a href="https://doc.rust-lang.org/book/">Rust book</a>，当然 rust cn 社区有一本同样优秀的 <a href="https://course.rs">Rust course</a> 。</p>
+<p>虽然不是必需的，但有使用Rust标准库或其他语言编写网络代码的一些经验可能会有所帮助。</p>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<p>本教程至少需要Rust版本1.45.0，但建议使用Rust的最新稳定版本。</p>
+<pre><code class="language-zsh">rustc --version
+rustc 1.64.0 (a55dd71d5 2022-09-19)
+</code></pre>
+<h3 id="mini-redis-server"><a class="header" href="#mini-redis-server">Mini-Redis server</a></h3>
+<p>接下来需要安装 <code>Mini-Redis server</code> 来保证我们写的客户端能被测试。</p>
+<pre><code class="language-zsh">cargo install mini-redis
+</code></pre>
+<p>如果因为国内糟糕的网络环境导致下载速度不忍直视，可以使用字节跳动 Rust 技术团队的 <a href="https://rsproxy.cn/">rsproxy</a> 来替换默认源。</p>
+<p>通过启动 server 来确保我们已经成功安装。</p>
+<pre><code class="language-zsh">mini-redis-server
+</code></pre>
+<p>接着另外打开一个终端窗口，尝试使用<code>mini-redis-cli</code> <code>get</code> 一个 <code>key</code> 。</p>
+<pre><code class="language-zsh">mini-redis-cli get foo
+</code></pre>
+<p>不出意外你会看到 <code>(nil)</code> 。</p>
+<h2 id="准备开始"><a class="header" href="#准备开始">准备开始</a></h2>
+<p>就是这样，一切准备就绪。转到下一页编写我们的第一个异步Rust应用程序。</p>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<h1 id="hello-tokio"><a class="header" href="#hello-tokio">Hello Tokio</a></h1>
+<p>我们将从编写一个非常基本的 <code>Tokio</code> 应用程序开始。它将连接到 <code>Mini-Redis</code> 服务器，设置 <code>key</code> <code>hello</code> 的值为 <code>world</code> 。然后它将读回 <code>key</code>。这将使用 <code>Mini-Redis</code> 的客户端库完成。</p>
+<h2 id="代码"><a class="header" href="#代码">代码</a></h2>
+<hr />
+<h3 id="生成一个新的-crate"><a class="header" href="#生成一个新的-crate">生成一个新的 <code>crate</code></a></h3>
+<pre><code class="language-zsh">cargo new my-redis
+cd my-redis
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h2 id="这块内容记录的是我碰到过的一些问题以及解决过程"><a class="header" href="#这块内容记录的是我碰到过的一些问题以及解决过程">这块内容记录的是我碰到过的一些问题以及解决过程。</a></h2>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
