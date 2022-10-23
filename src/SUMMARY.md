@@ -6,6 +6,7 @@
   - [Tower](./rust/tower/rust_tower.md)
   - [mini-redis](./rust/mini-redis/mini-redis.md)
     - [Hello Tokio](./rust/mini-redis/hello_tokio.md)
+    - [Spawning](./rust/mini-redis/spawning.md)
 - [issues and solutions](./issues/issues.md)
   - [docker](./issues/docker/docker.md)
     - [问题及解决方案](./issues/docker/docker_issues.md)
