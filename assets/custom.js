@@ -92,12 +92,12 @@ var initAll = function () {
             giscusTheme = "transparent_dark";
         }
 
-        // var msg = {
-        //     setConfig: {
-        //         theme: giscusTheme
-        //     }
-        // };
-        // iframe.contentWindow.postMessage({ giscus: msg }, 'https://giscus.app');
+        var msg = {
+            setConfig: {
+                theme: giscusTheme
+            }
+        };
+        iframe.contentWindow.postMessage({ giscus: msg }, 'https://giscus.app');
     });
 
     pagePath = pagePath.replace("index.md", "");
@@ -111,15 +111,15 @@ var initAll = function () {
     }
 
     // add visitors count
-    // var ele = document.createElement("div");
-    // ele.setAttribute("align", "center");
-    // var count = document.createElement("img")
-    // count.setAttribute("src", "https://visitor-badge.glitch.me/badge?page_id=" + path);
-    // ele.appendChild(count);
-    // var divider = document.createElement("hr")
+    var ele = document.createElement("div");
+    ele.setAttribute("align", "center");
+    var count = document.createElement("img")
+    count.setAttribute("src", "https://visitor-badge.glitch.me/badge?page_id=" + path);
+    ele.appendChild(count);
+    var divider = document.createElement("hr")
 
-    // document.getElementById("giscus-container").appendChild(ele);
-    // document.getElementById("giscus-container").appendChild(divider);
+    document.getElementById("giscus-container").appendChild(ele);
+    document.getElementById("giscus-container").appendChild(divider);
 
     // 选取浏览器默认使用的语言
     // const lang = navigator.language || navigator.userLanguage
@@ -137,9 +137,9 @@ var initAll = function () {
     script.async = true;
     script.crossOrigin = "anonymous";
     script.setAttribute("data-repo", "m4n5ter/m4n5ter.github.io");
-    script.setAttribute("data-repo-id", "MDEwOlJlcG9zaXRvcnkxNDM4MjIwNjk=");
-    script.setAttribute("data-category", "章节评论区");
-    script.setAttribute("data-category-id", "DIC_kwDOCJKM9c4COQcP");
+    script.setAttribute("data-repo-id", "R_kgDOH_M5eQ");
+    script.setAttribute("data-category", "评论区");
+    script.setAttribute("data-category-id", "DIC_kwDOH_M5ec4CSJVW");
     script.setAttribute("data-mapping", "specific");
     script.setAttribute("data-term", pagePath);
     script.setAttribute("data-reactions-enabled", "1");
@@ -149,7 +149,7 @@ var initAll = function () {
     // script.setAttribute("data-lang", lang);
     // 预先加载评论会更好，这样用户读到那边时，评论就加载好了
     // script.setAttribute("data-loading", "lazy");
-    // document.getElementById("giscus-container").appendChild(script);
+    document.getElementById("giscus-container").appendChild(script);
 
 
 
