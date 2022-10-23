@@ -222,3 +222,5 @@ help: to force the async block to take ownership of `v` (and any other
 插一句嘴：上面这块儿我是琢磨了很久，但是还有一些内容没完全明白，看来还是有待提升呐～
 
 ## `Send` bound
+
+从 `tokio::spawn` 生成的任务**必须**实现 `Send` trait 。这样才能当任务被 `.await` 后允许 Tokio runtime 在线程之间移动他们。
