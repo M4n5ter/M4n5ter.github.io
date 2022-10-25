@@ -21,5 +21,7 @@
     - [问题及解决方案](./issues/mysql/mysql_issues.md)
   - [gitea](./issues/gitea/gitea.md)
     - [问题及解决方案](./issues/gitea/gitea_issues.md)
+  - [nginx](./issues/nginx/nginx.md)
+    - [问题及解决方案](./issues/nginx/nginx_issues.md)
 - [Links](./links/links.md)
 - [Math](./math/math.md)

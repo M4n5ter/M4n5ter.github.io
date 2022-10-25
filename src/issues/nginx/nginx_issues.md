@@ -1,0 +1,50 @@
+## 反向代理
+
+[Module ngx_http_proxy_module](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)
+
+### 保护 host header
+
+在使用 nginx 对 minio 进行反向代理时，遇到了这个 issue [#7936](https://github.com/minio/minio/issues/7936) 。原因是没有保护 Host header。
+
+```nginx
+server {
+ listen 80;
+ server_name example.com;
+
+ # To allow special characters in headers
+ ignore_invalid_headers off;
+ # Allow any size file to be uploaded.
+ # Set to a value such as 1000m; to restrict file size to a specific value
+ client_max_body_size 0;
+ # To disable buffering
+ proxy_buffering off;
+
+ location / {
+   proxy_set_header X-Real-IP $remote_addr;
+   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+   proxy_set_header X-Forwarded-Proto $scheme;
+   proxy_set_header Host $http_host; # 主要是此处，保护 host header
+
+   proxy_connect_timeout 300;
+   # Default is HTTP/1, keepalive is only enabled in HTTP/1.1
+   proxy_http_version 1.1;
+   proxy_set_header Connection ""; # For HTTP, the proxy_http_version directive should be set to “1.1” and the “Connection” header field should be cleared
+   chunked_transfer_encoding off;
+
+   proxy_pass http://localhost:9000; # If you are using docker-compose this would be the hostname i.e. minio
+   # Health Check endpoint might go here. See https://www.nginx.com/resources/wiki/modules/healthcheck/
+   # /minio/health/live;
+ }
+}
+```
+
+### 解决跨域
+
+```nginx
+location /api {
+    add_header Access-Control-Allow-Origin * always;
+    add_header Access-Control-Allow-Headers *;
+    add_header Access-Control-Allow-Methods "GET, POST, PUT, OPTIONS";
+    proxy_pass https://baidu.com;
+}
+```
