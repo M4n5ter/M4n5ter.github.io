@@ -20,10 +20,10 @@ server {
  proxy_buffering off;
 
  location / {
-   proxy_set_header X-Real-IP $remote_addr;
-   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-   proxy_set_header X-Forwarded-Proto $scheme;
-   proxy_set_header Host $http_host; # 主要是此处，保护 host header
+   proxy_set_header X-Real-IP \$remote_addr;
+   proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+   proxy_set_header X-Forwarded-Proto \$scheme;
+   proxy_set_header Host \$http_host; # 主要是此处，保护 host header
 
    proxy_connect_timeout 300;
    # Default is HTTP/1, keepalive is only enabled in HTTP/1.1
