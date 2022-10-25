@@ -121,8 +121,6 @@ async fn process(socket: TcpStream, db: Db) {
 
 >  [`current_thread` runtime flavor](https://docs.rs/tokio/1/tokio/runtime/struct.Builder.html#method.new_current_thread) 是一个轻量、单线程的运行时。当只生成少量任务和打开不多的 sockets 时它是一个不错的选择。举个例子，当在异步客户端库之上桥接一个同步 API 时，这种选择效果很好（比如用new 一个 current_thread runtime，然后在它之上用 block_on 执行异步代码）。
 
-
-
 如果在同步锁上的竞争成为了一个问题，最好的解决方案是少量切换成 Tokio mutex。如果不采用前者方案，要考虑的选项有：
 
 * 跑一个专门用来管理状态的任务，并且使用消息传递来共享状态。
@@ -154,8 +152,6 @@ shard.insert(key, value);
 
 上面概述的简单实现需要使用固定数量的分片，并且一旦创建了 `SharedDb` 后分片的数量就不能改变了。[dashmap](https://docs.rs/dashmap) crate 提供了一个更有经验验证的分片 hash map 实现。
 
-
-
 ## Holding a `MutexGuard` across an `.await` （跨 `.await` 持有一个 `MutexGuard`）
 
 你可能会写出像下面这样的代码：
@@ -169,7 +165,6 @@ async fn increment_and_do_stuff(mutex: &Mutex<i32>) {
 
     do_something_async().await;
 } // 锁在这里超出作用域
-
 ```
 
 当你尝试 spawn 一些东西来调用这个函数，你会遇到下面的错误信息：
@@ -232,4 +227,53 @@ async fn increment_and_do_stuff(mutex: &Mutex<i32>) {
 
 注意，这里讨论的错误在上一节的 [Send Bound - Spawning](https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound) 也讨论过。
 
-你不应该尝试通过某种方式生成一个不需要实现 `Send` 的任务来规避这个问题，因为
+你不应该尝试通过某种方式生成一个不需要实现 `Send` 的任务来规避这个问题，因为如果任务正持有锁，而 Tokio 在 `.await` 处暂停了你的任务，一些其它的任务可能会被调度到同样的线程上，并且其他任务也可能尝试获取锁，这会导致死锁，因为等待锁的任务会阻塞当前线程，这也就阻止了持有锁的任务释放锁。
+
+我们下面将要讨论一些解决这个错误信息的方法：
+
+### Restructure your code to not hold the lock across an `.await` （重构你的代码来让锁不再跨 `.await` 持有）
+
+我们已经在上面的片段中看到了一个例子，但是还有一些更鲁棒的解决方式。举个例子，你可以把互斥锁包装在一个结构体内，并且只将互斥锁锁定在该结构体上的非异步方法中。细节如下：
+
+```rust
+use std::sync::Mutex;
+
+struct CanIncrement {
+    mutex: Mutex<i32>,
+}
+impl CanIncrement {
+    // This function is not marked async.
+    fn increment(&self) {
+        let mut lock = self.mutex.lock().unwrap();
+        *lock += 1;
+    }
+}
+
+async fn increment_and_do_stuff(can_incr: &CanIncrement) {
+    can_incr.increment();
+    do_something_async().await;
+}
+```
+
+这种模式保证了你不会进入到 `Send` 错误中去，因为 mutex guard 没有出现在异步函数的任何地方，它在自己的同步函数结束时已经被释放了。
+
+### Spawn a task to manage the state and use message passing to operate on it（生成一个任务来管理状态，并且通过消息传递来操作）
+
+这是本章节最开始提到的两种方法中的第二种，并且它常常在共享的资源是 I/O 资源的时候被采用。有关更多详细信息，请参阅下一章。
+
+### Use Tokio's asynchronous mutex（使用 Tokio 异步锁）
+
+Tokio 提供的 `tokio::sync:Mutex` 类型也能在这使用。Tokio mutex 的主要特点是它能够被跨 `.await` 持有而不会出现任何问题。换而言之，使用一个异步锁的开销肯定是大于使用一个普通的互斥锁的，通常最好使用另外两种方法之一。
+
+```rust
+use tokio::sync::Mutex; // note! This uses the Tokio mutex
+
+// This compiles!
+// (but restructuring the code would be better in this case)
+async fn increment_and_do_stuff(mutex: &Mutex<i32>) {
+    let mut lock = mutex.lock().await;
+    *lock += 1;
+
+    do_something_async().await;
+} // lock goes out of scope here
+```
