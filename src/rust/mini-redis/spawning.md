@@ -265,8 +265,6 @@ error: could not compile `my-redis` due to previous error
 
 因为用了 `.await` 后，当前任务会让出线程控制权，任务的当前状态会被整个打包，并且可能会在多个线程间传递这个任务，存在任务会在不同的线程被执行的可能，而数据在线程间传递要求实现 `Send` trait 。
 
-
-
 下面是官方给出的两个例子：
 
 成功：
@@ -345,8 +343,6 @@ note: future is not `Send` as this value is used across an await
 
 我们会在下一节 Shared state 来更深入的探讨这个错误的特殊情况。
 
-
-
 ## Store values（存储值）
 
 我们现在将要实现 `process` 函数来处理发送过来的命令。我们使用 `HashMap` 来存储值。`SET` 命令将会插入数据到 `HashMap` ，`GET` 值会加载数据。另外，我们将会使用一个 loop 来接受每个连接的多个命令。
@@ -405,7 +401,6 @@ async fn process(socket: TcpStream) {
         connection.write_frame(&response).await.unwrap();
     }
 }
-
 ```
 
 让我们来试一试：
