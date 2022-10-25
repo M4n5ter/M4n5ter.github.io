@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>问题及解决方案 - M4n5ter Blog</title>
+    <!-- Custom HTML head -->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="icon" href="../../favicon.svg">
+    <link rel="shortcut icon" href="../../favicon.png">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/chrome.css">
+    <link rel="stylesheet" href="../../css/print.css" media="print">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../../highlight.css">
+    <link rel="stylesheet" href="../../tomorrow-night.css">
+    <link rel="stylesheet" href="../../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../../theme/style3.css">
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../../go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="../../rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tower/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item "><a href="../../rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li><li class="chapter-item "><a href="../../rust/mini-redis/spawning.html"><strong aria-hidden="true">3.2.2.</strong> Spawning</a></li><li class="chapter-item "><a href="../../rust/mini-redis/shared_state.html"><strong aria-hidden="true">3.2.3.</strong> Shared state</a></li><li class="chapter-item "><a href="../../rust/mini-redis/channels.html"><strong aria-hidden="true">3.2.4.</strong> Channels TODO</a></li><li class="chapter-item "><a href="../../rust/mini-redis/io.html"><strong aria-hidden="true">3.2.5.</strong> I/O TODO</a></li><li class="chapter-item "><a href="../../rust/mini-redis/framing.html"><strong aria-hidden="true">3.2.6.</strong> Framing TODO</a></li><li class="chapter-item "><a href="../../rust/mini-redis/async_in_depth.html"><strong aria-hidden="true">3.2.7.</strong> Async in depth TODO</a></li><li class="chapter-item "><a href="../../rust/mini-redis/select.html"><strong aria-hidden="true">3.2.8.</strong> Select TODO</a></li><li class="chapter-item "><a href="../../rust/mini-redis/streams.html"><strong aria-hidden="true">3.2.9.</strong> Streams TODO</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../issues/issues.html"><strong aria-hidden="true">4.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker.html"><strong aria-hidden="true">4.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker_issues.html"><strong aria-hidden="true">4.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/mysql/mysql.html"><strong aria-hidden="true">4.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/mysql/mysql_issues.html"><strong aria-hidden="true">4.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/gitea/gitea.html"><strong aria-hidden="true">4.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/gitea/gitea_issues.html"><strong aria-hidden="true">4.3.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item expanded "><a href="../../issues/nginx/nginx.html"><strong aria-hidden="true">4.4.</strong> nginx</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../issues/nginx/nginx_issues.html" class="active"><strong aria-hidden="true">4.4.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../links/links.html"><strong aria-hidden="true">5.</strong> Links</a></li><li class="chapter-item expanded "><a href="../../math/math.html"><strong aria-hidden="true">6.</strong> Math</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+            <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io/edit/main/src/" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<h2 id="反向代理"><a class="header" href="#反向代理">反向代理</a></h2>
+<p><a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">Module ngx_http_proxy_module</a></p>
+<h3 id="保护-host-header"><a class="header" href="#保护-host-header">保护 host header</a></h3>
+<p>在使用 nginx 对 minio 进行反向代理时，遇到了这个 issue <a href="https://github.com/minio/minio/issues/7936">#7936</a> 。原因是没有保护 Host header。</p>
+<pre><code class="language-nginx">server {
+ listen 80;
+ server_name example.com;
+
+ # To allow special characters in headers
+ ignore_invalid_headers off;
+ # Allow any size file to be uploaded.
+ # Set to a value such as 1000m; to restrict file size to a specific value
+ client_max_body_size 0;
+ # To disable buffering
+ proxy_buffering off;
+
+ location / {
+   proxy_set_header X-Real-IP &lt;span class=&quot;katex&quot;&gt;&lt;span class=&quot;katex-html&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;msupsub&quot;&gt;&lt;span class=&quot;vlist-t vlist-t2&quot;&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.151392em;&quot;&gt;&lt;span style=&quot;top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;&quot;&gt;&lt;span class=&quot;pstrut&quot; style=&quot;height:2.7em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sizing reset-size6 size3 mtight&quot;&gt;&lt;span class=&quot;mord mathnormal mtight&quot;&gt;a&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-s&quot;&gt;​&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.15em;&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mpunct&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.16666666666666666em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;msupsub&quot;&gt;&lt;span class=&quot;vlist-t vlist-t2&quot;&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.151392em;&quot;&gt;&lt;span style=&quot;top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;&quot;&gt;&lt;span class=&quot;pstrut&quot; style=&quot;height:2.7em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sizing reset-size6 size3 mtight&quot;&gt;&lt;span class=&quot;mord mathnormal mtight&quot;&gt;s&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-s&quot;&gt;​&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.15em;&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;msupsub&quot;&gt;&lt;span class=&quot;vlist-t vlist-t2&quot;&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.33610799999999996em;&quot;&gt;&lt;span style=&quot;top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;&quot;&gt;&lt;span class=&quot;pstrut&quot; style=&quot;height:2.7em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sizing reset-size6 size3 mtight&quot;&gt;&lt;span class=&quot;mord mathnormal mtight&quot;&gt;h&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-s&quot;&gt;​&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.15em;&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.07847em;&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.13889em;&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.68333em;vertical-align:0em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.13889em;&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;proxy_add_x_forwarded_for;
+   proxy_set_header X-Forwarded-Proto &lt;span class=&quot;katex&quot;&gt;&lt;span class=&quot;katex-html&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mpunct&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.16666666666666666em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;msupsub&quot;&gt;&lt;span class=&quot;vlist-t vlist-t2&quot;&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.151392em;&quot;&gt;&lt;span style=&quot;top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;&quot;&gt;&lt;span class=&quot;pstrut&quot; style=&quot;height:2.7em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sizing reset-size6 size3 mtight&quot;&gt;&lt;span class=&quot;mord mathnormal mtight&quot;&gt;s&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-s&quot;&gt;​&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.15em;&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;msupsub&quot;&gt;&lt;span class=&quot;vlist-t vlist-t2&quot;&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.33610799999999996em;&quot;&gt;&lt;span style=&quot;top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;&quot;&gt;&lt;span class=&quot;pstrut&quot; style=&quot;height:2.7em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sizing reset-size6 size3 mtight&quot;&gt;&lt;span class=&quot;mord mathnormal mtight&quot;&gt;h&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-s&quot;&gt;​&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.15em;&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.08125em;&quot;&gt;H&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;http_host; # 主要是此处，保护 host header
+
+   proxy_connect_timeout 300;
+   # Default is HTTP/1, keepalive is only enabled in HTTP/1.1
+   proxy_http_version 1.1;
+   proxy_set_header Connection &quot;&quot;; # For HTTP, the proxy_http_version directive should be set to “1.1” and the “Connection” header field should be cleared
+   chunked_transfer_encoding off;
+
+   proxy_pass http://localhost:9000; # If you are using docker-compose this would be the hostname i.e. minio
+   # Health Check endpoint might go here. See https://www.nginx.com/resources/wiki/modules/healthcheck/
+   # /minio/health/live;
+ }
+}
+</code></pre>
+<h3 id="解决跨域"><a class="header" href="#解决跨域">解决跨域</a></h3>
+<pre><code class="language-nginx">location /api {
+    add_header Access-Control-Allow-Origin * always;
+    add_header Access-Control-Allow-Headers *;
+    add_header Access-Control-Allow-Methods &quot;GET, POST, PUT, OPTIONS&quot;;
+    proxy_pass https://baidu.com;
+}
+</code></pre>
+
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../../issues/nginx/nginx.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../links/links.html" class="mobile-nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../../issues/nginx/nginx.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a rel="next" href="../../links/links.html" class="nav-chapters next" title="Next chapter"
+                aria-label="Next chapter" aria-keyshortcuts="Right">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </nav>
+
+    </div>
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+    <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "issues/nginx/nginx_issues.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../../assets/custom.js"></script>
+    <script type="text/javascript" src="../../assets/bigPicture.js"></script>
+</body>
+
+</html>
