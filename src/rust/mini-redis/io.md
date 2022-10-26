@@ -138,3 +138,26 @@ touch src/bin/echo-server-copy.rs
 ```zsh
 cargo run --bin echo-server-copy
 ```
+
+我们能够使用一个标准的命令行工具，比如 `telnet` 来测试我们的回声服务，或者通过写一个简单的客户端，就像在 [`tokio::net::TcpStream`](https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#examples) 文档中找到的那个一样。
+
+这是一个 TCP server 并且需要一个 accept loop。一个新的任务被生成来处理每个接收到的 socket 。
+
+```rust
+use tokio::io;
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -> io::Result<()> {
+    let listener = TcpListener::bind("127.0.0.1:6142").await?;
+
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+
+        tokio::spawn(async move {
+            // Copy data here
+        });
+    }
+}
+
+```
