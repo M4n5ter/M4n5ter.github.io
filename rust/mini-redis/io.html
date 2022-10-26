@@ -287,7 +287,109 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     }
 }
 </code></pre></pre>
-<p>就像前面说的，这个工具函数接收一个 reader 参数和一个 writer 参数，并且将数据从一个 copy 到另一个中。</p>
+<p>就像前面说的，这个工具函数接收一个 reader 参数和一个 writer 参数，并且将数据从一个 copy 到另一个中。然而啊，我们只有一个 <code>TcpStream</code> ，这单个值同时实现了 <code>AsyncRead</code> 和 <code>AsyncWrite</code> 。可是由于 <code>io::copy</code> 对 reader 和 writer 都要求 <code>&amp;mut</code> ，这 socket 不能同时作为放到这两个参数上。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 这是无法编译的
+io::copy(&amp;mut socket, &amp;mut socket).await
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="splitting-a-reader--writer"><a class="header" href="#splitting-a-reader--writer">Splitting a reader + writer</a></h3>
+<p>为了解决这个难题，我们必须把 socket 分离成一个 reader 句柄和一个 writer 句柄。拆分 reader/writer 组合的最佳方法是使用 <a href="https://docs.rs/tokio/1/tokio/io/fn.split.html"><code>io::split</code></a>。</p>
+<p>任何同时实现了 reader + writer 的类型都能够使用 <a href="https://docs.rs/tokio/1/tokio/io/fn.split.html"><code>io::split</code></a> 实用工具来拆分。这个函数接收单个的值并返回分离的 reader 和 writer 句柄。这两个句柄可以被独立使用，包括分别在两个单独的任务中使用。</p>
+<p>举个例子，echo 客户端可以像这样并发处理读写：</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpStream;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let socket = TcpStream::connect(&quot;127.0.0.1:6142&quot;).await?;
+    let (mut rd, mut wr) = io::split(socket);
+
+    // Write data in the background
+    tokio::spawn(async move {
+        wr.write_all(b&quot;hello\r\n&quot;).await?;
+        wr.write_all(b&quot;world\r\n&quot;).await?;
+
+        // 有时候，rust 的类型推断器需要一点点的帮助
+        Ok::&lt;_, io::Error&gt;(())
+    });
+
+    let mut buf = vec![0; 128];
+
+    loop {
+        let n = rd.read(&amp;mut buf).await?;
+
+        if n == 0 {
+            break;
+        }
+
+        println!(&quot;GOT {:?}&quot;, &amp;buf[..n]);
+    }
+
+    Ok(())
+}
+</code></pre></pre>
+<p>因为 <code>io::split</code> 支持<strong>任何</strong>实现了 <code>AsyncRead + AsyncWrite</code> 的值，并返回独立的句柄，<code>io::split</code> 在内部使用了一个 <code>Arc</code> 和 一个 <code>Mutex</code> （这意味着会有蛮大的开销）。如果 socket 是 <code>TcpStream</code> 的情况就能避免这种开销。<code>TcpStream</code> 提供了两个专门的函数（<a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split"><code>into_split</code></a>）。</p>
+<p><a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 接收一个 <code>&amp;mut TcpStream</code> 并返回一个 reader 和 一个 writer 句柄。正因为使用的是引用，所以这两个句柄必须跟 <code>split()</code> 调用待在<strong>同一</strong>任务中。虽然有前面这个限制，但是它的这种专门实现是<strong>零开销</strong>的，没有 <code>Arc</code> 也没有 <code>Mutex</code> 。<code>TcpStream</code> 也提供了 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split"><code>into_split</code></a> 来支持处理可跨任务使用的场景，开销缩减到了只有一个 <code>Arc</code>。</p>
+<p>因为 <code>io::copy()</code> 调用是跟持有 <code>TcpStream</code> 的任务是同一个任务（跟上面那段代码中的情况不同，上面的代码的 rd 跟 wr 在不同的任务中），这就意味着我们完全可以使用 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 。在 server 处理 echo 逻辑的任务变成了下面这样：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>tokio::spawn(async move {
+    let (mut rd, mut wr) = socket.split();
+    
+    if io::copy(&amp;mut rd, &amp;mut wr).await.is_err() {
+        eprintln!(&quot;failed to copy&quot;);
+    }
+});
+<span class="boring">}
+</span></code></pre></pre>
+<p>可以在<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server-copy.rs">这里</a>找到完整代码。</p>
+<h3 id="manual-copying-手动-copy"><a class="header" href="#manual-copying-手动-copy">Manual copying （手动 copy）</a></h3>
+<p>现在，来看一下我们要如何通过手动 copy data 来写 echo server。为了做到这点，我们使用 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read"><code>AsyncReadExt::read</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_all"><code>AsyncWriteExt::write_all</code></a> 。</p>
+<p>完整的 server 代码是这样：</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+
+        tokio::spawn(async move {
+            let mut buf = vec![0; 1024];
+
+            loop {
+                match socket.read(&amp;mut buf).await {
+                    // Return value of `Ok(0)` signifies that the remote has
+                    // closed
+                    Ok(0) =&gt; return,
+                    Ok(n) =&gt; {
+                        // Copy the data back to socket
+                        if socket.write_all(&amp;buf[..n]).await.is_err() {
+                            // Unexpected socket error. There isn't much we can
+                            // do here so just stop processing.
+                            return;
+                        }
+                    }
+                    Err(_) =&gt; {
+                        // Unexpected socket error. There isn't much we can do
+                        // here so just stop processing.
+                        return;
+                    }
+                }
+            }
+        });
+    }
+}
+</code></pre></pre>
+<p>（你可以把这段代码放到 <code>src/bin/echo-server.rs</code>  并用 <code>cargo run --bin echo-server</code> 启动它）</p>
+<p>我是 arch linux ：</p>
+<pre><code class="language-zsh">yay -S netcat
+echo 你好 | nc 127.0.0.1 6142
+</code></pre>
 
                     <div id="giscus-container"></div>
                 </main>
