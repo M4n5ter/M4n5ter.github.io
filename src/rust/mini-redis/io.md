@@ -156,3 +156,5 @@ async fn main() -> io::Result<()> {
     }
 }
 ```
+
+就像前面说的，这个工具函数接收一个 reader 参数和一个 writer 参数，并且将数据从一个 copy 到另一个中。
