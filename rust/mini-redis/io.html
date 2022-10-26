@@ -174,7 +174,102 @@
                 </div>
                 <main>
                     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
-<h1 id="io-todo"><a class="header" href="#io-todo">I/O TODO</a></h1>
+<h2 id="io"><a class="header" href="#io">I/O</a></h2>
+<p>Tokio 的 I/O 操作大致与 <code>std</code> 中的相同，但是是异步的。这有一个为读取而生的 trait <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> 和一个为写入而生的 trait <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> 。一些特定的类型恰当的实现了这些 trait（<a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html"><code>TcpStream</code></a>, <a href="https://docs.rs/tokio/1/tokio/fs/struct.File.html"><code>File</code></a>, <a href="https://docs.rs/tokio/1/tokio/io/struct.Stdout.html"><code>Stdout</code></a>）。<a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> 也被一些像 <code>Vec&lt;u8&gt;</code> 和 <code>&amp;[u8]</code> 这样的数据结构实现了。这允许在需要 reader 或 writer 的地方使用字节数组。</p>
+<p>本章将会覆盖基础的 Tokio I/O 读写并且通过几个例子来说明。下一章将会给出一个更加高级的 I/O 示例。</p>
+<h2 id="asyncread-and-asyncwrite"><a class="header" href="#asyncread-and-asyncwrite"><code>AsyncRead</code> and <code>AsyncWrite</code></a></h2>
+<p>这两个 trait 提供了异步读写字节流的工具。在这些 trait 上的方法通常不会直接调用，就好像你不会手动从 <code>Future</code> 调用 <code>poll</code> 方法。相反，我们都是通过 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html"><code>AsyncReadExt</code></a> and <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html"><code>AsyncWriteExt</code></a> 提供的实用方法来使用它们。</p>
+<p>让我们简略的看一下它俩的几个方法。这些方法都是 <code>async</code> ，所以都必须用 <code>.await</code> 来使用。</p>
+<h3 id="async-fn-read"><a class="header" href="#async-fn-read"><code>async fn read()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read"><code>AsyncReadExt::read</code></a> 提供了一个异步方法来读取数据到一个 buffer，返回读取的字节数。</p>
+<p><strong>Note：</strong> 当 <code>read()</code> 返回了 <code>Ok(0)</code> ，这标志着 stream 关闭了。任何对 <code>read()</code> 的进一步调用都会立即返回 <code>Ok(0)</code> 。对 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html"><code>TcpStream</code></a> 实例来说，这标志着 socket 的 the read half 关闭了。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::fs::File;
+use tokio::io::{self, AsyncReadExt};
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut buffer = [0; 10];
+
+    // read up to 10 bytes
+    let n = f.read(&amp;mut buffer[..]).await?;
+
+    println!(&quot;The bytes: {:?}&quot;, &amp;buffer[..n]);
+    Ok(())
+}
+</code></pre></pre>
+<h3 id="async-fn-read_to_end"><a class="header" href="#async-fn-read_to_end"><code>async fn read_to_end()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read_to_end"><code>AsyncReadExt::read_to_end</code></a> 会从 stream 读取所有的字节直到 EOF。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncReadExt};
+use tokio::fs::File;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut buffer = Vec::new();
+
+    // read the whole file
+    f.read_to_end(&amp;mut buffer).await?;
+    Ok(())
+}
+</code></pre></pre>
+<h3 id="async-fn-write"><a class="header" href="#async-fn-write"><code>async fn write()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write"><code>AsyncWriteExt::write</code></a> 把一个 buffer 写入到 writer，返回写入的字节数。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncWriteExt};
+use tokio::fs::File;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut file = File::create(&quot;foo.txt&quot;).await?;
+
+    // Writes some prefix of the byte string, but not necessarily all of it.
+    let n = file.write(b&quot;some bytes&quot;).await?;
+
+    println!(&quot;Wrote the first {} bytes of 'some bytes'.&quot;, n);
+    Ok(())
+}
+</code></pre></pre>
+<h3 id="async-fn-write_all"><a class="header" href="#async-fn-write_all"><code>async fn write_all()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_all"><code>AsyncWriteExt::write_all</code></a> 把整个 buffer 写入 writer，与上面那个不一样，这哥们就不返回写入的字节数了。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncWriteExt};
+use tokio::fs::File;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut file = File::create(&quot;foo.txt&quot;).await?;
+
+    file.write_all(b&quot;some bytes&quot;).await?;
+    Ok(())
+}
+</code></pre></pre>
+<p>这两个特征都包括许多其他有用的方法。有关完整的方法列表，请参阅API文档。</p>
+<h2 id="helper-functions-辅助函数"><a class="header" href="#helper-functions-辅助函数">Helper functions （辅助函数）</a></h2>
+<p>此外，就像 <code>std</code>， <a href="https://docs.rs/tokio/1/tokio/io/index.html"><code>tokio::io</code></a> 模块包含了一些有用的工具函数以及用于处理 <a href="https://docs.rs/tokio/1/tokio/io/fn.stdin.html">standard input</a>、 <a href="https://docs.rs/tokio/1/tokio/io/fn.stdout.html">standard output</a> 和 <a href="https://docs.rs/tokio/1/tokio/io/fn.stderr.html">standard error</a> 的API。例如，<a href="https://docs.rs/tokio/1/tokio/io/fn.copy.html"><code>tokio::io::copy</code></a> 异步的将 reader 的全部内容 copy 到一个 writer 。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::fs::File;
+use tokio::io;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut reader: &amp;[u8] = b&quot;hello&quot;;
+    let mut file = File::create(&quot;foo.txt&quot;).await?;
+
+    io::copy(&amp;mut reader, &amp;mut file).await?;
+    Ok(())
+}
+</code></pre></pre>
+<p>请注意，这种用法体现了 <code>&amp;[u8]</code> 也实现 <code>AsyncRead</code> 的事实。</p>
+<h2 id="echo-server-回声服务"><a class="header" href="#echo-server-回声服务">Echo server （回声服务）</a></h2>
+<p>让我们做些玩意儿来练习下异步I/O。我们将要写一个回声服务。</p>
+<p>这个回声服务要绑定在一个 <code>TcpListener</code> 并且在一个 loop 中接收入站连接。对每个入站连接来说，数据从 socket 中读取并立即写回 socket。客户端发送数据到服务端，并接收回相同的数据。</p>
+<p>我们将会用两种不同的方案来实现两次回声服务。</p>
+<h3 id="using-iocopy"><a class="header" href="#using-iocopy">Using <code>io::copy()</code></a></h3>
+<p>开始，我们将用 <a href="https://docs.rs/tokio/1/tokio/io/fn.copy.html"><code>io::copy</code></a> 实用工具来实现 echo 逻辑。</p>
+<p>你可以写在一个新的 binary 文件中：</p>
+<pre><code class="language-zsh">touch src/bin/echo-server-copy.rs
+</code></pre>
+<p>可以通过以下方式启动（或只是检查编译）：</p>
+<pre><code class="language-zsh">cargo run --bin echo-server-copy
+</code></pre>
 
                     <div id="giscus-container"></div>
                 </main>
