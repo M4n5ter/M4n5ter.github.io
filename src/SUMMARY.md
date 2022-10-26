@@ -8,7 +8,7 @@
     - [Hello Tokio](./rust/mini-redis/hello_tokio.md)
     - [Spawning](./rust/mini-redis/spawning.md)
     - [Shared state](./rust/mini-redis/shared_state.md)
-    - [Channels TODO](./rust/mini-redis/channels.md)
+    - [Channels](./rust/mini-redis/channels.md)
     - [I/O TODO](./rust/mini-redis/io.md)
     - [Framing TODO](./rust/mini-redis/framing.md)
     - [Async in depth TODO](./rust/mini-redis/async_in_depth.md)
