@@ -1,4 +1,4 @@
-## Channels TODO
+## Channels
 
 现在我们已经了解了一些关于 Tokio 的并发，让我们把它们应用到客户端侧吧。把我们先前写的服务端的代码移动到一个显式的二进制文件里去：
 
@@ -79,8 +79,6 @@ Tokio 提供了 [一些 channel](https://docs.rs/tokio/1/tokio/sync/index.html) 
 
 在这块内容里，我们会使用 [mpsc](https://docs.rs/tokio/1/tokio/sync/mpsc/index.html) 和 [oneshot](https://docs.rs/tokio/1/tokio/sync/oneshot/index.html) 。其他类型的 channel 会在之后的内容中探索。本节内容的完整代码在[这里](https://github.com/tokio-rs/website/blob/master/tutorial-code/channels/src/main.rs) 。
 
-
-
 ## Define the message type （定义消息类型）
 
 在许多使用消息传递的场景下，接收消息的任务会响应多条命令。在我们的场景下，任务将会响应 `GET` 和 `SET` 命令。为了模拟这个，我们先定义一个 `Command` enum 。
@@ -99,8 +97,6 @@ enum Command {
     }
 }
 ```
-
-
 
 ## Create the channel （创建通道）
 
@@ -151,8 +147,6 @@ async fn main() {
 当每个 `Sender` 超出作用域或者因为其他原因被 drop 了，就不再能往这个 channel 发送更多消息了。此时，在 `Receiver` 上调用 `recv` 将会返回 `None`，这意味着所有的 sender 都不在了，channel 被关闭了。 
 
 在我们的场景下，管理 redis connection 的任务知道一旦 channel 被关闭，就得关闭 redis connection，因为 connection 不会再被使用了。
-
-
 
 ## Spawn manager task （生成管理者任务）
 
@@ -298,8 +292,6 @@ let t2 = tokio::spawn(async move {
 当接收端被 drop 时，往一个 oneshot channel 发送一个值会返回 `Err` 。这表示接收端不再对结果感兴趣了。在我们的假设中，接收端(想发命令的任务)不再对 response(管理器任务返回的结果) 感兴趣的情况是可接受的。所以通过 `resp.send(...)`  返回的 `Err`  就没必要处理了。
 
 可以在[这里](https://github.com/tokio-rs/website/blob/master/tutorial-code/channels/src/main.rs)看到完整代码。
-
-
 
 ## Backpressure and bounded channels (背压和有界的通道)
 
