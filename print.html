@@ -1993,6 +1993,25 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 <p>可以通过以下方式启动（或只是检查编译）：</p>
 <pre><code class="language-zsh">cargo run --bin echo-server-copy
 </code></pre>
+<p>我们能够使用一个标准的命令行工具，比如 <code>telnet</code> 来测试我们的回声服务，或者通过写一个简单的客户端，就像在 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#examples"><code>tokio::net::TcpStream</code></a> 文档中找到的那个一样。</p>
+<p>这是一个 TCP server 并且需要一个 accept loop。一个新的任务被生成来处理每个接收到的 socket 。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io;
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+
+        tokio::spawn(async move {
+            // Copy data here
+        });
+    }
+}
+
+</code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="framing-todo"><a class="header" href="#framing-todo">Framing TODO</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
