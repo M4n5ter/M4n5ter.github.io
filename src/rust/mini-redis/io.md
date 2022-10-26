@@ -157,4 +157,125 @@ async fn main() -> io::Result<()> {
 }
 ```
 
-就像前面说的，这个工具函数接收一个 reader 参数和一个 writer 参数，并且将数据从一个 copy 到另一个中。
+就像前面说的，这个工具函数接收一个 reader 参数和一个 writer 参数，并且将数据从一个 copy 到另一个中。然而啊，我们只有一个 `TcpStream` ，这单个值同时实现了 `AsyncRead` 和 `AsyncWrite` 。可是由于 `io::copy` 对 reader 和 writer 都要求 `&mut` ，这 socket 不能同时作为放到这两个参数上。
+
+```rust
+// 这是无法编译的
+io::copy(&mut socket, &mut socket).await
+```
+
+### Splitting a reader + writer
+
+为了解决这个难题，我们必须把 socket 分离成一个 reader 句柄和一个 writer 句柄。拆分 reader/writer 组合的最佳方法是使用 [`io::split`](https://docs.rs/tokio/1/tokio/io/fn.split.html)。
+
+任何同时实现了 reader + writer 的类型都能够使用 [`io::split`](https://docs.rs/tokio/1/tokio/io/fn.split.html) 实用工具来拆分。这个函数接收单个的值并返回分离的 reader 和 writer 句柄。这两个句柄可以被独立使用，包括分别在两个单独的任务中使用。
+
+举个例子，echo 客户端可以像这样并发处理读写：
+
+```rust
+use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpStream;
+
+#[tokio::main]
+async fn main() -> io::Result<()> {
+    let socket = TcpStream::connect("127.0.0.1:6142").await?;
+    let (mut rd, mut wr) = io::split(socket);
+
+    // Write data in the background
+    tokio::spawn(async move {
+        wr.write_all(b"hello\r\n").await?;
+        wr.write_all(b"world\r\n").await?;
+
+        // 有时候，rust 的类型推断器需要一点点的帮助
+        Ok::<_, io::Error>(())
+    });
+
+    let mut buf = vec![0; 128];
+
+    loop {
+        let n = rd.read(&mut buf).await?;
+
+        if n == 0 {
+            break;
+        }
+
+        println!("GOT {:?}", &buf[..n]);
+    }
+
+    Ok(())
+}
+```
+
+因为 `io::split` 支持**任何**实现了 `AsyncRead + AsyncWrite` 的值，并返回独立的句柄，`io::split` 在内部使用了一个 `Arc` 和 一个 `Mutex` （这意味着会有蛮大的开销）。如果 socket 是 `TcpStream` 的情况就能避免这种开销。`TcpStream` 提供了两个专门的函数（[`TcpStream::split`](https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split) 和 [`into_split`](https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split)）。
+
+[`TcpStream::split`](https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split) 接收一个 `&mut TcpStream` 并返回一个 reader 和 一个 writer 句柄。正因为使用的是引用，所以这两个句柄必须跟 `split()` 调用待在**同一**任务中。虽然有前面这个限制，但是它的这种专门实现是**零开销**的，没有 `Arc` 也没有 `Mutex` 。`TcpStream` 也提供了 [`into_split`](https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split) 来支持处理可跨任务使用的场景，开销缩减到了只有一个 `Arc`。
+
+因为 `io::copy()` 调用是跟持有 `TcpStream` 的任务是同一个任务（跟上面那段代码中的情况不同，上面的代码的 rd 跟 wr 在不同的任务中），这就意味着我们完全可以使用 [`TcpStream::split`](https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split) 。在 server 处理 echo 逻辑的任务变成了下面这样：
+
+```rust
+tokio::spawn(async move {
+    let (mut rd, mut wr) = socket.split();
+    
+    if io::copy(&mut rd, &mut wr).await.is_err() {
+        eprintln!("failed to copy");
+    }
+});
+```
+
+可以在[这里](https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server-copy.rs)找到完整代码。
+
+
+
+### Manual copying （手动 copy）
+
+现在，来看一下我们要如何通过手动 copy data 来写 echo server。为了做到这点，我们使用 [`AsyncReadExt::read`](https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read) 和 [`AsyncWriteExt::write_all`](https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_all) 。
+
+完整的 server 代码是这样：
+
+```rust
+use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -> io::Result<()> {
+    let listener = TcpListener::bind("127.0.0.1:6142").await?;
+
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+
+        tokio::spawn(async move {
+            let mut buf = vec![0; 1024];
+
+            loop {
+                match socket.read(&mut buf).await {
+                    // Return value of `Ok(0)` signifies that the remote has
+                    // closed
+                    Ok(0) => return,
+                    Ok(n) => {
+                        // Copy the data back to socket
+                        if socket.write_all(&buf[..n]).await.is_err() {
+                            // Unexpected socket error. There isn't much we can
+                            // do here so just stop processing.
+                            return;
+                        }
+                    }
+                    Err(_) => {
+                        // Unexpected socket error. There isn't much we can do
+                        // here so just stop processing.
+                        return;
+                    }
+                }
+            }
+        });
+    }
+}
+```
+
+（你可以把这段代码放到 `src/bin/echo-server.rs`  并用 `cargo run --bin echo-server` 启动它）
+
+我是 arch linux ：
+
+```zsh
+yay -S netcat
+echo 你好 | nc 127.0.0.1 6142
+```
