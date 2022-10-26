@@ -91,8 +91,6 @@ async fn main() -> io::Result<()> {
 
 这两个特征都包括许多其他有用的方法。有关完整的方法列表，请参阅API文档。
 
-
-
 ## Helper functions （辅助函数）
 
 此外，就像 `std`， [`tokio::io`](https://docs.rs/tokio/1/tokio/io/index.html) 模块包含了一些有用的工具函数以及用于处理 [standard input](https://docs.rs/tokio/1/tokio/io/fn.stdin.html)、 [standard output](https://docs.rs/tokio/1/tokio/io/fn.stdout.html) 和 [standard error](https://docs.rs/tokio/1/tokio/io/fn.stderr.html) 的API。例如，[`tokio::io::copy`](https://docs.rs/tokio/1/tokio/io/fn.copy.html) 异步的将 reader 的全部内容 copy 到一个 writer 。
@@ -112,8 +110,6 @@ async fn main() -> io::Result<()> {
 ```
 
 请注意，这种用法体现了 `&[u8]` 也实现 `AsyncRead` 的事实。
-
-
 
 ## Echo server （回声服务）
 
@@ -159,5 +155,4 @@ async fn main() -> io::Result<()> {
         });
     }
 }
-
 ```

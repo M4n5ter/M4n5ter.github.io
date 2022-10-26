@@ -4,4 +4,4 @@
 > 
 > *参照 rust course 而建*
 
-<img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/smile.jpg?raw=true">
+<img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/smile2.png?raw=true">
