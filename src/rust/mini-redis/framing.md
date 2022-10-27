@@ -70,8 +70,6 @@ impl Connection {
 
 可以在[这里](https://redis.io/topics/protocol) 找到 Redis wire protocal 的细节。完整的 `Connection` 代码在[这里](https://github.com/tokio-rs/mini-redis/blob/tutorial/src/connection.rs) 。
 
-
-
 ## Buffered reads （带缓冲地读）
 
 `read_frame` 方法在返回前会等待一个完整的 frame 被接收。单个 `TcpStream::read()` 调用可能会返回一个任意数量的数据。这个数据可能是一个完整的 frame、一个不完整 frame 或者多个 frame。如果接收到了一个不完整的 frame，数据会被放入 buffer 并且会继续从 socket 读更多数据。如果接收到了多个 frame，第一个帧会被返回，剩下的数据会被放入 buffer 直到下次 `read_frame` 调用。
@@ -213,21 +211,19 @@ pub async fn read_frame(&mut self)
 
 此外，当使用 `Vec<u8>` 的时候，buffer 必须被**初始化**。`vec![0;4096]` 这个宏申请了一个 4k 字节的数组并且往 Vector 中的每个条目写了 0 。这个初始化过程不是免费的。当使用 `BytesMut` 和 `BufMut` 的时候，容量是**不需要**初始化的（这个特性棒:D）。`BytesMut` 这个抽象会阻止我们从未初始化的内存中进行读，这使得我们避开了初始化的步骤。
 
-
-
 ## Parsing（解析）
 
 现在，让我们瞅瞅看 `parse_frame()` 函数。解析由两个步骤完成。
 
-1.  确保缓冲了一个完整的 frame 并找到这个 frame 的索引位置。
+1. 确保缓冲了一个完整的 frame 并找到这个 frame 的索引位置。
 
-2.  解析这个 frame。
+2. 解析这个 frame。
 
 `mini-redis` crate 为以上两步都提供了一个函数：
 
-1.  `Frame::check`
+1. `Frame::check`
 
-2.  `Frame::parse`
+2. `Frame::parse`
 
 我们还将复用 `Buf` 抽象来提供帮助。一个 `Buf` 被传递进 `Frame::check` 。当 `check` 函数迭代传进来的这个 buffer 的时候，内部的 cursor 会被推进。当 `check` 返回，这个 `Buf` 内部的 cursor 会指向 frame 的末尾。
 
@@ -280,8 +276,88 @@ fn parse_frame(&mut self)
 
  [`Buf`](https://docs.rs/bytes/1/bytes/buf/trait.Buf.html) 还有很多更有用的方法。可以去 [API docs](https://docs.rs/bytes/1/bytes/buf/trait.Buf.html) 看更多细节。
 
-
-
 ## Buffered writes（带缓冲地写）
 
 framing 的另外一半 API 是 `write_frame(frame)` 函数。这个函数会把一个完整的 frame 写入到 socket 。为了最小化 `write` 系统调用的次数，写入操作都会被缓冲(buffered)。一个 write buffer 会被维护并且在往 socket 写入之前， frame 都会被 encode 到这个 buffer。然而，不同于 `read_frame()` ，在写入 socket 之前，并不总是会缓冲一整个 frame 。
+
+思考一下有一个批量 frame 的流 (a bulk stream frame)，被写入的值是 `Frame::Bulk(Bytes)` 。bulk frame 的报文格式是 frame 头是一个 `\$` 字符，然后跟着等同于数据字节数的长度，最后是数据本身。大部分 frame 都是 `Bytes` 的内容。如果数据很庞大，把它 copy 到一个中间缓冲区的开销会很大（这就是上一段末尾提到的）。
+
+为了实现带缓冲的写入操作，我们将会使用 [`BufWriter` struct](https://docs.rs/tokio/1/tokio/io/struct.BufWriter.html) 。这个结构体使用 `T: AsyncWrite` 来初始化（`BufWriter::new(T)`，这个 T 得是 `AsyncWrite`），并且它本身也实现了 `AsyncWrite` 。当 `write` 在 `BufWriter` 上被调用，write 并不会直接作用到内部的 writer 上，而是作用到一个内部的 buffer 上。当这个 buffer 满了后，buffer 的内容会被刷到内部的 writer 上，同时清空这个 buffer 。我们还会有一些优化允许在某些情况下绕过缓冲区（上一段提到的情况）。
+
+我们不会尝试把 `write_frame()` 的完整实现作为教程的一部分。所以完整实现请看[这里](https://github.com/tokio-rs/mini-redis/blob/tutorial/src/connection.rs#L159-L184)。
+
+首先， `Connection` 结构体需要改变成如下：
+
+```rust
+use tokio::io::BufWriter;
+use tokio::net::TcpStream;
+use bytes::BytesMut;
+
+pub struct Connection {
+    stream: BufWriter<TcpStream>,
+    buffer: BytesMut,
+}
+
+impl Connection {
+    pub fn new(stream: TcpStream) -> Connection {
+        Connection {
+            stream: BufWriter::new(stream),
+            buffer: BytesMut::with_capacity(4096),
+        }
+    }
+}
+```
+
+接下来会实现 `write_frame()`：
+
+```rust
+use tokio::io::{self, AsyncWriteExt};
+use mini_redis::Frame;
+
+async fn write_frame(&mut self, frame: &Frame)
+    -> io::Result<()>
+{
+    match frame {
+        Frame::Simple(val) => {
+            self.stream.write_u8(b'+').await?;
+            self.stream.write_all(val.as_bytes()).await?;
+            self.stream.write_all(b"\r\n").await?;
+        }
+        Frame::Error(val) => {
+            self.stream.write_u8(b'-').await?;
+            self.stream.write_all(val.as_bytes()).await?;
+            self.stream.write_all(b"\r\n").await?;
+        }
+        Frame::Integer(val) => {
+            self.stream.write_u8(b':').await?;
+            self.write_decimal(*val).await?;
+        }
+        Frame::Null => {
+            self.stream.write_all(b"$-1\r\n").await?;
+        }
+        Frame::Bulk(val) => {
+            let len = val.len();
+
+            self.stream.write_u8(b'$').await?;
+            self.write_decimal(len as u64).await?;
+            self.stream.write_all(val).await?;
+            self.stream.write_all(b"\r\n").await?;
+        }
+        Frame::Array(_val) => unimplemented!(),
+    }
+
+    self.stream.flush().await;
+
+    Ok(())
+}
+```
+
+下面这些被用到的函数都由 [`AsyncWriteExt`](https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html) trait 提供。他们在 `TcpStream` 上也是可用的，但不建议在没有中间缓冲区的情况下发出单字节写入（一次就发一个字节，会导致太多的 syscall，太浪费资源了）。
+
+- [`write_u8`](https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_u8) 把单个字节写入 writer。
+- [`write_all`](https://tokio.rs/tokio/tutorial/framing) 把整个切片写入 writer。
+- [`write_decimal`](https://github.com/tokio-rs/mini-redis/blob/tutorial/src/connection.rs#L225-L238) 是 mini-redis 实现的，用于把一个十进制数字转化成字符后写入。
+
+函数以一个 `self.stream.flush().await` 调用结尾。因为 `BufWriter` 会把要写入的东西先存到一个中间缓冲区，调用 `write` 不能保证数据被写入 socket，而在返回之前我们想要 frame 被写入 socket。调用 `flush()` 会将挂在缓冲区上的所有数据写入 socket 。
+
+另一种选择是不在 `write_frame()` 中调用 `flush()` 。相反，在 `Connection` 上提供一个 `flush()` 函数。这将允许调用者将多个小 frame 写入到缓冲区中的队列，然后使用一个 `write` syscall 将它们全部写入 socket。但是这会增加 `Connection` API 的复杂度，而简单是 Mini-Redis 的其中一个目标，所以我们决定让 `flush().await` 调用包含在 `fn write_frame()` 中。
