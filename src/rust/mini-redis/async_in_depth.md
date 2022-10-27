@@ -100,4 +100,8 @@ async fn main() {
 
 ### Async fn as a Future （异步函数作为 future）
 
-在 main 函数中，我们实例化一个 future 并对它调用 `.await` 。
+在 main 函数中，我们实例化一个 future 并对它调用 `.await` 。在异步函数中，我们可以对任何实现了 `Future` 的值调用 `.await` 。相反，调用一个 `async` function 返回一个实现了 `Future` 的匿名类型。`async fn main()` 所生成的 future 类似于：
+
+```rust
+
+```
