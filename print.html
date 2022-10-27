@@ -2611,9 +2611,57 @@ async fn main() {
 <h3 id="async-fn-as-a-future-异步函数作为-future"><a class="header" href="#async-fn-as-a-future-异步函数作为-future">Async fn as a Future （异步函数作为 future）</a></h3>
 <p>在 main 函数中，我们实例化一个 future 并对它调用 <code>.await</code> 。在异步函数中，我们可以对任何实现了 <code>Future</code> 的值调用 <code>.await</code> 。相反，调用一个 <code>async</code> function 返回一个实现了 <code>Future</code> 的匿名类型。<code>async fn main()</code> 所生成的 future 类似于：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span>
-<span class="boring">fn main() {
-</span><span class="boring">}
+</span><span class="boring">fn main() {
+</span>use std::future::Future;
+use std::pin::Pin;
+use std::task::{Context, Poll};
+use std::time::{Duration, Instant};
+
+enum MainFuture {
+    // Initialized, never polled
+    State0,
+    // Waiting on `Delay`, i.e. the `future.await` line.
+    State1(Delay),
+    // The future has completed.
+    Terminated,
+}
+
+impl Future for MainFuture {
+    type Output = ();
+
+    fn poll(mut self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context&lt;'_&gt;)
+        -&gt; Poll&lt;()&gt;
+    {
+        use MainFuture::*;
+
+        loop {
+            match *self {
+                State0 =&gt; {
+                    let when = Instant::now() +
+                        Duration::from_millis(10);
+                    let future = Delay { when };
+                    *self = State1(future);
+                }
+                State1(ref mut my_future) =&gt; {
+                    match Pin::new(my_future).poll(cx) {
+                        Poll::Ready(out) =&gt; {
+                            assert_eq!(out, &quot;done&quot;);
+                            *self = Terminated;
+                            return Poll::Ready(());
+                        }
+                        Poll::Pending =&gt; {
+                            return Poll::Pending;
+                        }
+                    }
+                }
+                Terminated =&gt; {
+                    panic!(&quot;future polled after completion&quot;)
+                }
+            }
+        }
+    }
+}
+<span class="boring">}
 </span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="select-todo"><a class="header" href="#select-todo">Select TODO</a></h1>
