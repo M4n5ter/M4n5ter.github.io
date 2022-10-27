@@ -103,5 +103,53 @@ async fn main() {
 在 main 函数中，我们实例化一个 future 并对它调用 `.await` 。在异步函数中，我们可以对任何实现了 `Future` 的值调用 `.await` 。相反，调用一个 `async` function 返回一个实现了 `Future` 的匿名类型。`async fn main()` 所生成的 future 类似于：
 
 ```rust
+use std::future::Future;
+use std::pin::Pin;
+use std::task::{Context, Poll};
+use std::time::{Duration, Instant};
 
+enum MainFuture {
+    // Initialized, never polled
+    State0,
+    // Waiting on `Delay`, i.e. the `future.await` line.
+    State1(Delay),
+    // The future has completed.
+    Terminated,
+}
+
+impl Future for MainFuture {
+    type Output = ();
+
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>)
+        -> Poll<()>
+    {
+        use MainFuture::*;
+
+        loop {
+            match *self {
+                State0 => {
+                    let when = Instant::now() +
+                        Duration::from_millis(10);
+                    let future = Delay { when };
+                    *self = State1(future);
+                }
+                State1(ref mut my_future) => {
+                    match Pin::new(my_future).poll(cx) {
+                        Poll::Ready(out) => {
+                            assert_eq!(out, "done");
+                            *self = Terminated;
+                            return Poll::Ready(());
+                        }
+                        Poll::Pending => {
+                            return Poll::Pending;
+                        }
+                    }
+                }
+                Terminated => {
+                    panic!("future polled after completion")
+                }
+            }
+        }
+    }
+}
 ```
