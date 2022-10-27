@@ -215,7 +215,7 @@ async fn main() -> io::Result<()> {
 ```rust
 tokio::spawn(async move {
     let (mut rd, mut wr) = socket.split();
-    
+
     if io::copy(&mut rd, &mut wr).await.is_err() {
         eprintln!("failed to copy");
     }
@@ -223,8 +223,6 @@ tokio::spawn(async move {
 ```
 
 可以在[这里](https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server-copy.rs)找到完整代码。
-
-
 
 ### Manual copying （手动 copy）
 
@@ -279,3 +277,73 @@ async fn main() -> io::Result<()> {
 yay -S netcat
 echo 你好 | nc 127.0.0.1 6142
 ```
+
+让我们分析一下：首先，因为使用了  `AsyncRead` 和 `AsyncWrite` ，所以 extension traits （`AsyncReadExt` 和`AsyncWriteExt`）必须被引入。 
+
+```rust
+use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+```
+
+
+
+### Allocating a buffer （申请缓冲区）
+
+这种策略是为了从 socket 读取一些数据到缓冲区，然后再把缓冲区的内容写回 socket。
+
+```rust
+let mut buf = vec![0;1024];
+```
+
+显式地避免了栈上缓冲区。回顾一下[之前](https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound) ，我们注意到所有的跨 `.await` 调用的数据都得由任务本身存储。而在这个场景， `buf` 被用来跨 `.await` 。所有的任务数据被存储在同一个内存块。你可以把它想象成一个 `enum` ，`enum` 内的变量都是需要为一个特定的 `.await` 存储的数据。
+
+如果这个 `buf` 是一个栈数组，每个被生成的用来接受 socket 的任务的内部结构可能看起来会像这样：
+
+```rust
+struct Task {
+    // internal task fields here
+    task: enum {
+        AwaitingRead {
+            socket: TcpStream,
+            buf: [BufferType],
+        },
+        AwaitingWriteAll {
+            socket: TcpStream,
+            buf: [BufferType],
+        }
+
+    }
+}
+```
+
+如果一个栈数组被用来当做 buffer type，它将会被内联在任务结构体中。这会导致任务结构体非常庞大。另外，缓冲区大小通常是 page size (*Modern hardware and software tend to load data into RAM (and transfer data from RAM to disk) in discrete chunk called pages*)。这反过来又会使任务的大小变得尴尬：`\$page-size + 几个字节`。
+
+Linus 有一篇吐槽贴说:
+
+> Just do the math. I've done it. 4kB is good. 8kB is borderline ok. 16kB or more is simply not acceptable.
+> 
+> [Real World Technologies - Forums - Thread: Cache pipeline](https://www.realworldtech.com/forum/?threadid=144991&curpostid=145006)
+
+所以 linux 的 page size 应该会控制在 16kB 以内。
+
+编译器优化 async blocks 的布局比优化一个 basic `enum` 要多很多。实际上，变量不会像 `enum` 所要求的那样在枚举变体之间移动。但是，任务结构体的大小至少与最大变量一样大。
+
+正因如此，为 buffer 使用一个专门的内存分配通常是更有效的（这里是 `Vector`）。
+
+### Handling EOF （处理 EOF）
+
+当 TCP stream 读的那一半句柄关闭了，再去调用 `read()` 会返回 `Ok(0)` 。在这种时候退出 read loop 是很重要的。忘记在 EOF 的时候退出 read loop 是一个常见的 bug 来源。
+
+```rust
+loop {
+    match socket.read(&mut buf).await {
+        // Return value of `Ok(0)` signifies that the remote has
+        // closed
+        Ok(0) => return,
+        // ... other cases handled here
+    }
+}
+```
+
+忘记退出 read loop 通常会导致 100% CPU占用的无限循环。这是因为 socket 关闭后，`socket.read()` 会立即返回，循环就会永远的重复下去。
+
+完整代码看[这里](https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server.rs)
