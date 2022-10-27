@@ -284,8 +284,6 @@ echo 你好 | nc 127.0.0.1 6142
 use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
 ```
 
-
-
 ### Allocating a buffer （申请缓冲区）
 
 这种策略是为了从 socket 读取一些数据到缓冲区，然后再把缓冲区的内容写回 socket。
