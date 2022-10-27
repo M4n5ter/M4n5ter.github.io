@@ -23,5 +23,7 @@
     - [问题及解决方案](./issues/gitea/gitea_issues.md)
   - [nginx](./issues/nginx/nginx.md)
     - [问题及解决方案](./issues/nginx/nginx_issues.md)
+- [Blockchain TODO](./blockchain/blockchain.md)
+  - [substrate TODO](./blockchain/substrate/substrate.md)
 - [Links](./links/links.md)
 - [Math](./math/math.md)
