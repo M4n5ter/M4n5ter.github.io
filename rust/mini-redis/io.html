@@ -337,7 +337,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 </span><span class="boring">fn main() {
 </span>tokio::spawn(async move {
     let (mut rd, mut wr) = socket.split();
-    
+
     if io::copy(&amp;mut rd, &amp;mut wr).await.is_err() {
         eprintln!(&quot;failed to copy&quot;);
     }
@@ -390,6 +390,64 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 <pre><code class="language-zsh">yay -S netcat
 echo 你好 | nc 127.0.0.1 6142
 </code></pre>
+<p>让我们分析一下：首先，因为使用了  <code>AsyncRead</code> 和 <code>AsyncWrite</code> ，所以 extension traits （<code>AsyncReadExt</code> 和<code>AsyncWriteExt</code>）必须被引入。 </p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="allocating-a-buffer-申请缓冲区"><a class="header" href="#allocating-a-buffer-申请缓冲区">Allocating a buffer （申请缓冲区）</a></h3>
+<p>这种策略是为了从 socket 读取一些数据到缓冲区，然后再把缓冲区的内容写回 socket。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let mut buf = vec![0;1024];
+<span class="boring">}
+</span></code></pre></pre>
+<p>显式地避免了栈上缓冲区。回顾一下<a href="https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound">之前</a> ，我们注意到所有的跨 <code>.await</code> 调用的数据都得由任务本身存储。而在这个场景， <code>buf</code> 被用来跨 <code>.await</code> 。所有的任务数据被存储在同一个内存块。你可以把它想象成一个 <code>enum</code> ，<code>enum</code> 内的变量都是需要为一个特定的 <code>.await</code> 存储的数据。</p>
+<p>如果这个 <code>buf</code> 是一个栈数组，每个被生成的用来接受 socket 的任务的内部结构可能看起来会像这样：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Task {
+    // internal task fields here
+    task: enum {
+        AwaitingRead {
+            socket: TcpStream,
+            buf: [BufferType],
+        },
+        AwaitingWriteAll {
+            socket: TcpStream,
+            buf: [BufferType],
+        }
+
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>如果一个栈数组被用来当做 buffer type，它将会被内联在任务结构体中。这会导致任务结构体非常庞大。另外，缓冲区大小通常是 page size (<em>Modern hardware and software tend to load data into RAM (and transfer data from RAM to disk) in discrete chunk called pages</em>)。这反过来又会使任务的大小变得尴尬：<code>$page-size + 几个字节</code>。</p>
+<p>Linus 有一篇吐槽贴说:</p>
+<blockquote>
+<p>Just do the math. I've done it. 4kB is good. 8kB is borderline ok. 16kB or more is simply not acceptable.</p>
+<p><a href="https://www.realworldtech.com/forum/?threadid=144991&amp;curpostid=145006">Real World Technologies - Forums - Thread: Cache pipeline</a></p>
+</blockquote>
+<p>所以 linux 的 page size 应该会控制在 16kB 以内。</p>
+<p>编译器优化 async blocks 的布局比优化一个 basic <code>enum</code> 要多很多。实际上，变量不会像 <code>enum</code> 所要求的那样在枚举变体之间移动。但是，任务结构体的大小至少与最大变量一样大。</p>
+<p>正因如此，为 buffer 使用一个专门的内存分配通常是更有效的（这里是 <code>Vector</code>）。</p>
+<h3 id="handling-eof-处理-eof"><a class="header" href="#handling-eof-处理-eof">Handling EOF （处理 EOF）</a></h3>
+<p>当 TCP stream 读的那一半句柄关闭了，再去调用 <code>read()</code> 会返回 <code>Ok(0)</code> 。在这种时候退出 read loop 是很重要的。忘记在 EOF 的时候退出 read loop 是一个常见的 bug 来源。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>loop {
+    match socket.read(&amp;mut buf).await {
+        // Return value of `Ok(0)` signifies that the remote has
+        // closed
+        Ok(0) =&gt; return,
+        // ... other cases handled here
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>忘记退出 read loop 通常会导致 100% CPU占用的无限循环。这是因为 socket 关闭后，<code>socket.read()</code> 会立即返回，循环就会永远的重复下去。</p>
+<p>完整代码看<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server.rs">这里</a></p>
 
                     <div id="giscus-container"></div>
                 </main>
