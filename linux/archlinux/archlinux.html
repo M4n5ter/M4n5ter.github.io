@@ -1,0 +1,440 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>archlinux - M4n5ter Blog</title>
+    <!-- Custom HTML head -->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="shortcut icon" href="../../favicon.png">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/chrome.css">
+    <link rel="stylesheet" href="../../css/print.css" media="print">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../../highlight.css">
+    <link rel="stylesheet" href="../../tomorrow-night.css">
+    <link rel="stylesheet" href="../../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../../theme/style3.css">
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../../go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="../../rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tower/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item "><a href="../../rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li><li class="chapter-item "><a href="../../rust/mini-redis/spawning.html"><strong aria-hidden="true">3.2.2.</strong> Spawning</a></li><li class="chapter-item "><a href="../../rust/mini-redis/shared_state.html"><strong aria-hidden="true">3.2.3.</strong> Shared state</a></li><li class="chapter-item "><a href="../../rust/mini-redis/channels.html"><strong aria-hidden="true">3.2.4.</strong> Channels</a></li><li class="chapter-item "><a href="../../rust/mini-redis/io.html"><strong aria-hidden="true">3.2.5.</strong> I/O</a></li><li class="chapter-item "><a href="../../rust/mini-redis/framing.html"><strong aria-hidden="true">3.2.6.</strong> Framing</a></li><li class="chapter-item "><a href="../../rust/mini-redis/async_in_depth.html"><strong aria-hidden="true">3.2.7.</strong> Async in depth TODO</a></li><li class="chapter-item "><a href="../../rust/mini-redis/select.html"><strong aria-hidden="true">3.2.8.</strong> Select TODO</a></li><li class="chapter-item "><a href="../../rust/mini-redis/streams.html"><strong aria-hidden="true">3.2.9.</strong> Streams TODO</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../linux/linux.html"><strong aria-hidden="true">4.</strong> Linux</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../linux/archlinux/archlinux.html" class="active"><strong aria-hidden="true">4.1.</strong> archlinux</a></li></ol></li><li class="chapter-item expanded "><a href="../../issues/issues.html"><strong aria-hidden="true">5.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker.html"><strong aria-hidden="true">5.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker_issues.html"><strong aria-hidden="true">5.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/mysql/mysql.html"><strong aria-hidden="true">5.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/mysql/mysql_issues.html"><strong aria-hidden="true">5.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/gitea/gitea.html"><strong aria-hidden="true">5.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/gitea/gitea_issues.html"><strong aria-hidden="true">5.3.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/nginx/nginx.html"><strong aria-hidden="true">5.4.</strong> nginx</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/nginx/nginx_issues.html"><strong aria-hidden="true">5.4.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../blockchain/blockchain.html"><strong aria-hidden="true">6.</strong> Blockchain TODO</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../blockchain/substrate/substrate.html"><strong aria-hidden="true">6.1.</strong> substrate TODO</a></li></ol></li><li class="chapter-item expanded "><a href="../../links/links.html"><strong aria-hidden="true">7.</strong> Links</a></li><li class="chapter-item expanded "><a href="../../math/math.html"><strong aria-hidden="true">8.</strong> Math</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+            <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io/edit/main/src/" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+<h1 id="archlinux"><a class="header" href="#archlinux">archlinux</a></h1>
+<h2 id="pacman"><a class="header" href="#pacman">pacman</a></h2>
+<blockquote>
+<p>内容来源： <a href="https://www.cnblogs.com/sztom/p/10652624.html">Arch Linux 软件包的查询及清理 - osoft - 博客园</a></p>
+</blockquote>
+<h2 id="1-软件包基础搜索及安装卸载"><a class="header" href="#1-软件包基础搜索及安装卸载">1. 软件包基础搜索及安装卸载</a></h2>
+<pre><code class="language-zsh">pacman -Ss 软件名称 //(搜索软件包)  
+pacman -S 软件名称 //(安装软件包)  
+pacman -Rs 软件名称 //(卸载软件包)  
+pacman -Syu (更新)
+</code></pre>
+<h2 id="2-包的查询及清理"><a class="header" href="#2-包的查询及清理">2. 包的查询及清理</a></h2>
+<pre><code class="language-zsh">列出所有本地软件包（-Q,query查询本地；-q省略版本号）  
+pacman -Qq (列出有816个包)
+
+列出所有显式安装（-e,explicitly显式安装；-n忽略外部包AUR）  
+pacman -Qqe (列出200个包)
+
+列出自动安装的包（-d,depends作为依赖项）  
+pacman -Qqd (列出616个)
+
+列出孤立的包（-t不再被依赖的&quot;作为依赖项安装的包&quot;）  
+pacman -Qqdt (列出35个)  
+注意：通常这些是可以妥妥的删除的。(sudo pacman -Qqdt | sudo pacman -Rs -)
+</code></pre>
+<h2 id="3-软件包和文件的查询"><a class="header" href="#3-软件包和文件的查询">3. 软件包和文件的查询</a></h2>
+<pre><code class="language-zsh">列出包所拥有的文件  
+&lt;span class=&quot;katex&quot;&gt;&lt;span class=&quot;katex-html&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:1em;vertical-align:-0.25em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02691em;&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.04398em;&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;检&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;文&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;是&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;否&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;存&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;在&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;（&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.69444em;vertical-align:0em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;用&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;于&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;文&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;属&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;性&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;）&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt; sudo pacman -Qk iw  
+iw: 7 total files, 0 missing files
+
+查询提供文件的包  
+ sudo pacman -Qo /usr/share/man/man8/iw.8.gz  
+/usr/share/man/man8/iw.8.gz is owned by iw 5.0.1-1
+</code></pre>
+<h2 id="4-查询包详细信息"><a class="header" href="#4-查询包详细信息">4. 查询包详细信息</a></h2>
+<pre><code class="language-zsh">查询包详细信息（-Qi;-Qii[Backup Files]）(-Si[Repository,Download Size];-Sii[Signatures,])  
+ pacman -Qi 包名  
+Repository 仓库名称（要联网用pacman -Si或Sii才能看到这一栏；）  
+Name 名称  
+Version 版本  
+Description 描述  
+Architecture 架构  
+URL 网址  
+Licenses 许可证  
+Groups 组  
+Provides 提供  
+Depends On 依赖于（依赖那些包
+Optional Deps 可选项  
+Required By 被需求的（被那些包需求
+Optional For 可选项  
+Conflicts With 与...发生冲突  
+Replaces 替代对象  
+Download Size 下载大小（要联网用pacman -Si或Sii才能看到这一栏；）  
+Installed Size 安装尺寸  
+Packager 包装者  
+Build Date 包装日期  
+Install Date 安装日期 
+Install Reason 安装原因（主动安装，还是被依赖自动安装）
+Install Script 安装脚本  
+Validated By 验证者
+
+&lt;span class=&quot;katex&quot;&gt;&lt;span class=&quot;katex-html&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.7777700000000001em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8777699999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;更&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;多&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;参&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;数&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.66666em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;看&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;的&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;更&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;改&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;日&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;志&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:1em;vertical-align:-0.25em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;列&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;出&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;作&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;为&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;依&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;赖&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;项&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;安&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;装&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;的&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;软&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mopen&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.10764em;&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mclose&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.66666em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:1em;vertical-align:-0.25em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;列&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;出&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;显&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;式&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;安&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;装&lt;/span&gt;&lt;span class=&quot;mopen&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.10764em;&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mclose&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.7777700000000001em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8777699999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;看&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;组&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;的&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;所&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;有&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;成&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;员&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.74285em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.10764em;&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;看&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;信&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;息&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;（&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.76666em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;表&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;示&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;备&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;份&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;文&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;）&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;检&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;文&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;是&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;否&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;存&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;在&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;（&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;用&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;于&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;文&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;属&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;性&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;）&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.77777em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;列&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;出&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;询&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;所&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;拥&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;有&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;的&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;文&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.66666em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:1em;vertical-align:-0.25em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;列&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;出&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;已&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;安&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;装&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;的&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;软&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;只&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;能&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;在&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;同&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;步&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;数&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;据&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;库&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;中&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;找&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;到&lt;/span&gt;&lt;span class=&quot;mopen&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;过&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;滤&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;器&lt;/span&gt;&lt;span class=&quot;mclose&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.7777700000000001em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.10764em;&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2777777777777778em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mrel&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2777777777777778em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03148em;&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2777777777777778em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mrel&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2777777777777778em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.76666em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;询&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;文&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;件&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;而&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;不&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;是&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;数&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;据&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;库&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.7777700000000001em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8777699999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;显&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;示&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;查&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;询&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;和&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;搜&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;索&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;的&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;信&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;息&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;较&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;少&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.69841em;vertical-align:-0.08333em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:0.8888799999999999em;vertical-align:-0.19444em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.03588em;&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;列&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;出&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;所&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;有&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;都&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;不&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;需&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;要&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;（&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;可&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;选&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;）&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;的&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;包&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;（&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mbin&quot;&gt;−&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2222222222222222em;&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;base&quot;&gt;&lt;span class=&quot;strut&quot; style=&quot;height:1em;vertical-align:-0.25em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;忽&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;略&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;mord cjk_fallback&quot;&gt;）&lt;/span&gt;&lt;span class=&quot;mopen&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.10764em;&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.01968em;&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.02778em;&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;mclose&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt; sudo cat pacman.log |grep boost 查看安装日志  
+[2019-03-23 17:10] [ALPM] installed boost-libs (1.69.0-1)  
+[2019-03-28 17:21] [PACMAN] Running 'pacman -S --config /etc/pacman.conf -- extra/rsync extra/wget community/lxc extra/protobuf extra/jsoncpp extra/libuv extra/rhash extra/cmake community/glm extra/boost community/gtest'  
+[2019-03-28 17:22] [ALPM] installed boost (1.69.0-1)  
+[2019-03-28 17:22] [PACMAN] Running 'pacman -D --asdeps --config /etc/pacman.conf -- rsync wget lxc protobuf jsoncpp libuv rhash cmake glm boost gtest'
+</code></pre>
+<h2 id="5-卸载不再被需要的软件包"><a class="header" href="#5-卸载不再被需要的软件包">5. 卸载不再被需要的软件包</a></h2>
+<pre><code class="language-zsh">sudo pacman -Qqdt | sudo pacman -Rs -    //删除不再被需要的(曾经被依赖自动安装的程序包)  
+sudo pacman -Q |wc -l  
+769  
+sudo pacman -Qe |wc -l  
+200  
+sudo pacman -Qd |wc -l  
+569  
+sudo pacman -Qdt |wc -l  
+0
+</code></pre>
+<h2 id="6-清除多余的安装包缓存pkg包"><a class="header" href="#6-清除多余的安装包缓存pkg包">6. 清除多余的安装包缓存(pkg包)</a></h2>
+<p>使用pacman安装的软件包会缓存在这个目录下 /var/cache/pacman/pkg/ ，可以清理如下2种。<br />
+-k (-k[n])保留软件包的n个最近的版本，删除比较旧的软件包。<br />
+-u (-u)已卸载软件的安装包(pkg包)。</p>
+<pre><code class="language-zsh"> paccache -h
+</code></pre>
+<p>  Operations:</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>-d, --dryrun</strong></td><td>perform a dry run, only finding candidate packages.</td><td>执行干运行，只找到候选包。</td></tr>
+<tr><td><strong>-m, --move <dir></strong></td><td>move candidate packages to &quot;dir&quot;.</td><td>将候选包裹移到“dir”。</td></tr>
+<tr><td><strong>-r, --remove</strong></td><td>remove candidate packages.</td><td>删除候选包。</td></tr>
+</tbody></table>
+</div>
+<p>  Options:</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td>-a, --arch <arch></td><td>scan for &quot;arch&quot; (default: all architectures).</td><td>扫描“arch”（默认：所有架构）。</td></tr>
+<tr><td>-c, --cachedir <dir></td><td>scan &quot;dir&quot; for packages. can be used more than once.</td><td>扫描“dir”包。 可以使用不止一次。</td></tr>
+<tr><td></td><td>(default: read from /etc/pacman.conf).</td><td>（默认：从/etc/pacman.conf中读取）。</td></tr>
+<tr><td>-f, --force</td><td>apply force to mv(1) and rm(1) operations.</td><td>对mv（1）和rm（1）操作施加强制。</td></tr>
+<tr><td>-h, --help</td><td>display this help message and exit.</td><td>显示此帮助消息并退出。</td></tr>
+<tr><td>-i, --ignore <pkgs></td><td>ignore &quot;pkgs&quot;, comma-separated. Alternatively, specify &quot;-&quot; to read package names from stdin, newline-delimited.</td><td>忽略“pkgs”，以逗号分隔。 或者，指定“ - ”以从stdin读取包名称，换行符分隔。</td></tr>
+<tr><td><strong>-k, --keep <num></strong></td><td>keep &quot;num&quot; of each package in the cache (default: 3).</td><td>保留缓存中每个包的“num”（默认值：3）。</td></tr>
+<tr><td>--nocolor</td><td>remove color from output.</td><td>从输出中删除颜色。</td></tr>
+<tr><td>-q, --quiet</td><td>minimize output</td><td>最小化输出</td></tr>
+<tr><td><strong>-u, --uninstalled</strong></td><td>target uninstalled packages.</td><td>目标已卸载的软件包。</td></tr>
+<tr><td>-v, --verbose</td><td>increase verbosity. specify up to 3 times.</td><td>增加冗长。 最多指定3次。</td></tr>
+<tr><td>-z, --null</td><td>use null delimiters for candidate names (only with -v and -vv).</td><td>对候选名称使用null分隔符（仅使用-v和-vv）。</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-zsh">paccache -r //删除，默认保留最近的3个版本，-rk3  
+==&gt; finished: 6 packages removed (disk space saved: 194.11 MiB)  
+paccache -rk2 //删除，默认保留最近的2个版本  
+paccache -rk1 //删除，默认保留最近的1个版本
+</code></pre>
+<h2 id="7-通过日志查看安装历史"><a class="header" href="#7-通过日志查看安装历史">7. 通过日志查看安装历史</a></h2>
+<pre><code class="language-zsh">查看软件管理所操作日志。  
+cat /var/log/pacman.log |wc -l 
+6360  
+cat /var/log/pacman.log |grep installed |wc -l  
+1134  
+cat /var/log/pacman.log |grep running |wc -l  
+1182  
+cat /var/log/pacman.log |grep Running |wc -l  
+1122  
+cat /var/log/pacman.log |grep removed |wc -l  
+217  
+cat /var/log/pacman.log |grep upgraded |wc -l  
+811
+cat /var/log/pacman.log |grep pacman |tail  
+[2019-07-11 21:05] [PACMAN] Running 'pacman -S hexchat'  
+[2019-07-11 21:06] [PACMAN] Running 'pacman -S irssi'
+
+cat /var/log/pacman.log |grep installed |tail
+[2019-07-11 21:06] [ALPM] installed hexchat (2.14.2-3)  
+[2019-07-11 21:06] [ALPM] installed libotr (4.1.1-2)  
+[2019-07-11 21:06] [ALPM] installed irssi (1.2.1-1)
+
+cat /var/log/pacman.log |grep PACMAN |tail 
+[2019-07-11 21:06] [PACMAN] Running 'pacman -S konversation'  
+[2019-07-11 21:06] [PACMAN] Running 'pacman -S pidgin'  
+[2019-07-11 21:07] [PACMAN] Running 'pacman -S weechat'  
+[2019-07-11 21:07] [PACMAN] Running 'pacman -S ircii'
+
+cat /var/log/pacman.log |grep irssi
+[2019-07-11 21:06] [PACMAN] Running 'pacman -S irssi'  
+[2019-07-11 21:06] [ALPM] installed irssi (1.2.1-1)
+
+cat /var/log/pacman.log |grep pidgin  
+[2019-07-11 21:06] [PACMAN] Running 'pacman -S pidgin'
+
+更新记录  
+cat /var/log/pacman.log |grep 'upgraded chromium'
+[2019-06-15 06:39] [ALPM] upgraded chromium (75.0.3770.80-1 -&gt; 75.0.3770.90-2)  
+[2019-06-19 10:20] [ALPM] upgraded chromium (75.0.3770.90-2 -&gt; 75.0.3770.90-3)  
+[2019-06-23 17:18] [ALPM] upgraded chromium (75.0.3770.90-3 -&gt; 75.0.3770.100-1)
+</code></pre>
+<p>通过<strong>系统日志</strong>查看安装记录(速度可能较慢)</p>
+<pre><code class="language-zsh">sudo journalctl |grep irssi 
+Jul 11 21:04:46 tompc sudo[11619]: toma : TTY=pts/2 ; PWD=/home/toma ; USER=root ; COMMAND=/usr/bin/pacman -Ss irssi  
+Jul 11 21:06:11 tompc sudo[11841]: toma : TTY=pts/2 ; PWD=/home/toma ; USER=root ; COMMAND=/usr/bin/pacman -S irssi  
+Jul 11 21:06:11 tompc pacman[11842]: Running 'pacman -S irssi'  
+Jul 11 21:06:27 tompc pacman[11842]: installed irssi (1.2.1-1)
+
+sudo journalctl |grep pidgin  
+Jul 11 21:04:55 tompc sudo[11662]: toma : TTY=pts/2 ; PWD=/home/toma ; USER=root ; COMMAND=/usr/bin/pacman -Ss pidgin  
+Jul 11 21:06:57 tompc sudo[12000]: toma : TTY=pts/2 ; PWD=/home/toma ; USER=root ; COMMAND=/usr/bin/pacman -S pidgin  
+Jul 11 21:06:57 tompc pacman[12001]: Running 'pacman -S pidgin'
+</code></pre>
+<p>系统日志筛选更新记录</p>
+<pre><code class="language-zsh">sudo journalctl |grep 'upgraded chromium'
+Jun 15 06:39:47 tompc pacman[5551]: upgraded chromium (75.0.3770.80-1 -&gt; 75.0.3770.90-2)  
+Jun 19 10:20:45 tompc pacman[1904]: upgraded chromium (75.0.3770.90-2 -&gt; 75.0.3770.90-3)  
+Jun 23 17:18:33 tompc pacman[7079]: upgraded chromium (75.0.3770.90-3 -&gt; 75.0.3770.100-1)
+</code></pre>
+<p>附: pacman.log文件内容筛选时可用的关键字，供参考</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td>关键字1</td><td>关键字2</td><td>关键字3</td><td>计数</td></tr>
+<tr><td>[PACMAN]</td><td>running</td><td>pacman -R</td><td>47</td></tr>
+<tr><td></td><td></td><td>pacman -Rs</td><td>68</td></tr>
+<tr><td></td><td></td><td>pacman -S</td><td>310</td></tr>
+<tr><td></td><td></td><td>pacman -Syu</td><td>85</td></tr>
+<tr><td></td><td>starting</td><td>upgrade</td><td>85</td></tr>
+<tr><td></td><td>synchronizing</td><td>(空白)</td><td>89</td></tr>
+<tr><td>[ALPM-SCRIPTLET]</td><td>-k</td><td>.img</td><td>70</td></tr>
+<tr><td></td><td>Running</td><td>[autodetect]</td><td>35</td></tr>
+<tr><td></td><td></td><td>[base]</td><td>70</td></tr>
+<tr><td></td><td></td><td>[block]</td><td>70</td></tr>
+<tr><td></td><td></td><td>[filesystems]</td><td>70</td></tr>
+<tr><td></td><td></td><td>[fsck]</td><td>70</td></tr>
+<tr><td></td><td></td><td>[keyboard]</td><td>70</td></tr>
+<tr><td></td><td></td><td>[modconf]</td><td>70</td></tr>
+<tr><td></td><td></td><td>[resume]</td><td>66</td></tr>
+<tr><td></td><td></td><td>[udev]</td><td>70</td></tr>
+<tr><td></td><td>Building</td><td></td><td>70</td></tr>
+<tr><td></td><td>Creating</td><td></td><td>70</td></tr>
+<tr><td></td><td>Generating</td><td></td><td>70</td></tr>
+<tr><td></td><td>Image</td><td></td><td>70</td></tr>
+<tr><td></td><td>Starting</td><td></td><td>70</td></tr>
+<tr><td></td><td>WARNING</td><td></td><td>70</td></tr>
+<tr><td></td><td>Certificate</td><td></td><td>280</td></tr>
+<tr><td></td><td>gpg</td><td></td><td>245</td></tr>
+<tr><td>[ALPM]</td><td>installed</td><td></td><td>1123</td></tr>
+<tr><td></td><td>removed</td><td></td><td>217</td></tr>
+<tr><td></td><td>running</td><td>60-linux.hook</td><td>29</td></tr>
+<tr><td></td><td></td><td>70-dkms-install</td><td>24</td></tr>
+<tr><td></td><td></td><td>70-dkms-remove</td><td>23</td></tr>
+<tr><td></td><td></td><td>90-linux.hook</td><td>35</td></tr>
+<tr><td></td><td></td><td>gtk-update</td><td>133</td></tr>
+<tr><td></td><td></td><td>update-desktop</td><td>162</td></tr>
+<tr><td></td><td></td><td>systemd-update</td><td>340</td></tr>
+<tr><td></td><td></td><td>systemd-daemon</td><td>96</td></tr>
+<tr><td></td><td>transaction</td><td>completed</td><td>342</td></tr>
+<tr><td></td><td></td><td>started</td><td>342</td></tr>
+<tr><td></td><td>upgraded</td><td></td><td>811</td></tr>
+</tbody></table>
+</div>
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../../linux/linux.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../issues/issues.html" class="mobile-nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../../linux/linux.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a rel="next" href="../../issues/issues.html" class="nav-chapters next" title="Next chapter"
+                aria-label="Next chapter" aria-keyshortcuts="Right">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </nav>
+
+    </div>
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+    <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "linux/archlinux/archlinux.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../../assets/custom.js"></script>
+    <script type="text/javascript" src="../../assets/bigPicture.js"></script>
+</body>
+
+</html>
