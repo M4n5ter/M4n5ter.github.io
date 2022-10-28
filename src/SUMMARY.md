@@ -11,7 +11,7 @@
     - [Channels](./rust/mini-redis/channels.md)
     - [I/O](./rust/mini-redis/io.md)
     - [Framing](./rust/mini-redis/framing.md)
-    - [Async in depth TODO](./rust/mini-redis/async_in_depth.md)
+    - [Async in depth](./rust/mini-redis/async_in_depth.md)
     - [Select TODO](./rust/mini-redis/select.md)
     - [Streams TODO](./rust/mini-redis/streams.md)
 - [Linux](./linux/linux.md)
