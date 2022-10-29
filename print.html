@@ -3608,7 +3608,76 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 <p><code>tokio::spawn</code> 和 <code>select!</code> 都能够运行并发的异步操作。然而，运行并发操作的策略有所不同。<code>tokio::spawn</code> 函数携带一个异步操作，并且生成一个新的任务去运行它。一个任务是 Tokio runtime 调度的对象。两个不同的任务会被 Tokio 独立调度，它们可能会同时运行在不同的操作系统线程上。正因如此，一个被生成的任务和被生成的线程具有相同的限制：不能有借用！</p>
 <p><code>select!</code> 宏会在<strong>同一个任务</strong>中并发运行所有的分支。因为所有的 <code>select!</code> 分支都在同一个任务中被执行，它们永远不可能<strong>同时</strong>被运行。<code>select!</code> 宏会在单个任务上多路复用异步操作。</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
-<h1 id="streams-todo"><a class="header" href="#streams-todo">Streams TODO</a></h1>
+<h2 id="streams"><a class="header" href="#streams">Streams</a></h2>
+<p>stream 是一种异步的一系列的值。它的异步等效与 Rust 的 <a href="https://doc.rust-lang.org/book/ch13-02-iterators.html"><code>std::iter::Iterator</code></a> 并且通过 <a href="https://docs.rs/futures-core/0.3/futures_core/stream/trait.Stream.html"><code>Stream</code></a> trait 来表示。Streams 能够在 <code>async</code> functions 中被迭代。它们也可以通过适配器被转换。Tokio 在 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html"><code>StreamExt</code></a> trait 上提供了一些场景的适配器。</p>
+<p>Tokio 在一个单独的 crate 提供了 stream 支持：<code>tokio-stream</code> 。</p>
+<pre><code class="language-toml">tokio-stream = &quot;0.1&quot;
+</code></pre>
+<blockquote>
+<p>目前，Tokio 的 stream 实用工具存在与 <code>tokio-strean</code> crate 中。一旦 <code>Stream</code> trait 在 Rust 标准库中稳定了，Tokio 的 stream 将会被移动到 <code>tokio</code> crate 。</p>
+</blockquote>
+<h2 id="iteration"><a class="header" href="#iteration">Iteration</a></h2>
+<p>目前为止，Rust 编程语言没有支持异步的 <code>for</code> 循环。作为替代，迭代 stream 通过使用  <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.next"><code>StreamExt::next()</code></a> 并配对一个 <code>while let</code> 循环来完成。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio_stream::StreamExt;
+
+#[tokio::main]
+async fn main() {
+    let mut stream = tokio_stream::iter(&amp;[1, 2, 3]);
+
+    while let Some(v) = stream.next().await {
+        println!(&quot;GOT = {:?}&quot;, v);
+    }
+}
+</code></pre></pre>
+<p>像迭代器一样，<code>next()</code> 方法返回 <code>Option&lt;T&gt;</code> ，T 是 stream 里的值的类型。接收到 <code>None</code> 表示这个 stream iteration 终止了。</p>
+<h3 id="mini-redis-broadcast-mini-redis-广播"><a class="header" href="#mini-redis-broadcast-mini-redis-广播">Mini-Redis broadcast （Mini-Redis 广播）</a></h3>
+<p>让我们使用 Mini-Redis client 来回顾一个稍微更复杂的例子。</p>
+<p>完整的代码可以在<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/streams/src/main.rs">这里</a>找到。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio_stream::StreamExt;
+use mini_redis::client;
+
+async fn publish() -&gt; mini_redis::Result&lt;()&gt; {
+    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
+
+    // Publish some data
+    client.publish(&quot;numbers&quot;, &quot;1&quot;.into()).await?;
+    client.publish(&quot;numbers&quot;, &quot;two&quot;.into()).await?;
+    client.publish(&quot;numbers&quot;, &quot;3&quot;.into()).await?;
+    client.publish(&quot;numbers&quot;, &quot;four&quot;.into()).await?;
+    client.publish(&quot;numbers&quot;, &quot;five&quot;.into()).await?;
+    client.publish(&quot;numbers&quot;, &quot;6&quot;.into()).await?;
+    Ok(())
+}
+
+async fn subscribe() -&gt; mini_redis::Result&lt;()&gt; {
+    let client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
+    let subscriber = client.subscribe(vec![&quot;numbers&quot;.to_string()]).await?;
+    let messages = subscriber.into_stream();
+
+    tokio::pin!(messages);
+
+    while let Some(msg) = messages.next().await {
+        println!(&quot;got = {:?}&quot;, msg);
+    }
+
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -&gt; mini_redis::Result&lt;()&gt; {
+    tokio::spawn(async {
+        publish().await
+    });
+
+    subscribe().await?;
+
+    println!(&quot;DONE&quot;);
+
+    Ok(())
+}
+</code></pre></pre>
+<p>一个任务被生成来发布消息到 Mini-Redis server 上的 &quot;numbers&quot; channel 。然后，在主要的任务中，我们订阅 &quot;numbers&quot; channel 并且打印接收到的消息。</p>
+<p>订阅之后，我们在返回的 subscriber 上调用 <a href="https://docs.rs/mini-redis/0.4/mini_redis/client/struct.Subscriber.html#method.into_stream"><code>into_stream()</code></a> 。这个方法会消费掉这个 <code>Subscriber</code> ，返回一个能在消息到达的时候生成消息的 stream 。在我们开始迭代消息之前，注意这个 stream 通过<a href="https://docs.rs/tokio/1/tokio/macro.pin.html"><code>tokio::pin!</code></a> 被  <a href="https://doc.rust-lang.org/std/pin/index.html">pin</a> 到了栈上。 </p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="linux"><a class="header" href="#linux">Linux</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
