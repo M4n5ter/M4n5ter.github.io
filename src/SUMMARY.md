@@ -13,7 +13,7 @@
     - [Framing](./rust/mini-redis/framing.md)
     - [Async in depth](./rust/mini-redis/async_in_depth.md)
     - [Select](./rust/mini-redis/select.md)
-    - [Streams TODO](./rust/mini-redis/streams.md)
+    - [Streams](./rust/mini-redis/streams.md)
 - [Linux](./linux/linux.md)
   - [archlinux](./linux/archlinux/archlinux.md)
 - [issues and solutions](./issues/issues.md)
