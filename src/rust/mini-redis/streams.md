@@ -10,8 +10,6 @@ tokio-stream = "0.1"
 
 > 目前，Tokio 的 stream 实用工具存在与 `tokio-strean` crate 中。一旦 `Stream` trait 在 Rust 标准库中稳定了，Tokio 的 stream 将会被移动到 `tokio` crate 。
 
-
-
 ## Iteration
 
 目前为止，Rust 编程语言没有支持异步的 `for` 循环。作为替代，迭代 stream 通过使用  [`StreamExt::next()`](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.next) 并配对一个 `while let` 循环来完成。
@@ -131,8 +129,6 @@ got = Ok(Message { channel: "numbers", content: b"6" })
 
 让我们看看可以怎么来用 stream 拓展这个程序。
 
-
-
 ## Adapters （适配器）
 
 接收一个 [`Stream`](https://docs.rs/futures-core/0.3/futures_core/stream/trait.Stream.html) 并且返回另一个 [`Stream`](https://docs.rs/futures-core/0.3/futures_core/stream/trait.Stream.html) 的函数通常被称为 'stream adapters' ，因为它们是 'adapter pattern' 的一种形式。常见的 stream adapters 包括 [`map`](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.map)、 [`take`](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.take) 和 [`filter`](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter) 。
@@ -201,8 +197,6 @@ got = b"6"
 另一种选择是使用 [`filter_map`](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter_map) 将 [`filter`](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter) 和 [`map`](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.map) 两个步骤组合起来作为一个单次调用。
 
 在[这里](https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html)可以找到更多可用的 adapter。
-
-
 
 ## Implementing `Stream`
 
