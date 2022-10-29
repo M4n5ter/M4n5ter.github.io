@@ -158,8 +158,6 @@ Rust 的 future 是**状态机**(`state machine`) 。此处，`MainFuture` 代�
 
 我们也看到了 future 由 其他 future 构成（future 可以嵌套）。对外层的 future 调用 `poll` 会导致内部的 future 的 `poll` 函数也被调用。  
 
-
-
 ## Executor （执行者，一般就是运行时了）
 
 异步 Rust 函数会返回 future ，而 future 又必须通过调用它们身上的 `poll` 来推进它们的状态，future 又由其它 future 组成。因此，问题来了，谁来调用最最最外层的 future 的 `poll` 呢？
@@ -204,7 +202,7 @@ impl MiniTokio {
             tasks: VecDeque::new(),
         }
     }
-    
+
     /// Spawn a future onto the mini-tokio instance.
     fn spawn<F>(&mut self, future: F)
     where
@@ -212,11 +210,11 @@ impl MiniTokio {
     {
         self.tasks.push_back(Box::pin(future));
     }
-    
+
     fn run(&mut self) {
         let waker = task::noop_waker();
         let mut cx = Context::from_waker(&waker);
-        
+
         while let Some(mut task) = self.tasks.pop_front() {
             if task.as_mut().poll(&mut cx).is_pending() {
                 self.tasks.push_back(task);
@@ -470,8 +468,6 @@ impl Task {
 
 `Task::poll()` 函数会通过手动为  `Task` 实现的 `future` crate 中的  [`ArcWake`](https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html) trait 来创建 waker 。这个 waker 被用来创建一个 `task::Context` ，然后这个 `task::Context` 被传给 `poll` 。
 
-
-
 ## Summary （概括）
 
 我们现在已经看到了异步 Rust 如何工作的端到端示例。Rust 的 `async/await` 特性由 traits  支持。这就允许了第三方 crates，像 Tokio，来提供执行细节。
@@ -487,8 +483,6 @@ impl Task {
 * executor 接收到通知并且调度任务去执行。
 
 * 当任务再次被 poll 的时候，此时资源已经就绪了，并且任务会取得进展。  
-
-
 
 ## A few loose ends （一些零散的内容放在结尾）
 
