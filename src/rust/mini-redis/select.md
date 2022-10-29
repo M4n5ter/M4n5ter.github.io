@@ -223,8 +223,6 @@ async fn main() -> io::Result<()> {
 
 这个 accept loop 会一直运行直到遇到 error 或者 `rx` 收到一个值。`_` 模式表示我们对异步计算返回的值并不感兴趣。
 
-
-
 ## Return value
 
 `tokio::select!` 宏会返回 `<handler>` 表达式计算出的结果。
@@ -250,8 +248,6 @@ async fn main() {
 ```
 
 因为这个，它要求**每个**分支的 `<handler>` 表达式计算出同样的类型。如果 `select!` 的输出不被需要，一个不错的实践是让表达式返回 `()`
-
-
 
 ## Errors
 
@@ -290,8 +286,6 @@ async fn main() -> io::Result<()> {
 ```
 
 请关注 `listener.accept().await?` 。这个 `?` 操作符把错误传播出了 `<async expression>` 并且绑定到了 `res` 。发生错误时 `res` 会被设置成 `Err(_)` ，然后在 handler 中，`?` 操作符再次被使用，`res?` 语句会把错误传播出 `main` 函数。
-
-
 
 ## Pattern matching
 
@@ -332,8 +326,6 @@ async fn main() {
 在这个例子中， `select!` 表达式等待从 `rx1` 和 `rx2` 接收一个 value 。如果一个 channel 关闭了，`recv()` 会返回 `None` ，这将**无法**匹配例子中的模式，并且当前分支会被禁用。这个 `select!` 表达式将会继续在剩余的分支上 wait 。
 
 请注意例子中的 `select!` 表达式包含一个 `else` 分支。这个 `select!` 表达式必须计算出一个 value，当使用模式匹配，可能**没有**一条分支能成功匹配它们所关联的模式，如果这种情况发生了， `else` 分支就会被计算。
-
-
 
 ## Borrowing
 
@@ -403,8 +395,6 @@ async fn main() {
 }
 ```
 
-
-
 ## Loops
 
 `select!` 宏经常被用在循环中。这一部分将会通过几个示例来展示在循环中使用 `select!` 宏的常见方式。我们通过 select 多个 channels 开始：
@@ -451,10 +441,10 @@ async fn action() {
 #[tokio::main]
 async fn main() {
     let (mut tx, mut rx) = tokio::sync::mpsc::channel(128);    
-    
+
     let operation = action();
     tokio::pin!(operation);
-    
+
     loop {
         tokio::select! {
             _ = &mut operation => break,
@@ -537,17 +527,17 @@ async fn action(input: Option<i32>) -> Option<String> {
 #[tokio::main]
 async fn main() {
     let (mut tx, mut rx) = tokio::sync::mpsc::channel(128);
-    
+
     let mut done = false;
     let operation = action(None);
     tokio::pin!(operation);
-    
+
     tokio::spawn(async move {
         let _ = tx.send(1).await;
         let _ = tx.send(3).await;
         let _ = tx.send(2).await;
     });
-    
+
     loop {
         tokio::select! {
             res = &mut operation, if !done => {
@@ -584,8 +574,6 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 当尝试在 `operation` 已经完成**之后**使用它时，这个错误发生了。一般来说，当使用 `.await` ，这个被 await 的值就被消费掉了。在这个例子中，我们 await 了一个引用，这意味着 `operation` 在它完成后仍然存在。
 
 为了避免这个 panic，如果 `operation` 已经完成，我们必须小心地禁用第一条分支。这里的 `done` 变量被用来跟踪 `operation` 是否完成。一个 `select!` 分支可能会包含一个 **precondition** （先决条件），这个先决条件会在 `select!` await 当前分支**之前**被检查（虽然顺序上它被写在后面，但是不影响它是一个 "先决条件"）。如果先决条件计算出了 `false` 那么该分支会被禁用。`done` 变量被初始化为 `false` 。当 `operation` 完成，`done` 会被设置为 `true` ，这样在下次循环迭代的时候将会禁用 `operation` 分支。当一个偶数消息从 channel 被接收，`operation` 会被重置，并且 `done` 会被设置为 `false` 。
-
-
 
 ## Per-task concurrency
 
