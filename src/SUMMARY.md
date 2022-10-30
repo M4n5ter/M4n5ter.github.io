@@ -24,7 +24,7 @@
   - [archlinux](./linux/archlinux/archlinux.md)
   - [nmap-netcat(nc)](./linux/nc/nc.md)
   - [mkcert](./linux/mkcert/mkcert.md)
-- [Blockchain TODO](./blockchain/blockchain.md)
+- [Blockchain](./blockchain/blockchain.md)
   - [substrate TODO](./blockchain/substrate/substrate.md)
 - [issues and solutions](./issues/issues.md)
   - [docker](./issues/docker/docker.md)
