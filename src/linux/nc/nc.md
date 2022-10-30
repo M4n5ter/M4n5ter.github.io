@@ -78,8 +78,6 @@ nc -nv <中间机器 IP> <中间机器端口>
 客户端 -> 中间机器 IP:PORT -> 目标机器 IP:PORT
 ```
 
-
-
 ### 发送文件
 
 既然都能通信了，那么发文件也是理所应当的，基本传文件本质也是流量传输。
@@ -99,8 +97,6 @@ nc -lvvp 1665 > out.txt
 # 发送文件的机器
 nc -nv <IP> <PORT> < temp.txt
 ```
-
-
 
 ### 反弹 Shell
 
@@ -135,11 +131,7 @@ Host github.com
 
 这样对 github 仓库进行 `git pull` `git push` 这样的操作都会走代理。
 
-
-
   `--proxy` 和 `--proxy-type` 可以让 `ncat` 摇身一变为一个代理工具。
-
-
 
 ### `--allow` / `--allowfile`
 
@@ -148,3 +140,9 @@ Host github.com
 ### `--deny` / `--denyfile`
 
 与上面的相反，它是拒绝。
+
+
+
+## 更多功能请自行探索
+
+`ncat` 提供了许多功能，这些功能可以相互组合，或者配合其它东西来使用，能玩出的花样是非常多的。
