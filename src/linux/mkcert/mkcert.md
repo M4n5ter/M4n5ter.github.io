@@ -35,18 +35,13 @@ Ncat: Listening on 0.0.0.0:1589
 Ncat: Connection from 127.0.0.1.
 Ncat: Connection from 127.0.0.1:39156.
 Ncat: Failed SSL connection from 127.0.0.1: error:00000000:lib(0):func(0):reason(0)
-
 ```
 
 `mkcert`  自动生成并安装一个本地 CA 到 root stores，并且生成 locally-trusted 证书。`mkcert` 不会自动使用证书来配置服务器，不过，这取决于你。
 
-
-
 ## 安装
 
 > Warning: `mkcert`  自动生成的 `rootCA-key.pem` 文件提供了完整的能力来拦截你机器上的安全请求。请不要分享它。 
-
-
 
 ### macOS
 
@@ -115,8 +110,6 @@ scoop install mkcert
 
 如果遇到权限问题，请使用管理员运行 `mkcert`
 
-
-
 ## 支持的 root stores
 
 `mkcert` 支持以下 root stores：
@@ -141,8 +134,6 @@ scoop install mkcert
 
 为了把 local root CA 装到这些 root stores 中，你可以设置 `TRUST_STORES` 环境变量到一个逗号分隔的 list。有这些选项："system","java" 和 "nss"（包括了 Firefox）。
 
-
-
 ## 高级 topics
 
 ---
@@ -150,22 +141,22 @@ scoop install mkcert
 ### 高级选项
 
 ```zsh
-	-cert-file FILE, -key-file FILE, -p12-file FILE
-	    自定义输出路径.
+    -cert-file FILE, -key-file FILE, -p12-file FILE
+        自定义输出路径.
 
-	-client
-	    生成供客户端认证使用的证书.
+    -client
+        生成供客户端认证使用的证书.
 
-	-ecdsa
-	    生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
+    -ecdsa
+        生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
 
-	-pkcs12
-	    生成一个 ".p12" PKCS #12 文件，也可以被识别为 ".pfx" 文件,
-	    包含 cert 和 key for legacy applications.
+    -pkcs12
+        生成一个 ".p12" PKCS #12 文件，也可以被识别为 ".pfx" 文件,
+        包含 cert 和 key for legacy applications.
 
-	-csr CSR
-	    生成一个给予 CSR（证书签名申请） 的证书。
-	与除了 -install 和 -cert-file 以外的其它所以 flag 和参数冲突！
+    -csr CSR
+        生成一个给予 CSR（证书签名申请） 的证书。
+    与除了 -install 和 -cert-file 以外的其它所以 flag 和参数冲突！
 ```
 
 [SSL 证书 什么是CSR？-常见问题-文档中心-腾讯云](https://cloud.tencent.com/document/product/400/5367)
@@ -177,8 +168,6 @@ scoop install mkcert
 ```zsh
 mkcert -key-file key.pem -cert-file cert.pem example.com *.example.com
 ```
-
-
 
 ### S/MIME （邮件安全证书）
 
@@ -204,15 +193,11 @@ Node 不使用 system root store，所以它不会自动接受 `mkcert` 证书�
 export NODE_EXTRA_CA_CERTS="$(mkcert -CAROOT)/rootCA.pem"
 ```
 
-
-
 ### 改变 CA 文件的位置
 
 CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般来说你不会想去关注它的位置，因为它会被自动装载。但是你可以通过 `mkcert -CAROOT` 来打印这个目录位置。
 
 如果你想要管理单独的 CA 们，你可以使用 `\$CAROOT` 环境变量来设置 mkcert 放置和寻找 CA files 的路径。
-
-
 
 ### 在其它系统上安装 CA
 
@@ -224,6 +209,6 @@ CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般
 
 * 设置 `\$CAROOT` 为 `rootCA.pem` 所在目录。
 
-* 运行 `mkcert -install`
+* 运行 `mkcert -install`(arch linux 可以 `sudo trust anchor --store rootCA.pem`，其它发行版可以用自带的命令手动添加来信任 CA)
 
 请千万记住 `mkcert` 是用于开发目的的，不建议用于生产，所以它不应该被用到用户终端上，并且你不应该导出或者共享 `rootCA-key.pem` 。
