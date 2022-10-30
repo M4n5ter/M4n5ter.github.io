@@ -36,4 +36,3 @@
   - [nginx](./issues/nginx/nginx.md)
     - [问题及解决方案](./issues/nginx/nginx_issues.md)
 - [Links](./links/links.md)
-- [Math](./math/math.md)
