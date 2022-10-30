@@ -206,7 +206,6 @@ Ncat: Listening on 0.0.0.0:1589
 Ncat: Connection from 127.0.0.1.
 Ncat: Connection from 127.0.0.1:39156.
 Ncat: Failed SSL connection from 127.0.0.1: error:00000000:lib(0):func(0):reason(0)
-
 </code></pre>
 <p><code>mkcert</code>  自动生成并安装一个本地 CA 到 root stores，并且生成 locally-trusted 证书。<code>mkcert</code> 不会自动使用证书来配置服务器，不过，这取决于你。</p>
 <h2 id="安装"><a class="header" href="#安装">安装</a></h2>
@@ -289,22 +288,22 @@ scoop install mkcert
 <h2 id="高级-topics"><a class="header" href="#高级-topics">高级 topics</a></h2>
 <hr />
 <h3 id="高级选项"><a class="header" href="#高级选项">高级选项</a></h3>
-<pre><code class="language-zsh">	-cert-file FILE, -key-file FILE, -p12-file FILE
-	    自定义输出路径.
+<pre><code class="language-zsh">    -cert-file FILE, -key-file FILE, -p12-file FILE
+        自定义输出路径.
 
-	-client
-	    生成供客户端认证使用的证书.
+    -client
+        生成供客户端认证使用的证书.
 
-	-ecdsa
-	    生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
+    -ecdsa
+        生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
 
-	-pkcs12
-	    生成一个 &quot;.p12&quot; PKCS #12 文件，也可以被识别为 &quot;.pfx&quot; 文件,
-	    包含 cert 和 key for legacy applications.
+    -pkcs12
+        生成一个 &quot;.p12&quot; PKCS #12 文件，也可以被识别为 &quot;.pfx&quot; 文件,
+        包含 cert 和 key for legacy applications.
 
-	-csr CSR
-	    生成一个给予 CSR（证书签名申请） 的证书。
-	与除了 -install 和 -cert-file 以外的其它所以 flag 和参数冲突！
+    -csr CSR
+        生成一个给予 CSR（证书签名申请） 的证书。
+    与除了 -install 和 -cert-file 以外的其它所以 flag 和参数冲突！
 </code></pre>
 <p><a href="https://cloud.tencent.com/document/product/400/5367">SSL 证书 什么是CSR？-常见问题-文档中心-腾讯云</a></p>
 <blockquote>
@@ -341,7 +340,7 @@ scoop install mkcert
 <p>设置 <code>$CAROOT</code> 为 <code>rootCA.pem</code> 所在目录。</p>
 </li>
 <li>
-<p>运行 <code>mkcert -install</code></p>
+<p>运行 <code>mkcert -install</code>(arch linux 可以 <code>sudo trust anchor --store rootCA.pem</code>，其它发行版可以用自带的命令手动添加来信任 CA)</p>
 </li>
 </ul>
 <p>请千万记住 <code>mkcert</code> 是用于开发目的的，不建议用于生产，所以它不应该被用到用户终端上，并且你不应该导出或者共享 <code>rootCA-key.pem</code> 。</p>
