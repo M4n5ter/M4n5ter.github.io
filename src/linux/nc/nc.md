@@ -2,7 +2,7 @@
 
 nc 是由 C 编写的非常强悍的网络工具，`nc` 主要有 4 个版本，gnu nc （2004 年停止维护，也叫 nc traditional）， openbsd nc（重写了 gnu nc，在正常维护），nmap-netcat（也叫 ncat，由 nmap 重写 nc traditional，被称为 21 世纪的 netcat，也是功能最多的 nc）。
 
-下面我介绍的就是 nmap-netcat。
+下面我介绍的就是 nmap-netcat，出现的不论是 `nc` 还是 `ncat` 请一律当 `ncat` 处理，因为部分在 CentOS 上执行，CentOS上的 `nc` 就是 `ncat`。
 
 ## 安装
 
@@ -140,8 +140,6 @@ Host github.com
 ### `--deny` / `--denyfile`
 
 与上面的相反，它是拒绝。
-
-
 
 ## 更多功能请自行探索
 
