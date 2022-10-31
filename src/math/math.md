@@ -392,9 +392,10 @@ $$
 > 
 > $$
 > \large \sum^\infty_{n=1}U_n和\sum^\infty_{n=1}V_n分别收敛于 S 和\sigma.\\
-> \sum^\infty_{n=1}(U_n\pm V_n)也收敛.和S\pm\sigma
-
+\sum^\infty_{n=1}(U_n\pm V_n)也收敛.和S\pm\sigma
 > $$
+
+
 
 正推可以，反推不可以。
 
@@ -587,15 +588,20 @@ $$
 > 定理：
 > 
 > $$
-> \sum^{+\infty}_{n=1}U_n=U_1+U_2+U_3+\cdot\cdot\cdot是任意项级数\\
+>  \sum^{+\infty}_{n=1}U_n=U_1+U_2+U_3+\cdot\cdot\cdot是任意项级数\\
+> $$
+> 
+>    $$
 
+$$
 \lim\limits_{n\to +\infty}|\frac{U_n+1}{U_n}|=l \longleftarrow
 正项级数的比值审敛法\\
 ①: l < 1 时，\sum U_n(绝对)收敛\\
 ②：l > 1 (+\infty)时，\sum U_n 发散
 ③：l = 1 时，本方法无法判断
+$$
 
-> $$
+
 
 ## 幂级数
 
