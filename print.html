@@ -4084,7 +4084,57 @@ Jun 23 17:18:33 tompc pacman[7079]: upgraded chromium (75.0.3770.90-3 -&gt; 75.0
 <tr><td></td><td></td><td>started</td><td>342</td></tr>
 <tr><td></td><td>upgraded</td><td></td><td>811</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+</div>
+<h2 id="emoji-支持"><a class="header" href="#emoji-支持">emoji 支持</a></h2>
+<pre><code class="language-shell">#!/bin/sh
+set -e
+if [[ $(id -u) -ne 0 ]] ; then echo &quot;请使用 root 用户执行本脚本&quot; ; exit 1 ; fi
+echo &quot;开始设置 Noto Emoji font...&quot;
+# 1 - 安装  noto-fonts-emoji 包
+pacman -S noto-fonts-emoji --needed
+# pacman -S powerline-fonts --needed
+echo &quot;推荐的系统字体: inconsolata regular (ttf-inconsolata 或 powerline-fonts)&quot;
+# 2 - 添加字体配置到 /etc/fonts/conf.d/01-notosans.conf
+echo '&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE fontconfig SYSTEM &quot;fonts.dtd&quot;&gt;
+&lt;fontconfig&gt;
+ &lt;alias&gt;
+   &lt;family&gt;sans-serif&lt;/family&gt;
+   &lt;prefer&gt;
+     &lt;family&gt;Noto Sans&lt;/family&gt;
+     &lt;family&gt;Noto Color Emoji&lt;/family&gt;
+     &lt;family&gt;Noto Emoji&lt;/family&gt;
+     &lt;family&gt;DejaVu Sans&lt;/family&gt;
+   &lt;/prefer&gt; 
+ &lt;/alias&gt;
+
+ &lt;alias&gt;
+   &lt;family&gt;serif&lt;/family&gt;
+   &lt;prefer&gt;
+     &lt;family&gt;Noto Serif&lt;/family&gt;
+     &lt;family&gt;Noto Color Emoji&lt;/family&gt;
+     &lt;family&gt;Noto Emoji&lt;/family&gt;
+     &lt;family&gt;DejaVu Serif&lt;/family&gt;
+   &lt;/prefer&gt;
+ &lt;/alias&gt;
+
+ &lt;alias&gt;
+  &lt;family&gt;monospace&lt;/family&gt;
+  &lt;prefer&gt;
+    &lt;family&gt;Noto Mono&lt;/family&gt;
+    &lt;family&gt;Noto Color Emoji&lt;/family&gt;
+    &lt;family&gt;Noto Emoji&lt;/family&gt;
+    &lt;family&gt;DejaVu Sans Mono&lt;/family&gt;
+   &lt;/prefer&gt;
+ &lt;/alias&gt;
+&lt;/fontconfig&gt;
+
+' &gt; /etc/fonts/local.conf
+# 3 - 通过 fc-cache 更新字体缓存
+fc-cache
+echo &quot;Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Chrome. 如果没什么变化说明你的字体本身已经包含 emoji.&quot;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h2 id="nmap-netcatnc"><a class="header" href="#nmap-netcatnc">nmap-netcat(nc)</a></h2>
 <p>nc 是由 C 编写的非常强悍的网络工具，<code>nc</code> 主要有 4 个版本，gnu nc （2004 年停止维护，也叫 nc traditional）， openbsd nc（重写了 gnu nc，在正常维护），nmap-netcat（也叫 ncat，由 nmap 重写 nc traditional，被称为 21 世纪的 netcat，也是功能最多的 nc）。</p>
 <p>下面我介绍的就是 nmap-netcat，出现的不论是 <code>nc</code> 还是 <code>ncat</code> 请一律当 <code>ncat</code> 处理，因为部分在 CentOS 上执行，CentOS上的 <code>nc</code> 就是 <code>ncat</code>。</p>
