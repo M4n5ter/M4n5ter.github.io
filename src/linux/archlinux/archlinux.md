@@ -268,3 +268,55 @@ Jun 23 17:18:33 tompc pacman[7079]: upgraded chromium (75.0.3770.90-3 -> 75.0.37
 |                  | transaction   | completed       | 342  |
 |                  |               | started         | 342  |
 |                  | upgraded      |                 | 811  |
+
+## emoji 支持
+
+```shell
+#!/bin/sh
+set -e
+if [[ \$(id -u) -ne 0 ]] ; then echo "请使用 root 用户执行本脚本" ; exit 1 ; fi
+echo "开始设置 Noto Emoji font..."
+# 1 - 安装  noto-fonts-emoji 包
+pacman -S noto-fonts-emoji --needed
+# pacman -S powerline-fonts --needed
+echo "推荐的系统字体: inconsolata regular (ttf-inconsolata 或 powerline-fonts)"
+# 2 - 添加字体配置到 /etc/fonts/conf.d/01-notosans.conf
+echo '<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+ <alias>
+   <family>sans-serif</family>
+   <prefer>
+     <family>Noto Sans</family>
+     <family>Noto Color Emoji</family>
+     <family>Noto Emoji</family>
+     <family>DejaVu Sans</family>
+   </prefer> 
+ </alias>
+
+ <alias>
+   <family>serif</family>
+   <prefer>
+     <family>Noto Serif</family>
+     <family>Noto Color Emoji</family>
+     <family>Noto Emoji</family>
+     <family>DejaVu Serif</family>
+   </prefer>
+ </alias>
+
+ <alias>
+  <family>monospace</family>
+  <prefer>
+    <family>Noto Mono</family>
+    <family>Noto Color Emoji</family>
+    <family>Noto Emoji</family>
+    <family>DejaVu Sans Mono</family>
+   </prefer>
+ </alias>
+</fontconfig>
+
+' > /etc/fonts/local.conf
+# 3 - 通过 fc-cache 更新字体缓存
+fc-cache
+echo "Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Chrome. 如果没什么变化说明你的字体本身已经包含 emoji."
+```
