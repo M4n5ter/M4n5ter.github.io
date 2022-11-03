@@ -4416,7 +4416,7 @@ save-session-interval=60
 ## 文件保存相关 ##
 
 # 文件的保存路径, 默认: 当前启动位置
-dir=/liangzai/Aria2
+dir=/home/Aria2/download/
 # 启用磁盘缓存, 0为禁用缓存, 需1.16以上版本, 默认:16M
 disk-cache=32M
 # 文件预分配方式, 能有效降低磁盘碎片, 默认:prealloc
@@ -4516,6 +4516,8 @@ seed-ratio=0
 bt-seed-unverified=true
 # 保存磁力链接元数据为种子文件(.torrent文件), 默认:false
 bt-save-metadata=true
+# tracker,wget https://trackerslist.com/best_aria2.txt -O - |awk NF
+#bt-tracker=traker1,traker2
 </code></pre>
 <h3 id="开机自启"><a class="header" href="#开机自启">开机自启</a></h3>
 <pre><code class="language-zsh"># 创建 service 文件
