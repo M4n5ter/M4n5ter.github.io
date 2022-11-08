@@ -4182,7 +4182,7 @@ nc -nv &lt;中间机器 IP&gt; &lt;中间机器端口&gt;
 <pre><code>客户端 -&gt; 中间机器 IP:PORT -&gt; 目标机器 IP:PORT
 </code></pre>
 <h3 id="发送文件"><a class="header" href="#发送文件">发送文件</a></h3>
-<p>既然都能通信了，那么发文件也是理所应当的，基本传文件本质也是流量传输。</p>
+<p>既然都能通信了，那么发文件也是理所应当的，传文件本质也是流量传输。</p>
 <pre><code class="language-zsh"># 提供文件的机器，这样表示建立连接后把 temp.txt 的内容发送过去
 nc -lvvp 1665 &lt; temp.txt
 # 需要获取文件的机器，这样与目标建立连接后，把它发过来的内容重定向到一个文件中
