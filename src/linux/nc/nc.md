@@ -126,7 +126,7 @@ nc -lp 6666 -e /bin/bash
 
 ```zsh
 Host github.com
-  ProxyCommand ncat --proxy 127.0.0.1:10808 --proxy-type socks5  %h %p
+  ProxyCommand ncat --proxy 127.0.0.1:10808 --proxy-type <Your proxy type>  %h %p
 ```
 
 这样对 github 仓库进行 `git pull` `git push` 这样的操作都会走代理。
