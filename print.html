@@ -4211,7 +4211,7 @@ nc -lp 6666 -e /bin/bash
 <h3 id="ssh-代理"><a class="header" href="#ssh-代理">SSH 代理</a></h3>
 <p>~/.ssh/config</p>
 <pre><code class="language-zsh">Host github.com
-  ProxyCommand ncat --proxy 127.0.0.1:10808 --proxy-type socks5  %h %p
+  ProxyCommand ncat --proxy 127.0.0.1:10808 --proxy-type &lt;Your proxy type&gt;  %h %p
 </code></pre>
 <p>这样对 github 仓库进行 <code>git pull</code> <code>git push</code> 这样的操作都会走代理。</p>
 <p><code>--proxy</code> 和 <code>--proxy-type</code> 可以让 <code>ncat</code> 摇身一变为一个代理工具。</p>
