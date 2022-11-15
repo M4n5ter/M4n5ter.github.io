@@ -5,7 +5,7 @@
 使用 alpine based image，并且挂载了 unix socket。
 
 ```bash
-docker run -d \
+\$ docker run -d \
 -v `pwd`/conf/:/etc/postgresql/postgresql.conf \
 -v `pwd`/data:/var/lib/postgresql/data \
 -v /var/run/postgresql:/var/run/postgresql \
@@ -20,19 +20,19 @@ postgres:15-alpine
 ## 使用 `pgcli` 来获得拥有更友好的客户端
 
 ```bash
-$ sudo pacman -S pgcli
+\$ sudo pacman -S pgcli
 # -or-
-$ sudo apt-get install pgcli
+\$ sudo apt-get install pgcli
 # -or-
-$ brew install pgcli
+\$ brew install pgcli
 # -or-
-$ pip install -U pgcli
+\$ pip install -U pgcli
 ```
 
 ### 默认启动直接通过 unix socket 连接 postgres
 
 ```bash
-$ pgcli
+\$ pgcli
 Server: PostgreSQL 15.1
 Version: 3.5.0
 Home: http://pgcli.com
