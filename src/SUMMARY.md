@@ -25,6 +25,7 @@
   - [nmap-netcat(nc)](./linux/nc/nc.md)
   - [mkcert](./linux/mkcert/mkcert.md)
   - [aria2](./linux/aria2/aria2.md)
+  - [postgres](./linux/postgres/postgres.md)
 - [Blockchain](./blockchain/blockchain.md)
   - [substrate TODO](./blockchain/substrate/substrate.md)
 - [issues and solutions](./issues/issues.md)
