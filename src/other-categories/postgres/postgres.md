@@ -8,7 +8,7 @@
 \$ mkdir conf
 \$ docker run -i --rm postgres:15-alpine cat /usr/local/share/postgresql/postgresql.conf.sample > conf/postgresql.conf
 \$ docker run -d \
--v `pwd`/conf/:/etc/postgresql/postgresql.conf \
+-v `pwd`/conf/postgresql.conf:/etc/postgresql/postgresql.conf \
 -v `pwd`/data:/var/lib/postgresql/data \
 -v /var/run/postgresql:/var/run/postgresql \
 -p 5432:5432 \
@@ -16,7 +16,7 @@
 -e LANG=zh_CN.utf8 \
 -e POSTGRES_INITDB_ARGS="--locale-provider=icu --icu-locale=zh-CN" \
 -e POSTGRES_PASSWORD=<YOUR PASSWORD> \
-postgres:15-alpine
+postgres:15-alpine -c 'config_file=/etc/postgresql/postgresql.conf'
 ```
 
 ## 使用 `pgcli` 来获得拥有更友好的客户端
