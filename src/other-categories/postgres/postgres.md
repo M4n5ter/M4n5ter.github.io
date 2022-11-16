@@ -40,6 +40,13 @@ m4n5ter> exit
 Goodbye!
 ```
 
+### linux navicat reset
+
+下面的方法不会丢失已经存在连接(Navicat 16 Premium)：
+```bash
+\$ dconf reset -f "/com/premiumsoft/navicat-premium/" && rm -Rf ~/.config/navicat/Premium/preferences.json*
+```
+
 ## Links
 
 * [Postgres Current Version Document](https://www.postgresql.org/docs/current)
