@@ -4549,7 +4549,9 @@ sudo systemctl enable --now aria2
 <h1 id="postgres"><a class="header" href="#postgres">Postgres</a></h1>
 <h2 id="利用-docker-快速在-当前工作目录pwd-启动一个本地-postgres-环境"><a class="header" href="#利用-docker-快速在-当前工作目录pwd-启动一个本地-postgres-环境">利用 Docker 快速在 <strong>当前工作目录(<code>pwd</code>)</strong> 启动一个本地 postgres 环境</a></h2>
 <p>使用 alpine based image，并且挂载了 unix socket。</p>
-<pre><code class="language-bash">$ docker run -d \
+<pre><code class="language-bash">$ mkdir conf
+$ docker run -i --rm postgres:15-alpine cat /usr/local/share/postgresql/postgresql.conf.sample &gt; conf/postgresql.conf
+$ docker run -d \
 -v `pwd`/conf/:/etc/postgresql/postgresql.conf \
 -v `pwd`/data:/var/lib/postgresql/data \
 -v /var/run/postgresql:/var/run/postgresql \
