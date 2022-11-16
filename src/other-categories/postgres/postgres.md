@@ -5,6 +5,8 @@
 使用 alpine based image，并且挂载了 unix socket。
 
 ```bash
+\$ mkdir conf
+\$ docker run -i --rm postgres:15-alpine cat /usr/local/share/postgresql/postgresql.conf.sample > conf/postgresql.conf
 \$ docker run -d \
 -v `pwd`/conf/:/etc/postgresql/postgresql.conf \
 -v `pwd`/data:/var/lib/postgresql/data \
