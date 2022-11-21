@@ -45,10 +45,18 @@ Goodbye!
 ### linux navicat reset
 
 下面的方法不会丢失已经存在连接(Navicat 16 Premium)：
-```bash
-\$ dconf reset -f "/com/premiumsoft/navicat-premium/" && rm -Rf ~/.config/navicat/Premium/preferences.json*
-```
 
-## Links
+```bash
+#!/bin/bash
+
+# Backup
+cp ~/.config/dconf/user ~/.config/dconf/user.bk
+cp ~/.config/navicat/Premium/preferences.json ~/.config/navicat/Premium/preferences.json.bk
+
+# Clear data in dconf
+dconf reset -f /com/premiumsoft/navicat-premium/
+# Remove data fields in config file
+sed -i -E 's/,?"([A-Z0-9]+)":\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json## Links
+```
 
 * [Postgres Current Version Document](https://www.postgresql.org/docs/current)
