@@ -208,9 +208,17 @@ Goodbye!
 </code></pre>
 <h3 id="linux-navicat-reset"><a class="header" href="#linux-navicat-reset">linux navicat reset</a></h3>
 <p>下面的方法不会丢失已经存在连接(Navicat 16 Premium)：</p>
-<pre><code class="language-bash">$ dconf reset -f &quot;/com/premiumsoft/navicat-premium/&quot; &amp;&amp; rm -Rf ~/.config/navicat/Premium/preferences.json*
+<pre><code class="language-bash">#!/bin/bash
+
+# Backup
+cp ~/.config/dconf/user ~/.config/dconf/user.bk
+cp ~/.config/navicat/Premium/preferences.json ~/.config/navicat/Premium/preferences.json.bk
+
+# Clear data in dconf
+dconf reset -f /com/premiumsoft/navicat-premium/
+# Remove data fields in config file
+sed -i -E 's/,?&quot;([A-Z0-9]+)&quot;:\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json## Links
 </code></pre>
-<h2 id="links"><a class="header" href="#links">Links</a></h2>
 <ul>
 <li><a href="https://www.postgresql.org/docs/current">Postgres Current Version Document</a></li>
 </ul>
