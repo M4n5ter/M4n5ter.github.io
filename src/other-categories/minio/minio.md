@@ -88,9 +88,9 @@ events {
 
 
 stream {
-        #log_format basic '$remote_addr [$time_local] '
-        #         '$protocol $status $bytes_sent $bytes_received '
-        #         '$session_time';
+        #log_format basic '\$remote_addr [\$time_local] '
+        #         '\$protocol \$status \$bytes_sent \$bytes_received '
+        #         '\$session_time';
         #access_log /var/log/nginx/stream-access.log basic buffer=32k;
 
 
@@ -136,10 +136,10 @@ http {
         add_header Access-Control-Allow-Methods *;
 
          location / {
-               proxy_set_header X-Real-IP $remote_addr;
-               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-               proxy_set_header X-Forwarded-Proto $scheme;
-               proxy_set_header Host $http_host; # 主要是此处，保护 host header
+               proxy_set_header X-Real-IP \$remote_addr;
+               proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+               proxy_set_header X-Forwarded-Proto \$scheme;
+               proxy_set_header Host \$http_host; # 主要是此处，保护 host header
 
                proxy_connect_timeout 300;
                # 默认是 HTTP/1, keepalive 需要 HTTP/1.1
@@ -158,7 +158,7 @@ http {
 将 `docker-compose.yml` 与 `nginx.conf` 置于统一目录下，然后执行：
 
 ```bash
-$ docker compose up -d
+\$ docker compose up -d
 # -or-
-$ docker-compose up -d
+\$ docker-compose up -d
 ```
