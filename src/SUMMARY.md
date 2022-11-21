@@ -27,6 +27,7 @@
   - [aria2](./other-categories/aria2/aria2.md)
   - [postgres](./other-categories/postgres/postgres.md)
   - [pre-commit](./other-categories/pre-commit/pre-commit.md)
+  - [minio](./other-categories/minio/minio.md)
 - [Blockchain](./blockchain/blockchain.md)
   - [substrate TODO](./blockchain/substrate/substrate.md)
 - [issues and solutions](./issues/issues.md)
