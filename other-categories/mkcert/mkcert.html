@@ -1,0 +1,397 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>mkcert - M4n5ter Blog</title>
+    <!-- Custom HTML head -->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="shortcut icon" href="../../favicon.png">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/chrome.css">
+    <link rel="stylesheet" href="../../css/print.css" media="print">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../../highlight.css">
+    <link rel="stylesheet" href="../../tomorrow-night.css">
+    <link rel="stylesheet" href="../../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../../theme/style3.css">
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../../go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="../../rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tower/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item "><a href="../../rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li><li class="chapter-item "><a href="../../rust/mini-redis/spawning.html"><strong aria-hidden="true">3.2.2.</strong> Spawning</a></li><li class="chapter-item "><a href="../../rust/mini-redis/shared_state.html"><strong aria-hidden="true">3.2.3.</strong> Shared state</a></li><li class="chapter-item "><a href="../../rust/mini-redis/channels.html"><strong aria-hidden="true">3.2.4.</strong> Channels</a></li><li class="chapter-item "><a href="../../rust/mini-redis/io.html"><strong aria-hidden="true">3.2.5.</strong> I/O</a></li><li class="chapter-item "><a href="../../rust/mini-redis/framing.html"><strong aria-hidden="true">3.2.6.</strong> Framing</a></li><li class="chapter-item "><a href="../../rust/mini-redis/async_in_depth.html"><strong aria-hidden="true">3.2.7.</strong> Async in depth</a></li><li class="chapter-item "><a href="../../rust/mini-redis/select.html"><strong aria-hidden="true">3.2.8.</strong> Select</a></li><li class="chapter-item "><a href="../../rust/mini-redis/streams.html"><strong aria-hidden="true">3.2.9.</strong> Streams</a></li></ol></li><li class="chapter-item "><a href="../../rust/tokio/tokio.html"><strong aria-hidden="true">3.3.</strong> Tokio</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/topics.html"><strong aria-hidden="true">3.3.1.</strong> Topics TODO</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/bridging_with_sync_code.html"><strong aria-hidden="true">3.3.1.1.</strong> Bridging with sync code TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/graceful_shutdown.html"><strong aria-hidden="true">3.3.1.2.</strong> Graceful Shutdown TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/getting_started_with_tracing.html"><strong aria-hidden="true">3.3.1.3.</strong> Getting started with Tracing TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/next_steps_with_tracing.html"><strong aria-hidden="true">3.3.1.4.</strong> Next steps with Tracing TODO</a></li></ol></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../other-categories/other-categories.html"><strong aria-hidden="true">4.</strong> Other categories</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../other-categories/archlinux/archlinux.html"><strong aria-hidden="true">4.1.</strong> archlinux</a></li><li class="chapter-item "><a href="../../other-categories/nc/nc.html"><strong aria-hidden="true">4.2.</strong> nmap-netcat(nc)</a></li><li class="chapter-item expanded "><a href="../../other-categories/mkcert/mkcert.html" class="active"><strong aria-hidden="true">4.3.</strong> mkcert</a></li><li class="chapter-item "><a href="../../other-categories/aria2/aria2.html"><strong aria-hidden="true">4.4.</strong> aria2</a></li><li class="chapter-item "><a href="../../other-categories/postgres/postgres.html"><strong aria-hidden="true">4.5.</strong> postgres</a></li><li class="chapter-item "><a href="../../other-categories/pre-commit/pre-commit.html"><strong aria-hidden="true">4.6.</strong> pre-commit</a></li><li class="chapter-item "><a href="../../other-categories/minio/minio.html"><strong aria-hidden="true">4.7.</strong> minio</a></li><li class="chapter-item "><a href="../../other-categories/git/git.html"><strong aria-hidden="true">4.8.</strong> git</a></li><li class="chapter-item "><a href="../../other-categories/croc/croc.html"><strong aria-hidden="true">4.9.</strong> croc</a></li></ol></li><li class="chapter-item expanded "><a href="../../blockchain/blockchain.html"><strong aria-hidden="true">5.</strong> Blockchain</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../blockchain/substrate/substrate.html"><strong aria-hidden="true">5.1.</strong> substrate TODO</a></li></ol></li><li class="chapter-item expanded "><a href="../../issues/issues.html"><strong aria-hidden="true">6.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker.html"><strong aria-hidden="true">6.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker_issues.html"><strong aria-hidden="true">6.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/mysql/mysql.html"><strong aria-hidden="true">6.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/mysql/mysql_issues.html"><strong aria-hidden="true">6.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/gitea/gitea.html"><strong aria-hidden="true">6.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/gitea/gitea_issues.html"><strong aria-hidden="true">6.3.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/nginx/nginx.html"><strong aria-hidden="true">6.4.</strong> nginx</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/nginx/nginx_issues.html"><strong aria-hidden="true">6.4.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../links/links.html"><strong aria-hidden="true">7.</strong> Links</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+            <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io/edit/main/src/other-categories/mkcert/mkcert.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <h2 id="mkcert"><a class="header" href="#mkcert">mkcert</a></h2>
+<p><code>mkcert</code> 是 GO 编写的，一个简单的<strong>零配置</strong>的，用来生成自签证书的工具。</p>
+<p>下面给一个简单的示例，在本地生成自签证书，并使用让 nc 使用生成的证书。</p>
+<pre><code class="language-zsh">~ ·········································································································································  10:46:25
+❯ mkcert -install
+The local CA is already installed in the system trust store! 👍The local CA is already installed in the Firefox and/or Chrome/Chromium trust store! 👍
+~ ·········································································································································  10:46:34
+❯ mkcert example.com &quot;*.example.com&quot; example.test localhost 127.0.0.1 ::1
+
+Created a new certificate valid for the following names 📜 - &quot;example.com&quot;
+ - &quot;*.example.com&quot;
+ - &quot;example.test&quot;
+ - &quot;localhost&quot;
+ - &quot;127.0.0.1&quot;
+ - &quot;::1&quot;
+
+Reminder: X.509 wildcards only go one level deep, so this won't match a.b.example.com ℹ️
+
+The certificate is at &quot;./example.com+5.pem&quot; and the key at &quot;./example.com+5-key.pem&quot; ✅
+It will expire on 30 January 2025 🗓
+
+~ ·········································································································································  10:47:37
+❯ ls             
+公共  视频  文档  音乐  aria          aria2-downloads  Dockerfile             example.com+5.pem  GOPATH  minio-binaries  nowip_hosts.txt  tech_backend.jar
+模板  图片  下载  桌面  aria2-config  cv_debug.log     example.com+5-key.pem  go                 math    navicat_reset   src
+~ ·········································································································································  10:47:55
+❯ ncat -lvp 1589 --ssl-key example.com+5-key.pem --ssl-cert example.com+5.pem 
+Ncat: Version 7.92 ( https://nmap.org/ncat )
+Ncat: Listening on :::1589
+Ncat: Listening on 0.0.0.0:1589
+Ncat: Connection from 127.0.0.1.
+Ncat: Connection from 127.0.0.1:39156.
+Ncat: Failed SSL connection from 127.0.0.1: error:00000000:lib(0):func(0):reason(0)
+</code></pre>
+<p><code>mkcert</code>  自动生成并安装一个本地 CA 到 root stores，并且生成 locally-trusted 证书。<code>mkcert</code> 不会自动使用证书来配置服务器，不过，这取决于你。</p>
+<h2 id="安装"><a class="header" href="#安装">安装</a></h2>
+<blockquote>
+<p>Warning: <code>mkcert</code>  自动生成的 <code>rootCA-key.pem</code> 文件提供了完整的能力来拦截你机器上的安全请求。请不要分享它。 </p>
+</blockquote>
+<h3 id="macos"><a class="header" href="#macos">macOS</a></h3>
+<pre><code class="language-zsh">brew install mkcert
+brew install nss # 如果用 Firefox 的话
+</code></pre>
+<h3 id="linux"><a class="header" href="#linux">Linux</a></h3>
+<p>在 Linux 上，首先要安装 <code>certutil</code></p>
+<pre><code class="language-zsh">sudo apt install libnss3-tools
+    -or-
+sudo yum install nss-tools
+    -or-
+sudo pacman -S nss
+    -or-
+sudo zypper install mozilla-nss-tools
+</code></pre>
+<p>然后可以使用 <a href="https://docs.brew.sh/Homebrew-on-Linux">Homebrew on Linux</a> 来安装。</p>
+<pre><code class="language-zsh">brew install mkcert
+</code></pre>
+<p>或者从源码构建（要求 Go 1.13+）</p>
+<pre><code class="language-zsh">git clone https://github.com/FiloSottile/mkcert &amp;&amp; cd mkcert
+go build -ldflags &quot;-X main.Version=$(git describe --tags)&quot;
+</code></pre>
+<p>又或者使用 <a href="https://github.com/FiloSottile/mkcert/releases">预构建的二进制文件</a>。</p>
+<pre><code class="language-zsh">curl -JLO &quot;https://dl.filippo.io/mkcert/latest?for=linux/amd64&quot;
+chmod +x mkcert-v*-linux-amd64
+sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+</code></pre>
+<p>对于 Arch Linux 用户（比如我），<a href="https://www.archlinux.org/packages/community/x86_64/mkcert/"><code>mkcert</code></a> 在 Arch Linux 官方仓库中可用。</p>
+<pre><code class="language-zsh">sudo pacman -S mkcert
+</code></pre>
+<h3 id="windows"><a class="header" href="#windows">Windows</a></h3>
+<p>使用 <a href="https://chocolatey.org/">Chocolatey</a></p>
+<pre><code class="language-zsh">choco install mkcert
+</code></pre>
+<p>或者使用 Scoop</p>
+<pre><code class="language-zsh">scoop bucket add extras
+scoop install mkcert
+</code></pre>
+<p>或者从源码构建（要求 Go 1.10+） ，或者使用 <a href="https://github.com/FiloSottile/mkcert/releases">预构建的二进制文件</a>。</p>
+<p>如果遇到权限问题，请使用管理员运行 <code>mkcert</code></p>
+<h2 id="支持的-root-stores"><a class="header" href="#支持的-root-stores">支持的 root stores</a></h2>
+<p><code>mkcert</code> 支持以下 root stores：</p>
+<ul>
+<li>
+<p>macOS system store</p>
+</li>
+<li>
+<p>Windows system store</p>
+</li>
+<li>
+<p>Linux 发行版提供</p>
+<ul>
+<li>
+<p><code>update-ca-trust</code> （Fedora，RHEL，CentOS）或者</p>
+</li>
+<li>
+<p><code>update-ca-certificates</code> （Ubuntu，Debian，OpenSUSE，SLES）或者</p>
+</li>
+<li>
+<p><code>trust</code> （Arch）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Firefox （仅 macOS 和 Linux）</p>
+</li>
+<li>
+<p>Chrome 和 Chromium</p>
+</li>
+<li>
+<p>Java（当 <code>JAVA_HOME</code> 被设置时）</p>
+</li>
+</ul>
+<p>为了把 local root CA 装到这些 root stores 中，你可以设置 <code>TRUST_STORES</code> 环境变量到一个逗号分隔的 list。有这些选项：&quot;system&quot;,&quot;java&quot; 和 &quot;nss&quot;（包括了 Firefox）。</p>
+<h2 id="高级-topics"><a class="header" href="#高级-topics">高级 topics</a></h2>
+<hr />
+<h3 id="高级选项"><a class="header" href="#高级选项">高级选项</a></h3>
+<pre><code class="language-zsh">    -cert-file FILE, -key-file FILE, -p12-file FILE
+        自定义输出路径.
+
+    -client
+        生成供客户端认证使用的证书.
+
+    -ecdsa
+        生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
+
+    -pkcs12
+        生成一个 &quot;.p12&quot; PKCS #12 文件，也可以被识别为 &quot;.pfx&quot; 文件,
+        包含 cert 和 key for legacy applications.
+
+    -csr CSR
+        生成一个给予 CSR（证书签名申请） 的证书。
+    与除了 -install 和 -cert-file 以外的其它所以 flag 和参数冲突！
+</code></pre>
+<p><a href="https://cloud.tencent.com/document/product/400/5367">SSL 证书 什么是CSR？-常见问题-文档中心-腾讯云</a></p>
+<blockquote>
+<p><strong>请注意！</strong> 你必须把这些选项放在域名列表之前。</p>
+</blockquote>
+<h3 id="例如"><a class="header" href="#例如">例如</a></h3>
+<pre><code class="language-zsh">mkcert -key-file key.pem -cert-file cert.pem example.com *.example.com
+</code></pre>
+<h3 id="smime-邮件安全证书"><a class="header" href="#smime-邮件安全证书">S/MIME （邮件安全证书）</a></h3>
+<p>用下面这种方式 <code>mkcert</code> 会生成一个 S/MIME 证书：</p>
+<pre><code class="language-zsh">mkcert filippo@example.com
+</code></pre>
+<h3 id="移动设备"><a class="header" href="#移动设备">移动设备</a></h3>
+<p>对于要让移动设备信任证书的情况，你得安装 root CA。就是 <code>rootCA.pem</code> 这个文件，可以通过 <code>mkcert -CAROOT</code> 打印出这个文件所在的目录。</p>
+<p>在 iOS 上，你也可以使用 AirDrop，把 CA 邮件发给你自己，或者通过一个 HTTP server 提供它。在打开它之后，你需要  <a href="https://github.com/FiloSottile/mkcert/issues/233#issuecomment-690110809">install the profile in Settings &gt; Profile Downloaded</a> and then <a href="https://support.apple.com/en-nz/HT204477">enable full trust in it</a> 。</p>
+<p>对于 Android ，你得安装这个 CA 然后在应用程序的开发版本中启用 user roots。可以看一看这个 <a href="https://stackoverflow.com/a/22040887/749014">StackOverflow 回答</a> 。</p>
+<h3 id="用-nodejs-来使用这个-root"><a class="header" href="#用-nodejs-来使用这个-root">用 Node.js 来使用这个 root</a></h3>
+<p>Node 不使用 system root store，所以它不会自动接受 <code>mkcert</code> 证书。相反，你得设置 <a href="https://nodejs.org/api/cli.html#cli_node_extra_ca_certs_file"><code>NODE_EXTRA_CA_CERTS</code></a> 环境变量。</p>
+<pre><code class="language-zsh">export NODE_EXTRA_CA_CERTS=&quot;$(mkcert -CAROOT)/rootCA.pem&quot;
+</code></pre>
+<h3 id="改变-ca-文件的位置"><a class="header" href="#改变-ca-文件的位置">改变 CA 文件的位置</a></h3>
+<p>CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般来说你不会想去关注它的位置，因为它会被自动装载。但是你可以通过 <code>mkcert -CAROOT</code> 来打印这个目录位置。</p>
+<p>如果你想要管理单独的 CA 们，你可以使用 <code>\$CAROOT</code> 环境变量来设置 mkcert 放置和寻找 CA files 的路径。</p>
+<h3 id="在其它系统上安装-ca"><a class="header" href="#在其它系统上安装-ca">在其它系统上安装 CA</a></h3>
+<p>安装 trust store 不需要 CA key（只要 CA），所以你可以导出 CA，并且使用 <code>mkcert</code> 来安装到其它机器上。</p>
+<ul>
+<li>
+<p>找到 <code>rootCA.pem</code> 文件，可以用 <code>mkcert -CAROOT</code> 找到对应目录。</p>
+</li>
+<li>
+<p>把它 copy 到别的机器上。</p>
+</li>
+<li>
+<p>设置 <code>\$CAROOT</code> 为 <code>rootCA.pem</code> 所在目录。</p>
+</li>
+<li>
+<p>运行 <code>mkcert -install</code>(arch linux 可以 <code>sudo trust anchor --store rootCA.pem</code>，其它发行版可以用自带的命令手动添加来信任 CA)</p>
+</li>
+</ul>
+<p>请千万记住 <code>mkcert</code> 是用于开发目的的，不建议用于生产，所以它不应该被用到用户终端上，并且你不应该导出或者共享 <code>rootCA-key.pem</code> 。</p>
+
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../../other-categories/nc/nc.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../other-categories/aria2/aria2.html" class="mobile-nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../../other-categories/nc/nc.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a rel="next" href="../../other-categories/aria2/aria2.html" class="nav-chapters next" title="Next chapter"
+                aria-label="Next chapter" aria-keyshortcuts="Right">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </nav>
+
+    </div>
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+    <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "other-categories/mkcert/mkcert.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../../assets/custom.js"></script>
+    <script type="text/javascript" src="../../assets/bigPicture.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>I/O - M4n5ter Blog</title>
+    <!-- Custom HTML head -->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="shortcut icon" href="../../favicon.png">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/chrome.css">
+    <link rel="stylesheet" href="../../css/print.css" media="print">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../../highlight.css">
+    <link rel="stylesheet" href="../../tomorrow-night.css">
+    <link rel="stylesheet" href="../../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../../theme/style3.css">
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../../go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="../../rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tower/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item expanded "><a href="../../rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li><li class="chapter-item "><a href="../../rust/mini-redis/spawning.html"><strong aria-hidden="true">3.2.2.</strong> Spawning</a></li><li class="chapter-item "><a href="../../rust/mini-redis/shared_state.html"><strong aria-hidden="true">3.2.3.</strong> Shared state</a></li><li class="chapter-item "><a href="../../rust/mini-redis/channels.html"><strong aria-hidden="true">3.2.4.</strong> Channels</a></li><li class="chapter-item expanded "><a href="../../rust/mini-redis/io.html" class="active"><strong aria-hidden="true">3.2.5.</strong> I/O</a></li><li class="chapter-item "><a href="../../rust/mini-redis/framing.html"><strong aria-hidden="true">3.2.6.</strong> Framing</a></li><li class="chapter-item "><a href="../../rust/mini-redis/async_in_depth.html"><strong aria-hidden="true">3.2.7.</strong> Async in depth</a></li><li class="chapter-item "><a href="../../rust/mini-redis/select.html"><strong aria-hidden="true">3.2.8.</strong> Select</a></li><li class="chapter-item "><a href="../../rust/mini-redis/streams.html"><strong aria-hidden="true">3.2.9.</strong> Streams</a></li></ol></li><li class="chapter-item "><a href="../../rust/tokio/tokio.html"><strong aria-hidden="true">3.3.</strong> Tokio</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/topics.html"><strong aria-hidden="true">3.3.1.</strong> Topics TODO</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/bridging_with_sync_code.html"><strong aria-hidden="true">3.3.1.1.</strong> Bridging with sync code TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/graceful_shutdown.html"><strong aria-hidden="true">3.3.1.2.</strong> Graceful Shutdown TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/getting_started_with_tracing.html"><strong aria-hidden="true">3.3.1.3.</strong> Getting started with Tracing TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/next_steps_with_tracing.html"><strong aria-hidden="true">3.3.1.4.</strong> Next steps with Tracing TODO</a></li></ol></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../other-categories/other-categories.html"><strong aria-hidden="true">4.</strong> Other categories</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../other-categories/archlinux/archlinux.html"><strong aria-hidden="true">4.1.</strong> archlinux</a></li><li class="chapter-item "><a href="../../other-categories/nc/nc.html"><strong aria-hidden="true">4.2.</strong> nmap-netcat(nc)</a></li><li class="chapter-item "><a href="../../other-categories/mkcert/mkcert.html"><strong aria-hidden="true">4.3.</strong> mkcert</a></li><li class="chapter-item "><a href="../../other-categories/aria2/aria2.html"><strong aria-hidden="true">4.4.</strong> aria2</a></li><li class="chapter-item "><a href="../../other-categories/postgres/postgres.html"><strong aria-hidden="true">4.5.</strong> postgres</a></li><li class="chapter-item "><a href="../../other-categories/pre-commit/pre-commit.html"><strong aria-hidden="true">4.6.</strong> pre-commit</a></li><li class="chapter-item "><a href="../../other-categories/minio/minio.html"><strong aria-hidden="true">4.7.</strong> minio</a></li><li class="chapter-item "><a href="../../other-categories/git/git.html"><strong aria-hidden="true">4.8.</strong> git</a></li><li class="chapter-item "><a href="../../other-categories/croc/croc.html"><strong aria-hidden="true">4.9.</strong> croc</a></li></ol></li><li class="chapter-item expanded "><a href="../../blockchain/blockchain.html"><strong aria-hidden="true">5.</strong> Blockchain</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../blockchain/substrate/substrate.html"><strong aria-hidden="true">5.1.</strong> substrate TODO</a></li></ol></li><li class="chapter-item expanded "><a href="../../issues/issues.html"><strong aria-hidden="true">6.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker.html"><strong aria-hidden="true">6.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker_issues.html"><strong aria-hidden="true">6.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/mysql/mysql.html"><strong aria-hidden="true">6.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/mysql/mysql_issues.html"><strong aria-hidden="true">6.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/gitea/gitea.html"><strong aria-hidden="true">6.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/gitea/gitea_issues.html"><strong aria-hidden="true">6.3.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/nginx/nginx.html"><strong aria-hidden="true">6.4.</strong> nginx</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/nginx/nginx_issues.html"><strong aria-hidden="true">6.4.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../links/links.html"><strong aria-hidden="true">7.</strong> Links</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+            <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io/edit/main/src/rust/mini-redis/io.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <h2 id="io"><a class="header" href="#io">I/O</a></h2>
+<p>Tokio 的 I/O 操作大致与 <code>std</code> 中的相同，但是是异步的。这有一个为读取而生的 trait <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> 和一个为写入而生的 trait <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> 。一些特定的类型恰当的实现了这些 trait（<a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html"><code>TcpStream</code></a>, <a href="https://docs.rs/tokio/1/tokio/fs/struct.File.html"><code>File</code></a>, <a href="https://docs.rs/tokio/1/tokio/io/struct.Stdout.html"><code>Stdout</code></a>）。<a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> 也被一些像 <code>Vec&lt;u8&gt;</code> 和 <code>&amp;[u8]</code> 这样的数据结构实现了。这允许在需要 reader 或 writer 的地方使用字节数组。</p>
+<p>本章将会覆盖基础的 Tokio I/O 读写并且通过几个例子来说明。下一章将会给出一个更加高级的 I/O 示例。</p>
+<h2 id="asyncread-and-asyncwrite"><a class="header" href="#asyncread-and-asyncwrite"><code>AsyncRead</code> and <code>AsyncWrite</code></a></h2>
+<p>这两个 trait 提供了异步读写字节流的工具。在这些 trait 上的方法通常不会直接调用，就好像你不会手动从 <code>Future</code> 调用 <code>poll</code> 方法。相反，我们都是通过 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html"><code>AsyncReadExt</code></a> and <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html"><code>AsyncWriteExt</code></a> 提供的实用方法来使用它们。</p>
+<p>让我们简略的看一下它俩的几个方法。这些方法都是 <code>async</code> ，所以都必须用 <code>.await</code> 来使用。</p>
+<h3 id="async-fn-read"><a class="header" href="#async-fn-read"><code>async fn read()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read"><code>AsyncReadExt::read</code></a> 提供了一个异步方法来读取数据到一个 buffer，返回读取的字节数。</p>
+<p><strong>Note：</strong> 当 <code>read()</code> 返回了 <code>Ok(0)</code> ，这标志着 stream 关闭了。任何对 <code>read()</code> 的进一步调用都会立即返回 <code>Ok(0)</code> 。对 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html"><code>TcpStream</code></a> 实例来说，这标志着 socket 的 the read half 关闭了。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::fs::File;
+use tokio::io::{self, AsyncReadExt};
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut buffer = [0; 10];
+
+    // read up to 10 bytes
+    let n = f.read(&amp;mut buffer[..]).await?;
+
+    println!(&quot;The bytes: {:?}&quot;, &amp;buffer[..n]);
+    Ok(())
+}
+</code></pre></pre>
+<h3 id="async-fn-read_to_end"><a class="header" href="#async-fn-read_to_end"><code>async fn read_to_end()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read_to_end"><code>AsyncReadExt::read_to_end</code></a> 会从 stream 读取所有的字节直到 EOF。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncReadExt};
+use tokio::fs::File;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut buffer = Vec::new();
+
+    // read the whole file
+    f.read_to_end(&amp;mut buffer).await?;
+    Ok(())
+}
+</code></pre></pre>
+<h3 id="async-fn-write"><a class="header" href="#async-fn-write"><code>async fn write()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write"><code>AsyncWriteExt::write</code></a> 把一个 buffer 写入到 writer，返回写入的字节数。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncWriteExt};
+use tokio::fs::File;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut file = File::create(&quot;foo.txt&quot;).await?;
+
+    // Writes some prefix of the byte string, but not necessarily all of it.
+    let n = file.write(b&quot;some bytes&quot;).await?;
+
+    println!(&quot;Wrote the first {} bytes of 'some bytes'.&quot;, n);
+    Ok(())
+}
+</code></pre></pre>
+<h3 id="async-fn-write_all"><a class="header" href="#async-fn-write_all"><code>async fn write_all()</code></a></h3>
+<p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_all"><code>AsyncWriteExt::write_all</code></a> 把整个 buffer 写入 writer，与上面那个不一样，这哥们就不返回写入的字节数了。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncWriteExt};
+use tokio::fs::File;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut file = File::create(&quot;foo.txt&quot;).await?;
+
+    file.write_all(b&quot;some bytes&quot;).await?;
+    Ok(())
+}
+</code></pre></pre>
+<p>这两个特征都包括许多其他有用的方法。有关完整的方法列表，请参阅API文档。</p>
+<h2 id="helper-functions-辅助函数"><a class="header" href="#helper-functions-辅助函数">Helper functions （辅助函数）</a></h2>
+<p>此外，就像 <code>std</code>， <a href="https://docs.rs/tokio/1/tokio/io/index.html"><code>tokio::io</code></a> 模块包含了一些有用的工具函数以及用于处理 <a href="https://docs.rs/tokio/1/tokio/io/fn.stdin.html">standard input</a>、 <a href="https://docs.rs/tokio/1/tokio/io/fn.stdout.html">standard output</a> 和 <a href="https://docs.rs/tokio/1/tokio/io/fn.stderr.html">standard error</a> 的API。例如，<a href="https://docs.rs/tokio/1/tokio/io/fn.copy.html"><code>tokio::io::copy</code></a> 异步的将 reader 的全部内容 copy 到一个 writer 。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::fs::File;
+use tokio::io;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let mut reader: &amp;[u8] = b&quot;hello&quot;;
+    let mut file = File::create(&quot;foo.txt&quot;).await?;
+
+    io::copy(&amp;mut reader, &amp;mut file).await?;
+    Ok(())
+}
+</code></pre></pre>
+<p>请注意，这种用法体现了 <code>&amp;[u8]</code> 也实现 <code>AsyncRead</code> 的事实。</p>
+<h2 id="echo-server-回声服务"><a class="header" href="#echo-server-回声服务">Echo server （回声服务）</a></h2>
+<p>让我们做些玩意儿来练习下异步I/O。我们将要写一个回声服务。</p>
+<p>这个回声服务要绑定在一个 <code>TcpListener</code> 并且在一个 loop 中接收入站连接。对每个入站连接来说，数据从 socket 中读取并立即写回 socket。客户端发送数据到服务端，并接收回相同的数据。</p>
+<p>我们将会用两种不同的方案来实现两次回声服务。</p>
+<h3 id="using-iocopy"><a class="header" href="#using-iocopy">Using <code>io::copy()</code></a></h3>
+<p>开始，我们将用 <a href="https://docs.rs/tokio/1/tokio/io/fn.copy.html"><code>io::copy</code></a> 实用工具来实现 echo 逻辑。</p>
+<p>你可以写在一个新的 binary 文件中：</p>
+<pre><code class="language-zsh">touch src/bin/echo-server-copy.rs
+</code></pre>
+<p>可以通过以下方式启动（或只是检查编译）：</p>
+<pre><code class="language-zsh">cargo run --bin echo-server-copy
+</code></pre>
+<p>我们能够使用一个标准的命令行工具，比如 <code>telnet</code> 来测试我们的回声服务，或者通过写一个简单的客户端，就像在 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#examples"><code>tokio::net::TcpStream</code></a> 文档中找到的那个一样。</p>
+<p>这是一个 TCP server 并且需要一个 accept loop。一个新的任务被生成来处理每个接收到的 socket 。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io;
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+
+        tokio::spawn(async move {
+            // Copy data here
+        });
+    }
+}
+</code></pre></pre>
+<p>就像前面说的，这个工具函数接收一个 reader 参数和一个 writer 参数，并且将数据从一个 copy 到另一个中。然而啊，我们只有一个 <code>TcpStream</code> ，这单个值同时实现了 <code>AsyncRead</code> 和 <code>AsyncWrite</code> 。可是由于 <code>io::copy</code> 对 reader 和 writer 都要求 <code>&amp;mut</code> ，这 socket 不能同时作为放到这两个参数上。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 这是无法编译的
+io::copy(&amp;mut socket, &amp;mut socket).await
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="splitting-a-reader--writer"><a class="header" href="#splitting-a-reader--writer">Splitting a reader + writer</a></h3>
+<p>为了解决这个难题，我们必须把 socket 分离成一个 reader 句柄和一个 writer 句柄。拆分 reader/writer 组合的最佳方法是使用 <a href="https://docs.rs/tokio/1/tokio/io/fn.split.html"><code>io::split</code></a>。</p>
+<p>任何同时实现了 reader + writer 的类型都能够使用 <a href="https://docs.rs/tokio/1/tokio/io/fn.split.html"><code>io::split</code></a> 实用工具来拆分。这个函数接收单个的值并返回分离的 reader 和 writer 句柄。这两个句柄可以被独立使用，包括分别在两个单独的任务中使用。</p>
+<p>举个例子，echo 客户端可以像这样并发处理读写：</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpStream;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let socket = TcpStream::connect(&quot;127.0.0.1:6142&quot;).await?;
+    let (mut rd, mut wr) = io::split(socket);
+
+    // Write data in the background
+    tokio::spawn(async move {
+        wr.write_all(b&quot;hello\r\n&quot;).await?;
+        wr.write_all(b&quot;world\r\n&quot;).await?;
+
+        // 有时候，rust 的类型推断器需要一点点的帮助
+        Ok::&lt;_, io::Error&gt;(())
+    });
+
+    let mut buf = vec![0; 128];
+
+    loop {
+        let n = rd.read(&amp;mut buf).await?;
+
+        if n == 0 {
+            break;
+        }
+
+        println!(&quot;GOT {:?}&quot;, &amp;buf[..n]);
+    }
+
+    Ok(())
+}
+</code></pre></pre>
+<p>因为 <code>io::split</code> 支持<strong>任何</strong>实现了 <code>AsyncRead + AsyncWrite</code> 的值，并返回独立的句柄，<code>io::split</code> 在内部使用了一个 <code>Arc</code> 和 一个 <code>Mutex</code> （这意味着会有蛮大的开销）。如果 socket 是 <code>TcpStream</code> 的情况就能避免这种开销。<code>TcpStream</code> 提供了两个专门的函数（<a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split"><code>into_split</code></a>）。</p>
+<p><a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 接收一个 <code>&amp;mut TcpStream</code> 并返回一个 reader 和 一个 writer 句柄。正因为使用的是引用，所以这两个句柄必须跟 <code>split()</code> 调用待在<strong>同一</strong>任务中。虽然有前面这个限制，但是它的这种专门实现是<strong>零开销</strong>的，没有 <code>Arc</code> 也没有 <code>Mutex</code> 。<code>TcpStream</code> 也提供了 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split"><code>into_split</code></a> 来支持处理可跨任务使用的场景，开销缩减到了只有一个 <code>Arc</code>。</p>
+<p>因为 <code>io::copy()</code> 调用是跟持有 <code>TcpStream</code> 的任务是同一个任务（跟上面那段代码中的情况不同，上面的代码的 rd 跟 wr 在不同的任务中），这就意味着我们完全可以使用 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 。在 server 处理 echo 逻辑的任务变成了下面这样：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>tokio::spawn(async move {
+    let (mut rd, mut wr) = socket.split();
+
+    if io::copy(&amp;mut rd, &amp;mut wr).await.is_err() {
+        eprintln!(&quot;failed to copy&quot;);
+    }
+});
+<span class="boring">}
+</span></code></pre></pre>
+<p>可以在<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server-copy.rs">这里</a>找到完整代码。</p>
+<h3 id="manual-copying-手动-copy"><a class="header" href="#manual-copying-手动-copy">Manual copying （手动 copy）</a></h3>
+<p>现在，来看一下我们要如何通过手动 copy data 来写 echo server。为了做到这点，我们使用 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read"><code>AsyncReadExt::read</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_all"><code>AsyncWriteExt::write_all</code></a> 。</p>
+<p>完整的 server 代码是这样：</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -&gt; io::Result&lt;()&gt; {
+    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+
+        tokio::spawn(async move {
+            let mut buf = vec![0; 1024];
+
+            loop {
+                match socket.read(&amp;mut buf).await {
+                    // Return value of `Ok(0)` signifies that the remote has
+                    // closed
+                    Ok(0) =&gt; return,
+                    Ok(n) =&gt; {
+                        // Copy the data back to socket
+                        if socket.write_all(&amp;buf[..n]).await.is_err() {
+                            // Unexpected socket error. There isn't much we can
+                            // do here so just stop processing.
+                            return;
+                        }
+                    }
+                    Err(_) =&gt; {
+                        // Unexpected socket error. There isn't much we can do
+                        // here so just stop processing.
+                        return;
+                    }
+                }
+            }
+        });
+    }
+}
+</code></pre></pre>
+<p>（你可以把这段代码放到 <code>src/bin/echo-server.rs</code>  并用 <code>cargo run --bin echo-server</code> 启动它）</p>
+<p>我是 arch linux ：</p>
+<pre><code class="language-zsh">yay -S netcat
+echo 你好 | nc 127.0.0.1 6142
+</code></pre>
+<p>让我们分析一下：首先，因为使用了  <code>AsyncRead</code> 和 <code>AsyncWrite</code> ，所以 extension traits （<code>AsyncReadExt</code> 和<code>AsyncWriteExt</code>）必须被引入。 </p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="allocating-a-buffer-申请缓冲区"><a class="header" href="#allocating-a-buffer-申请缓冲区">Allocating a buffer （申请缓冲区）</a></h3>
+<p>这种策略是为了从 socket 读取一些数据到缓冲区，然后再把缓冲区的内容写回 socket。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let mut buf = vec![0;1024];
+<span class="boring">}
+</span></code></pre></pre>
+<p>显式地避免了栈上缓冲区。回顾一下<a href="https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound">之前</a> ，我们注意到所有的跨 <code>.await</code> 调用的数据都得由任务本身存储。而在这个场景， <code>buf</code> 被用来跨 <code>.await</code> 。所有的任务数据被存储在同一个内存块。你可以把它想象成一个 <code>enum</code> ，<code>enum</code> 内的变量都是需要为一个特定的 <code>.await</code> 存储的数据。</p>
+<p>如果这个 <code>buf</code> 是一个栈数组，每个被生成的用来接受 socket 的任务的内部结构可能看起来会像这样：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Task {
+    // internal task fields here
+    task: enum {
+        AwaitingRead {
+            socket: TcpStream,
+            buf: [BufferType],
+        },
+        AwaitingWriteAll {
+            socket: TcpStream,
+            buf: [BufferType],
+        }
+
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>如果一个栈数组被用来当做 buffer type，它将会被内联在任务结构体中。这会导致任务结构体非常庞大。另外，缓冲区大小通常是 page size (<em>Modern hardware and software tend to load data into RAM (and transfer data from RAM to disk) in discrete chunk called pages</em>)。这反过来又会使任务的大小变得尴尬：<code>\$page-size + 几个字节</code>。</p>
+<p>Linus 有一篇吐槽贴说:</p>
+<blockquote>
+<p>Just do the math. I've done it. 4kB is good. 8kB is borderline ok. 16kB or more is simply not acceptable.</p>
+<p><a href="https://www.realworldtech.com/forum/?threadid=144991&amp;curpostid=145006">Real World Technologies - Forums - Thread: Cache pipeline</a></p>
+</blockquote>
+<p>所以 linux 的 page size 应该会控制在 16kB 以内。</p>
+<p>编译器优化 async blocks 的布局比优化一个 basic <code>enum</code> 要多很多。实际上，变量不会像 <code>enum</code> 所要求的那样在枚举变体之间移动。但是，任务结构体的大小至少与最大变量一样大。</p>
+<p>正因如此，为 buffer 使用一个专门的内存分配通常是更有效的（这里是 <code>Vector</code>）。</p>
+<h3 id="handling-eof-处理-eof"><a class="header" href="#handling-eof-处理-eof">Handling EOF （处理 EOF）</a></h3>
+<p>当 TCP stream 读的那一半句柄关闭了，再去调用 <code>read()</code> 会返回 <code>Ok(0)</code> 。在这种时候退出 read loop 是很重要的。忘记在 EOF 的时候退出 read loop 是一个常见的 bug 来源。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>loop {
+    match socket.read(&amp;mut buf).await {
+        // Return value of `Ok(0)` signifies that the remote has
+        // closed
+        Ok(0) =&gt; return,
+        // ... other cases handled here
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>忘记退出 read loop 通常会导致 100% CPU占用的无限循环。这是因为 socket 关闭后，<code>socket.read()</code> 会立即返回，循环就会永远的重复下去。</p>
+<p>完整代码看<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server.rs">这里</a></p>
+
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../../rust/mini-redis/channels.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../rust/mini-redis/framing.html" class="mobile-nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../../rust/mini-redis/channels.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a rel="next" href="../../rust/mini-redis/framing.html" class="nav-chapters next" title="Next chapter"
+                aria-label="Next chapter" aria-keyshortcuts="Right">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </nav>
+
+    </div>
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+    <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "rust/mini-redis/io.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../../assets/custom.js"></script>
+    <script type="text/javascript" src="../../assets/bigPicture.js"></script>
+</body>
+
+</html>

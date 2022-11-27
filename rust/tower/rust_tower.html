@@ -1,0 +1,842 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>Tower - M4n5ter Blog</title>
+    <!-- Custom HTML head -->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="shortcut icon" href="../../favicon.png">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/chrome.css">
+    <link rel="stylesheet" href="../../css/print.css" media="print">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../../highlight.css">
+    <link rel="stylesheet" href="../../tomorrow-night.css">
+    <link rel="stylesheet" href="../../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../../theme/style3.css">
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../../go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="../../rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../rust/tower/rust_tower.html" class="active"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item "><a href="../../rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li><li class="chapter-item "><a href="../../rust/mini-redis/spawning.html"><strong aria-hidden="true">3.2.2.</strong> Spawning</a></li><li class="chapter-item "><a href="../../rust/mini-redis/shared_state.html"><strong aria-hidden="true">3.2.3.</strong> Shared state</a></li><li class="chapter-item "><a href="../../rust/mini-redis/channels.html"><strong aria-hidden="true">3.2.4.</strong> Channels</a></li><li class="chapter-item "><a href="../../rust/mini-redis/io.html"><strong aria-hidden="true">3.2.5.</strong> I/O</a></li><li class="chapter-item "><a href="../../rust/mini-redis/framing.html"><strong aria-hidden="true">3.2.6.</strong> Framing</a></li><li class="chapter-item "><a href="../../rust/mini-redis/async_in_depth.html"><strong aria-hidden="true">3.2.7.</strong> Async in depth</a></li><li class="chapter-item "><a href="../../rust/mini-redis/select.html"><strong aria-hidden="true">3.2.8.</strong> Select</a></li><li class="chapter-item "><a href="../../rust/mini-redis/streams.html"><strong aria-hidden="true">3.2.9.</strong> Streams</a></li></ol></li><li class="chapter-item "><a href="../../rust/tokio/tokio.html"><strong aria-hidden="true">3.3.</strong> Tokio</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/topics.html"><strong aria-hidden="true">3.3.1.</strong> Topics TODO</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/bridging_with_sync_code.html"><strong aria-hidden="true">3.3.1.1.</strong> Bridging with sync code TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/graceful_shutdown.html"><strong aria-hidden="true">3.3.1.2.</strong> Graceful Shutdown TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/getting_started_with_tracing.html"><strong aria-hidden="true">3.3.1.3.</strong> Getting started with Tracing TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/next_steps_with_tracing.html"><strong aria-hidden="true">3.3.1.4.</strong> Next steps with Tracing TODO</a></li></ol></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../other-categories/other-categories.html"><strong aria-hidden="true">4.</strong> Other categories</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../other-categories/archlinux/archlinux.html"><strong aria-hidden="true">4.1.</strong> archlinux</a></li><li class="chapter-item "><a href="../../other-categories/nc/nc.html"><strong aria-hidden="true">4.2.</strong> nmap-netcat(nc)</a></li><li class="chapter-item "><a href="../../other-categories/mkcert/mkcert.html"><strong aria-hidden="true">4.3.</strong> mkcert</a></li><li class="chapter-item "><a href="../../other-categories/aria2/aria2.html"><strong aria-hidden="true">4.4.</strong> aria2</a></li><li class="chapter-item "><a href="../../other-categories/postgres/postgres.html"><strong aria-hidden="true">4.5.</strong> postgres</a></li><li class="chapter-item "><a href="../../other-categories/pre-commit/pre-commit.html"><strong aria-hidden="true">4.6.</strong> pre-commit</a></li><li class="chapter-item "><a href="../../other-categories/minio/minio.html"><strong aria-hidden="true">4.7.</strong> minio</a></li><li class="chapter-item "><a href="../../other-categories/git/git.html"><strong aria-hidden="true">4.8.</strong> git</a></li><li class="chapter-item "><a href="../../other-categories/croc/croc.html"><strong aria-hidden="true">4.9.</strong> croc</a></li></ol></li><li class="chapter-item expanded "><a href="../../blockchain/blockchain.html"><strong aria-hidden="true">5.</strong> Blockchain</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../blockchain/substrate/substrate.html"><strong aria-hidden="true">5.1.</strong> substrate TODO</a></li></ol></li><li class="chapter-item expanded "><a href="../../issues/issues.html"><strong aria-hidden="true">6.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker.html"><strong aria-hidden="true">6.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker_issues.html"><strong aria-hidden="true">6.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/mysql/mysql.html"><strong aria-hidden="true">6.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/mysql/mysql_issues.html"><strong aria-hidden="true">6.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/gitea/gitea.html"><strong aria-hidden="true">6.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/gitea/gitea_issues.html"><strong aria-hidden="true">6.3.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/nginx/nginx.html"><strong aria-hidden="true">6.4.</strong> nginx</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/nginx/nginx_issues.html"><strong aria-hidden="true">6.4.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../links/links.html"><strong aria-hidden="true">7.</strong> Links</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+            <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io/edit/main/src/rust/tower/rust_tower.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <h3 id="简介"><a class="header" href="#简介">简介</a></h3>
+<p>Tower 是一个专注于对网络编程进行抽象的框架，将网络编程中的各行为进行抽象从而提高代码复用率。</p>
+<p>Tower 最核心的抽象为 Service trait，其接受一个 request 进行处理，成功则返回 response，否则返回 error。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn(Request) -&gt; Result&lt;Response, Error&gt;
+<span class="boring">}
+</span></code></pre></pre>
+<p>这个抽象可以同时运用于客户端和服务端。同时 Tower 也提供了 超时处理、访问频率限制和负载均衡之类的组件，这些功能可以被抽象为在 inner Service 调用之前和之后进行一些操作所共同组成的Service。这些 Service 称为中间件(middleware)。</p>
+<p>Tower 库对 Service 的设计希望满足以下目标：</p>
+<ol>
+<li>能够满足异步编程的规范</li>
+<li>不同的 Service 能够灵活地层层嵌套</li>
+<li>我们在给一个 Service 递交 request 时，希望能够得到该 Service 的执行情况；如果该 Service 负载过重，则需要延缓提交 request 甚至直接丢弃 request，这一点类似于 Future 中的 poll 方法。</li>
+</ol>
+<p>针对第一点，当 call 一个 Service 时，会直接返回一个 Future，由调用者决定怎么安排这个 Future，而不是要求实现了 Service trait 的结构体同时也实现 Future。</p>
+<p>针对第二点，每个实现了 Service 的结构体自身可以继续携带一个 Service，只需要将 request 递交给里层的 Service，就实现了 Service 的嵌套，这样本结构体就成为了一个中间件。</p>
+<p>针对第三点，在 Service 中定义了 <code>poll_ready</code> 方法用于获取一个 Service 的执行情况。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Service&lt;Request&gt; {
+  type Response;
+  type Error;
+  type Future: Future&lt;Output = Result&lt;Self::Response, Self::Error&gt;&gt;;
+
+  fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result(), Self::Error&gt;&gt;;
+
+  fn call(&amp;mut self, req: Request) -&gt; Self::Future;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="通过-service-trait-实现-timeout-中间件"><a class="header" href="#通过-service-trait-实现-timeout-中间件"><strong>通过 Service trait 实现 Timeout 中间件</strong></a></h3>
+<p>Timout 中间件用于对某个 request 的处理限定时间，如果超过时限还没有返回，则直接返回错误。Timout 应该有个用于进一步处理的里层serivce和一个时限。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Timeout&lt;T&gt; {
+  service: T,
+  duration: std::time::Duration
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>将 Timeout 也定义为一个 Service</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;S, Request&gt; Service&lt;Request&gt; for Timeout&lt;S&gt; 
+where
+  S: Service&lt;R&gt;,
+  S::Error: Into&lt;Box&lt;dyn std::error::Error + Send + Sync&gt;&gt; 
+<span class="boring">}
+</span></code></pre></pre>
+<p><code>poll_ready</code> 非常好处理，直接将调用里层 Service 的 poll_ready 函数。</p>
+<p>而 <code>call</code> 则要求返回一个 Future，如果要实现 Timeout 对应的行为逻辑，需要创建一个新的实现了 Future 的类型——ResponseFuture。我们希望它被poll时，首先会查看里层 Service 是否返回，如果已返回则返回结果，如果没有则检查是否已经timeout，如果没有则返回 Pending，如果已经超时则返回超时错误。</p>
+<p>因此我们创建了一个融合了里层 future 和超时 future 的类型</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[pin_project]
+struct ResponseFuture&lt;F&gt; {
+  #[pin]
+  response_future: F,
+  #[pin]
+  sleep: tokio::time::Sleep
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>pin_project 可以使得 Pin 类型的字段也是 Pin 类型，在调用 poll 函数时需要用到。</p>
+<p>然后为 ResponseFuture 实现 Future trait</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;F, Response, Error&gt; Future for ResponseFuture&lt;F&gt; 
+where
+    F: Future&lt;Output = Result&lt;Response, Error&gt;&gt;,
+    Error: Into&lt;Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;
+{
+    type Output = Result&lt;Response, Box&lt;dyn std::error::Error + Sync + Send&gt;&gt;;
+    fn poll(self: std::pin::Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Self::Output&gt; {
+        let this = self.project();
+​
+        match this.response_future.poll(cx) {
+            Poll::Ready(res) =&gt; {
+                let result = res.map_err(Into::into);
+                return Poll::Ready(result);
+            },
+            Poll::Pending =&gt; {}
+        }
+​
+        match this.sleep.poll(cx) {
+            Poll::Ready(_) =&gt; {
+                let error = Box::new(TimeoutError(()));
+                Poll::Ready(Err(error))
+            },
+            Poll::Pending =&gt; Poll::Pending
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="balance-中间件"><a class="header" href="#balance-中间件">Balance 中间件</a></h3>
+<p>从名字就可以看出来，Balance 模块用于提供负载均衡的服务，负载均衡会根据所有服务的负载程度来决定处理 request 的服务。</p>
+<p>在官方文档提供了两种 Balance 服务</p>
+<ul>
+<li>p2c：根据p2c算法 (Power of Two Random Choices) 实现，提供一种简单而大概的 service 选择方法，一般在无法精确每个 service 的负载时使用。</li>
+<li>pool：实现了一个动态大小的服务池 (service pool)，通过追踪每个 service 的 <code>poll_ready</code> 成功的次数来估计每个 service 的负载状况。（虽然这个模块还存在于官方文档之上，但是已经从最近的源码上移除了，显然官方打算移除这个模块，参见<a href="https://github.com/tower-rs/tower/pull/658">#658</a>。</li>
+</ul>
+<p>这里选择p2c算法进行分析。p2c 并非是一种挑选最优的算法，而是一种避免选到最坏的算法。其随机从所有 service 中选取两个，比较两个 service 的负载，选择较小的那个 service，从而保证避免选到负载最重的 service。这个算法在 nginx 中就有所运用。</p>
+<p>Balance 内部通过 ready_cache 模块维护一个 Pending 队列和一个 Ready map，当 Service 陷入 Pending 状态时，则加入 Pending 队列中，新加入的 Service 一开始也是加入到 Pending 队列中。可以通过调用 <code>promote_pending_to_ready</code> 函数遍历所有的 Pending Service 将已经 Ready 的 Service 加入到 Ready map 中。</p>
+<p>同样，Balance 也实现了 Service trait：</p>
+<ul>
+<li><code>poll_ready</code>：只有有存在一个被选中的 Service 是ready的，那么就可以返回 ready，并记录该 Service 的 index</li>
+<li><code>call</code>：直接调用上面的 index 对应的 Service 处理 request，这也就是为什么 Tower 建议在调用某个 Service 之前一定要调用 <code>poll_ready</code> 询问服务是否空闲。对应的 Service 在被调用之后会被插入到 Pending 队列中。</li>
+</ul>
+<p>综上所述，Balance 模块提供了一种 Service 集托管服务，通过将 Service 集托管到 Balance 模块，由 Balance 决定 request 交给哪个 Service 处理。</p>
+<h3 id="buffer-中间件"><a class="header" href="#buffer-中间件">Buffer 中间件</a></h3>
+<p>Buffer 中间件希望提供一个类似于 mpsc 一样多生产者单消费者一样的缓存队列，可以允许多个用户同时像某个 Service 提交 request，更重要的是，Service 要能够将 request 的执行结果返回给用户。</p>
+<p>Buffer 中间件的做法是将 Service 看作一个生产者，另外定义一个 Worker 作为消费者，Worker 负责接收 request 并处理。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Worker&lt;T, Request&gt;
+where T: Service&lt;Request&gt; 
+{
+  current_message: Option&lt;Message&lt;Request, T::Future&gt;&gt;,
+  rx: mpsc::Receiver&lt;Message&lt;Request, T::Future&gt;&gt;,
+  service: T,
+  finish: bool,
+  failed: Option&lt;ServiceError&gt;,
+  handle: Handle
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Worker 维护了一个 mpsc channel 的接收端rx，而每个 Buffer Service 维护了一个 mpsc channel 的发送端tx，且 Buffer 实现了 Clone trait，当 Buffer 被 clone 时，对应的 tx 也被clone。</p>
+<p>由于用户的 request 是由 Buffer 转交给 Worker 的，因此 request 的处理结果无法直接从 Buffer 获取。这里就体现了 Service trait 的灵活性，由于 Service 的call函数返回的是一个 Future，因此可以自定义一个 ResponseFuture，然后在 Worker 要处理的 Message 中包含一个 channel 的发送端，在call函数返回的 Future 中包含该 channel 的接收端，就可以使得 Worker 和用户之间可以直接通信。这个设计应该说是非常巧妙的。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;Req, Rsp, F, E&gt; Service&lt;Req&gt; for Buffer&lt;Req, F&gt;
+where
+  F: Future&lt;Output = Result&lt;Rsp, E&gt;&gt; + Send + 'static,
+  E: Into&lt;Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;,
+  Req: Send + 'static
+{
+  type Response = Rsp;
+  type Error = Box&lt;dyn std::error::Error + Send + Sync&gt;;
+  type Future = ResponseFuture&lt;F&gt;;
+
+  fn call(&amp;mut self, request: Rsp) -&gt; Self::Future {
+    let span = tracing::Span::current();//这个不用管
+    let (tx, rx) = oneshot::channel();//构建一次性管道用于传输返回结果。
+    match self.tx.send_item(Message {request, span, tx}) {
+      Ok(_) =&gt; ResponseFuture::new(rx),
+      Err(_) =&gt; {}
+    }
+  }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="discover-中间件"><a class="header" href="#discover-中间件">Discover 中间件</a></h3>
+<p>在前面的 Balance 中间件中提到了 Service 集的概念，有集合，就意味着有集合内元素的变动。各个中间件对于 Service 集合的实现可能并不相同，但是都对外提供了统一的增删接口，这个接口就是 Discover trait。</p>
+<p>Discover 为了方便对 Service 集进行管理，要求用户对每个 Service 定义一个唯一的标识符并且实现了 Eq。</p>
+<p>对 Service 集的修改主要就是增加和删除，用枚举 Change 表示：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum Change&lt;K, V&gt; {
+  Insert(K, V),
+  Remove(K)
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>对于一个维护 Service 集的struct，其对 Service 集的修改选择交给用户，由用户提供一个实现 Discover trait 的 struct，而维护 Service 集的 struct 只需要调用 poll_discover 函数就可以获取外界对 Service 集的修改。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Discover: Sealed&lt;Change&lt;(), ()&gt;&gt; {
+  type Key: Eq,
+  type Service;
+  type Error;
+  fn poll_discover(
+    self: Pin&lt;&amp;mut self&gt;, 
+    cx: &amp;mut Context&lt;'_&gt;
+  ) -&gt; Poll&lt;Option&lt;Result&lt;Change&lt;Self::Key, Self::Service&gt;, Self::Error&gt;&gt;&gt;;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<blockquote>
+<p><em>Tips: 在Rust异步编程中，很多的poll及类似的函数的返回结果都是 Poll&lt;Option&lt;Result&lt;V, E&gt;&gt;&gt; 类型的。这种返回类型可以从结果上反映很多东西，通常用于需要被多次poll的函数。</em></p>
+</blockquote>
+<ul>
+<li><em>Poll::Pending: 暂时没有value返回，和普通的poll函数类似</em></li>
+<li><em>Poll::Ready(None): 当前Future结束，不会再yield任何值</em></li>
+<li><em>Poll::Ready(Some(Ok(_))): 当前 Future yield 一个值，可能还需要被poll</em></li>
+<li><em>Poll::Ready(Some(Err(_))): 当前 Future 产生错误，需要进行处理</em></li>
+</ul>
+<p><em>这一套规则在很多 Rust 异步编程代码中都有体现，可以看作 Rust 异步编程中的潜规则。</em></p>
+<p>值得注意的是，这里的 Sealed 是一个空 trait，并且在crate之外无法访问，但是在 discover 模块中为所有实现了 TryStream 的类型实现了 Sealed</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;K, S, E, D: ?Sized&gt; Sealed&lt;Change&lt;(), ()&gt;&gt; for D
+where
+    D: TryStream&lt;Ok = Change&lt;K, S&gt;, Error = E&gt;,
+    K: Eq,
+{}
+<span class="boring">}
+</span></code></pre></pre>
+<p>也就是说，要实现 Discover 首先要实现 TryStream，而在 discover 中也为所有实现了 TryStream 的类型自动实现了 Discover trait:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;K, S, E, D: ?Sized&gt; Discover for D
+where
+    D: TryStream&lt;Ok = Change&lt;K, S&gt;, Error = E&gt;,
+    K: Eq,
+{
+    type Key = K;
+    type Service = S;
+    type Error = E;
+​
+    fn poll_discover(
+        self: Pin&lt;&amp;mut Self&gt;,
+        cx: &amp;mut Context&lt;'_&gt;,
+    ) -&gt; Poll&lt;Option&lt;Result&lt;D::Ok, D::Error&gt;&gt;&gt; {
+        TryStream::try_poll_next(self, cx)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>也就是将 Discover 抽象为流式操作，这样就可以用到很多现成的实现了 Stream 的工具来存储对于 Service 集的修改。</p>
+<h3 id="filter-中间件"><a class="header" href="#filter-中间件">Filter 中间件</a></h3>
+<p>Filter 顾名思义，对于 request 进行一次筛选，只有符合筛选条件的 request 才会提交给 Service 处理。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Filter&lt;T, U&gt; {
+  inner: T,
+  predicate: U
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>可以看出，Filter 的初始定义非常自由，Filter 对 predicate 并没有任何限制，但是 Filter 必须要根据 predicate 的返回结果分别处理，所以 Filter 和 predicate 总是相关的。</p>
+<p>Filter 只对于当 predicate 实现了 Predicate trait 时实现了 Service trait。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Predicate&lt;Req&gt; {
+  type Request;
+  fn check(&amp;mut self, request: Request) -&gt; Result&lt;Self::Request, Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>实现过程也很有意思，由于call函数要求返回一个 Future，因此当筛选不通过时，需要返回一个立刻返回 Ready(Err(_)) 的 Future</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;T, U, Request&gt; Service&lt;Request&gt; for Filter&lt;T, U&gt;
+where
+    U: Predicate&lt;Request&gt;,
+    T: Service&lt;U::Request&gt;,
+    T::Error: Into&lt;BoxError&gt;,
+{
+    type Response = T::Response;
+    type Error = BoxError;
+    type Future = ResponseFuture&lt;T::Response, T::Future&gt;;//即future_util::future::Either;
+​
+    fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), Self::Error&gt;&gt; {
+        self.inner.poll_ready(cx).map_err(Into::into)
+    }
+​
+    fn call(&amp;mut self, request: Request) -&gt; Self::Future {
+        ResponseFuture::new(match self.predicate.check(request) {
+            Ok(request) =&gt; Either::Right(self.inner.call(request).err_into()),
+            Err(e) =&gt; Either::Left(futures_util::future::ready(Err(e))),
+        })
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="async-predicate"><a class="header" href="#async-predicate"><strong>async predicate</strong></a></h3>
+<p>上面讲的predicate函数并不是异步的，这只适用于一些快速筛选的 Filter，如果 predicate 过程也需要等待IO等适合做成异步的场景，那么应该将 predicate 过程也做成异步形式。因此 Filter 模块还存在一个适用于异步场景的 AsyncFilter。</p>
+<p>这就导致在一个 Service 同时存在两种 Future，用户也不知道两种 Future 的先后关系，因此需要将两种 Future 放到一个 AsyncResponseFuture，由 AsyncResponseFuture 协调两个 Future。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum State&lt;F, G&gt; {
+  Check {check: F},
+  WaitResponse {response: G}
+}
+struct AsyncResponseFuture&lt;P, S, Request&gt;
+where
+  P: AsyncPredicate&lt;Request&gt;,
+  S: Service&lt;P::Request&gt;
+{
+  state: State&lt;P::Future, S::Future&gt;,
+  service: S
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>AsyncResponseFuture 的 poll 结果由当前 state 决定。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;P, S, Request&gt; Future for AsyncResponseFuture&lt;P, S, Request&gt;
+where
+    P: AsyncPredicate&lt;Request&gt;,
+    S: Service&lt;P::Request&gt;,
+    S::Error: Into&lt;crate::BoxError&gt;,
+{
+    type Output = Result&lt;S::Response, crate::BoxError&gt;;
+​
+    fn poll(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Self::Output&gt; {
+        let mut this = self.project();
+​
+        loop {
+            match this.state.as_mut().project() {
+                StateProj::Check { mut check } =&gt; {
+                    let request = ready!(check.as_mut().poll(cx))?;
+                    let response = this.service.call(request);
+                    this.state.set(State::WaitResponse { response });
+                }
+                StateProj::WaitResponse { response } =&gt; {
+                    return response.poll(cx).map_err(Into::into);
+                }
+            }
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="limit-中间件"><a class="header" href="#limit-中间件">Limit 中间件</a></h3>
+<p>服务器的处理能力是有限的，如果短时间内到达的 request 过多，可能会导致系统宕机。Limit 中间件用于对 request 进行限制，主要分为两种方式：</p>
+<ul>
+<li>concurrency: 限制并发处理的 request 数量</li>
+<li>rate：限制 request 处理的速率</li>
+</ul>
+<p>concurrency 很好实现，只需要在 Service 维护一个信号量 semaphore，每要处理一个 request 就获取一个信号量，使得并发处理的数量不会超过信号量的值。</p>
+<p>rate 可以表示为每一段时间允许的 request 数量：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Rate {
+  num: u64,
+  per: Duration
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>借助 tokio::time::sleep_util future，限制 now 到 now+per 这段时间内的 request 处理数量。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;S, Request&gt; Service&lt;Request&gt; for RateLimit&lt;S&gt;
+where
+  S: Service&lt;Request&gt;
+{
+  type Response = S::Response;
+  type Error = S::Error;
+  type Future = S::Future;
+  fn call(&amp;mut self, request: Request) -&gt; Self::Future {
+    match self.state {
+      State::Ready{mut until, mut rem} =&gt; {
+        let now = Instant::now();
+        if now &gt;= until {
+          until = now + self.rate.per();
+          rem = self.rate.num();
+        }
+
+        if rem &gt; 1 {
+          rem -= 1;
+          self.state = State::Ready{until, rem};
+        } else {
+          self.sleep.as_mut().reset(until);
+          self.state = State::Limited;
+        }
+
+        self.inner.call(request);
+      }
+      State::Limited =&gt; panic!(&quot;service not ready&quot;)
+    }
+  }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="load-中间件"><a class="header" href="#load-中间件">Load 中间件</a></h3>
+<p>Load 是用于定量化表示一个 Service 的负载的中间件。调用 Balance layer 的 Service 集就要求 Service 必须实现 Load trait。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Load {
+  type Metric: PartialOrd,
+  fn load(&amp;self) -&gt; Self::Metric;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Load 提供下列三个计算 Service 负载的模块：</p>
+<ul>
+<li>Constant：将 Service 的 Load 指标设为常数；</li>
+<li>PendingRequests: 根据 Service 的 Pending request 的数量作为 Service 的负载指标；</li>
+<li>PeakEwma: 峰值移动指数平均算法，将 request 的 rtt 时间作为 Service 的负载指标，rtt 即 request 从被接收到返回 response 中间经历的时间。<br />
+同时 Load 维护一个平均 rtt 时间，如果最新 request 的 rtt 大于平均 rtt，则取最新 rtt 作为平均 rtt（这就是峰值移动指数平均法的意思）；如果 rtt 小于平均rtt，则根据最新 rtt 和移动指数平均算法计算平均rtt。</li>
+</ul>
+<p>第二、第三个模块显然需要追踪每个 request 的运行情况，为了解决这个问题，两个模块在实现 Service trait 的 call 函数时会返回一个 TrackCompletionFuture</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct TrackCompletionFuture&lt;F, C, H&gt; {
+  #[pin]
+  future: F,
+  handle: Option&lt;H&gt;,
+  completion: C
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>其中，handle 为通知 Service request 已经完成的柄，TrackCompletionFuture 只需要负责在 request 执行完成之后 drop handle，由具体的模块去实现 handle 被 drop 时需要实现的动作。</p>
+<p>比如 PeakEwma 模块的 handle 需要追踪从接收 request 到执行完成的时间：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Handle {
+  sent_at: Instant,
+  decay_ns: f64,
+  rtt_estimate: Arc&lt;Mutex&lt;RttEstimate&gt;&gt;
+}
+impl Drop for Handle {
+  fn drop(&amp;mut self) {
+    let recv_at = Instant::now();
+    if let Ok(mut rtt) = self.rtt_estimate.lock() {
+      rtt.update(self.sent_at, recv_at, self.decay_ns);//涉及到PeakEwma算法的实现。
+    }
+  }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>至于 PendingRequests 就更简单了，其 handle 直接就是一个 Arc&lt;()&gt; 类型的 wrap，直接调用 Arc 类型的 strong_count 函数就知道当前 Pending 的 request 数量。</p>
+<h3 id="loadshed-中间件"><a class="header" href="#loadshed-中间件">LoadShed 中间件</a></h3>
+<p>LoadShed 类似于 Rust 中的一些 try_xxx 函数，其 poll_ready 函数返回 <code>Poll&lt;Result&lt;(), E&gt;&gt;</code> 类型，当 poll_ready 被调用时，总是返回 Ready，但是根据里层的类型判断里层 Service 是否真的 Ready，这个中间件适用于一些特殊的场景。</p>
+<p>如果在 Service not ready 的情况下调用call函数，则会返回 overloaded 错误。</p>
+<h3 id="make-中间件"><a class="header" href="#make-中间件">Make 中间件</a></h3>
+<p>Make 中间件是一种产生 Service 的 Service，适用于一些需要产生新的 Service 来进行处理的场景。Tower 给出的例子是 TCP listener，当收到一个新的 TCP 连接时，listener 需要创建一个新的 Service 来处理 TCP stream。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait MakeService&lt;Target, Request&gt;: Sealed&lt;(Target, Request)&gt; {
+  type Response;
+  type Error;
+  type Service: Service&lt;Reuquest, Response = Self::Response, Error = Self::Error&gt;;
+  type MakeError;
+  type Future: Future&lt;Output = Result&lt;Self::Service, Self::MakeError&gt;&gt;;
+
+  fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), Self::MakeError&gt;&gt;;
+  fn make_service(&amp;mut self, target: Target) -&gt; Self::Future;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>MakeService 已经为所有 Response type 为 Service 类型的 Service 自动实现。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;M, S, Target, Request&gt; MakeService&lt;Target, Request&gt; for M
+where
+    M: Service&lt;Target, Response = S&gt;,
+    S: Service&lt;Request&gt;,
+{
+    type Response = S::Response;
+    type Error = S::Error;
+    type Service = S;
+    type MakeError = M::Error;
+    type Future = M::Future;
+​
+    fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), Self::MakeError&gt;&gt; {
+        Service::poll_ready(self, cx)
+    }
+    fn make_service(&amp;mut self, target: Target) -&gt; Self::Future {
+        Service::call(self, target)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="service_fn-组件"><a class="header" href="#service_fn-组件"><strong>service_fn 组件</strong></a></h3>
+<p>Tower 提供了一个可以快速将一个签名为</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn(req: Request) -&gt; Result&lt;Response, Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;;
+<span class="boring">}
+</span></code></pre></pre>
+<p>的异步函数包装为一个 Service 的函数 service_fn，其就是一个 Make Service。这种包装很简单，因为每个异步函数在调用时编译器会自动生成一个 Future。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct ServiceFn&lt;T&gt; {
+  f: T
+}
+impl&lt;T, F, Request, R, E&gt; Service&lt;Request&gt; for ServiceFn&lt;T&gt;
+where
+    T: FnMut(Request) -&gt; F,
+    F: Future&lt;Output = Result&lt;R, E&gt;&gt;,
+{
+    type Response = R;
+    type Error = E;
+    type Future = F;
+​
+    fn poll_ready(&amp;mut self, _: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), E&gt;&gt; {
+        Ok(()).into()
+    }
+    fn call(&amp;mut self, req: Request) -&gt; Self::Future {
+        (self.f)(req)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="reconnect-中间件"><a class="header" href="#reconnect-中间件">Reconnect 中间件</a></h3>
+<p>Reconnect 是一个可以在发生错误时自动重连的中间件，一个 Reconnect Service 有三种状态：</p>
+<ul>
+<li>Idle: 暂时没有任何服务连接，当在这个状态 poll_ready 时，需要根据内部的一个 MakeService 中间件创建一个 Service Future 并跳到 Connecting(MakeService::Future) 状态</li>
+<li>Connecting: 通过前一步的 Service Future 进行 poll，如果返回 Ready 则跳到 Connected(Service) 状态，如果有错误则跳到 Idle 状态</li>
+<li>Connected: 调用内层 Service 的 poll_ready，如果返回错误，则需要重新创建连接，跳到 Idle 状态</li>
+</ul>
+<p>在 poll_ready 函数中，遇到 Poll::Ready(Ok(<em>)) 或 Poll::Pending 则直接返回，如果遇到 Poll::Ready(Err(</em>)) 则不断循环，直到 Service 正常，因此为 Reconnect。从这一点来看，poll_ready 其实永远不会返回 Poll::Ready(Err(_))，但是为了后续的扩展性，在函数签名上还是有。</p>
+<p>Reconnect 如果在非 Connected 状态下调用 call 函数则会 panic。</p>
+<h3 id="retry-中间件"><a class="header" href="#retry-中间件">Retry 中间件</a></h3>
+<p>Retry 中间件试图将多次里层 Service 的 poll 表现为一次，最简单的场景，对于一个比较繁忙的 Service，单次 poll 可能会返回 Error，于是我可能希望将 Service Future 的一次 poll 表现为里层 Service 每隔一段时间进行一次 poll 进行多次，直到成功返回 Ready 或达到次数限制。Retry 中间件就适用于这些场景。</p>
+<p>显然上面只是一种最简单的场景，Tower 为了给予用户最大的 Retry 定制化空间，只需要用户决定是否继续 retry 的类型实现 Policy trait</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Policy&lt;Req, Res, E&gt;: Sized {
+  type Future: Future&lt;Output = Self&gt;;
+  fn retry(&amp;self, req: &amp;Req, result: Result&lt;&amp;Res, &amp;E&gt;) -&gt; Option&lt;Self::Future&gt;;
+  fn clone_request(&amp;self, req: &amp;Req) -&gt; Option&lt;Req&gt;;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>其中 retry 函数用于决定是否应该继续 retry，如果返回 None 则停止，否则返回 Some(Future)。Future 可以在被 poll 时每次生成一个新的实现了 Policy 的 Retry Service，这意味着每次 retry 之后都可以产生新的 Service，而不是只能一直使用同一种 Policy，进一步增大了自由度。</p>
+<p>最后再看 Tower 给的 Retry Service 对于 call 函数的 ResponseFuture 的实现。ResponseFuture 包含三种状态：</p>
+<ul>
+<li>Called(service_future): 可以poll一次里层 Service，如果是 Pending 则直接返回 Pending。否则调用 retry 函数生成一个新的 Retry Service Future，跳到 Checking(retry_future) 状态</li>
+<li>Checking(retry_future): 等待 retry_future 生成新的 Retry Service 的中间态，如果生成 Retry Service 则跳到 Retrying 状态</li>
+<li>Retrying: 等待里层 Service poll_ready 的中间态，如果里层 Service 已经 Ready，则调用里层 Service 的call函数生成 service_future 并跳到 Called(service_future) 状态</li>
+</ul>
+<h3 id="spawnready-中间件"><a class="header" href="#spawnready-中间件">SpawnReady 中间件</a></h3>
+<p>SpawnReady 在官方文档上的介绍是 &quot;Drive a service to readiness on a background task&quot;。如果我们需要尽快察觉到某个 Service 已经 ready，那我们可能会经常去 poll_ready 一下，而 SpawnReady 就是将这件事包装为一个 Service，并且在内部包装一个 task 用于检查内层 Service 是否 ready。假设 executor 里面只有两个 task，那么一个是真正在做事的 task，另一个则是检查前一个 task 是否 ready 的 task。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;S, Req&gt; Service&lt;Req&gt; for SpawnReady&lt;S&gt;
+where
+    Req: 'static,
+    S: Service&lt;Req&gt; + Send + 'static,
+    S::Error: Into&lt;BoxError&gt;,
+{
+    type Response = S::Response;
+    type Error = BoxError;
+    type Future = ResponseFuture&lt;S::Future, S::Error&gt;;
+​
+    fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), BoxError&gt;&gt; {
+        loop {
+            self.inner = match self.inner {
+                Inner::Service(ref mut svc) =&gt; {
+                    if let Poll::Ready(r) = svc.as_mut().expect(&quot;illegal state&quot;).poll_ready(cx) {
+                        return Poll::Ready(r.map_err(Into::into));
+                    }
+                    let svc = svc.take().expect(&quot;illegal state&quot;);
+                    let rx =   tokio::spawn(svc.ready_oneshot().map_err(Into::into).in_current_span());
+                    Inner::Future(rx)
+                }
+                Inner::Future(ref mut fut) =&gt; {
+                    let svc = ready!(Pin::new(fut).poll(cx))??;
+                    Inner::Service(Some(svc))
+                }
+            }
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>通过 ready_oneshot 函数将 Service 包装为一个 ReadyOneshot task，然后通过 tokio::spawn 传入 executor</p>
+<h3 id="steer-中间件"><a class="header" href="#steer-中间件">Steer 中间件</a></h3>
+<p>Steer 中间件用于管理 Service 数组，根据自定义的规则将 request 导向特定的 Service。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Picker&lt;S, Req&gt; {
+  fn pick(&amp;mut self, r: &amp;Req, services: &amp;[S]) -&gt; usize;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>由于 Steer 内部维护多个 Service，所以只有多个 Service 同时 ready， Steer 才会返回 Ready。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Steer&lt;S, F, Req&gt; {
+  router: F,
+  services: Vec&lt;S&gt;,
+  not_ready: VecDeque&lt;usize&gt;,
+  _phantom: PhantomData&lt;Req&gt;
+}
+impl&lt;S, Req, F&gt; Service&lt;Req&gt; for Steer&lt;S, F, Req&gt;
+where
+    S: Service&lt;Req&gt;,
+    F: Picker&lt;S, Req&gt;,
+{
+    type Response = S::Response;
+    type Error = S::Error;
+    type Future = S::Future;
+​
+    fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), Self::Error&gt;&gt; {
+        loop {
+            // must wait for *all* services to be ready.
+            // this will cause head-of-line blocking unless the underlying services are always ready.
+            if self.not_ready.is_empty() {
+                return Poll::Ready(Ok(()));
+            } else {
+                if self.services[self.not_ready[0]]
+                    .poll_ready(cx)?
+                    .is_pending()
+                {
+                    return Poll::Pending;
+                }
+​
+                self.not_ready.pop_front();
+            }
+        }
+    }
+​
+    fn call(&amp;mut self, req: Req) -&gt; Self::Future {
+        assert!(
+            self.not_ready.is_empty(),
+            &quot;Steer must wait for all services to be ready. Did you forget to call poll_ready()?&quot;
+        );
+​
+        let idx = self.router.pick(&amp;req, &amp;self.services[..]);
+        let cl = &amp;mut self.services[idx];
+        self.not_ready.push_back(idx);
+        cl.call(req)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>这样的处理实际会拖累整体的效率，如果某个 request 所需要的 Service 实际是 ready 的，但是可能为了等待其他的 Service 而延缓调用。但是为了兼容 Tower 的核心 API 不得不这么处理，毕竟 poll_ready 会与 request 相关的 Service 只有这一个。</p>
+<h3 id="结论"><a class="header" href="#结论">结论</a></h3>
+<p>Tower 将网络编程中常见的行为抽象为统一的 Service，对外的接口非常统一，并且可以相互叠加，而且是异步式，是一个扩展性非常强大的框架，值得学习一下。</p>
+<h1 id="摘自httpszhuanlanzhihucomp548090197"><a class="header" href="#摘自httpszhuanlanzhihucomp548090197">摘自<a href="https://zhuanlan.zhihu.com/p/548090197">https://zhuanlan.zhihu.com/p/548090197</a></a></h1>
+
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../../rust/rust.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../rust/mini-redis/mini-redis.html" class="mobile-nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../../rust/rust.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a rel="next" href="../../rust/mini-redis/mini-redis.html" class="nav-chapters next" title="Next chapter"
+                aria-label="Next chapter" aria-keyshortcuts="Right">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </nav>
+
+    </div>
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+    <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "rust/tower/rust_tower.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../../assets/custom.js"></script>
+    <script type="text/javascript" src="../../assets/bigPicture.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>Shared state - M4n5ter Blog</title>
+    <!-- Custom HTML head -->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="shortcut icon" href="../../favicon.png">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/chrome.css">
+    <link rel="stylesheet" href="../../css/print.css" media="print">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../../highlight.css">
+    <link rel="stylesheet" href="../../tomorrow-night.css">
+    <link rel="stylesheet" href="../../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../../theme/style3.css">
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../../go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="../../rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tower/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item expanded "><a href="../../rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li><li class="chapter-item "><a href="../../rust/mini-redis/spawning.html"><strong aria-hidden="true">3.2.2.</strong> Spawning</a></li><li class="chapter-item expanded "><a href="../../rust/mini-redis/shared_state.html" class="active"><strong aria-hidden="true">3.2.3.</strong> Shared state</a></li><li class="chapter-item "><a href="../../rust/mini-redis/channels.html"><strong aria-hidden="true">3.2.4.</strong> Channels</a></li><li class="chapter-item "><a href="../../rust/mini-redis/io.html"><strong aria-hidden="true">3.2.5.</strong> I/O</a></li><li class="chapter-item "><a href="../../rust/mini-redis/framing.html"><strong aria-hidden="true">3.2.6.</strong> Framing</a></li><li class="chapter-item "><a href="../../rust/mini-redis/async_in_depth.html"><strong aria-hidden="true">3.2.7.</strong> Async in depth</a></li><li class="chapter-item "><a href="../../rust/mini-redis/select.html"><strong aria-hidden="true">3.2.8.</strong> Select</a></li><li class="chapter-item "><a href="../../rust/mini-redis/streams.html"><strong aria-hidden="true">3.2.9.</strong> Streams</a></li></ol></li><li class="chapter-item "><a href="../../rust/tokio/tokio.html"><strong aria-hidden="true">3.3.</strong> Tokio</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/topics.html"><strong aria-hidden="true">3.3.1.</strong> Topics TODO</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/bridging_with_sync_code.html"><strong aria-hidden="true">3.3.1.1.</strong> Bridging with sync code TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/graceful_shutdown.html"><strong aria-hidden="true">3.3.1.2.</strong> Graceful Shutdown TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/getting_started_with_tracing.html"><strong aria-hidden="true">3.3.1.3.</strong> Getting started with Tracing TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/next_steps_with_tracing.html"><strong aria-hidden="true">3.3.1.4.</strong> Next steps with Tracing TODO</a></li></ol></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../other-categories/other-categories.html"><strong aria-hidden="true">4.</strong> Other categories</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../other-categories/archlinux/archlinux.html"><strong aria-hidden="true">4.1.</strong> archlinux</a></li><li class="chapter-item "><a href="../../other-categories/nc/nc.html"><strong aria-hidden="true">4.2.</strong> nmap-netcat(nc)</a></li><li class="chapter-item "><a href="../../other-categories/mkcert/mkcert.html"><strong aria-hidden="true">4.3.</strong> mkcert</a></li><li class="chapter-item "><a href="../../other-categories/aria2/aria2.html"><strong aria-hidden="true">4.4.</strong> aria2</a></li><li class="chapter-item "><a href="../../other-categories/postgres/postgres.html"><strong aria-hidden="true">4.5.</strong> postgres</a></li><li class="chapter-item "><a href="../../other-categories/pre-commit/pre-commit.html"><strong aria-hidden="true">4.6.</strong> pre-commit</a></li><li class="chapter-item "><a href="../../other-categories/minio/minio.html"><strong aria-hidden="true">4.7.</strong> minio</a></li><li class="chapter-item "><a href="../../other-categories/git/git.html"><strong aria-hidden="true">4.8.</strong> git</a></li><li class="chapter-item "><a href="../../other-categories/croc/croc.html"><strong aria-hidden="true">4.9.</strong> croc</a></li></ol></li><li class="chapter-item expanded "><a href="../../blockchain/blockchain.html"><strong aria-hidden="true">5.</strong> Blockchain</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../blockchain/substrate/substrate.html"><strong aria-hidden="true">5.1.</strong> substrate TODO</a></li></ol></li><li class="chapter-item expanded "><a href="../../issues/issues.html"><strong aria-hidden="true">6.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker.html"><strong aria-hidden="true">6.1.</strong> docker</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/docker/docker_issues.html"><strong aria-hidden="true">6.1.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/mysql/mysql.html"><strong aria-hidden="true">6.2.</strong> mysql</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/mysql/mysql_issues.html"><strong aria-hidden="true">6.2.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/gitea/gitea.html"><strong aria-hidden="true">6.3.</strong> gitea</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/gitea/gitea_issues.html"><strong aria-hidden="true">6.3.1.</strong> 问题及解决方案</a></li></ol></li><li class="chapter-item "><a href="../../issues/nginx/nginx.html"><strong aria-hidden="true">6.4.</strong> nginx</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../issues/nginx/nginx_issues.html"><strong aria-hidden="true">6.4.1.</strong> 问题及解决方案</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../links/links.html"><strong aria-hidden="true">7.</strong> Links</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+            <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io/edit/main/src/rust/mini-redis/shared_state.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <h2 id="shared-state"><a class="header" href="#shared-state">Shared state</a></h2>
+<p>到目前为止，我们有一个 key-value server 在工作。但是，存在一个重大缺陷：状态不会在连接之间共享。我们将在本文中修复它。</p>
+<h2 id="strategies-方案"><a class="header" href="#strategies-方案">Strategies （方案）</a></h2>
+<p>这里有两种不同的方式来在 Tokio 中分享状态。</p>
+<ol>
+<li>
+<p>使用 <code>Mutex</code> 保护被分享的状态。</p>
+</li>
+<li>
+<p>生成一个任务来管理状态并且使用<strong>消息传递</strong>来操作</p>
+</li>
+</ol>
+<p>一般来说你想要为简单的数据采用第一种方法，第二种方法用来应对需要像 I/O 原语这样的异步工作。在本章，被分享的状态是一个 <code>HashMap</code> 并且操作为 <code>insert</code> 和 <code>get</code> 。这两种操作都不是异步的，因此我们可以使用 <code>Mutex</code> 。</p>
+<p>下一章再来介绍后一种方法。</p>
+<h2 id="add-bytes-dependency-添加-bytes-依赖"><a class="header" href="#add-bytes-dependency-添加-bytes-依赖">Add <code>bytes</code> dependency （添加 <code>bytes</code> 依赖）</a></h2>
+<p>与使用 <code>Vec&lt;u8&gt;</code> 不同，Mini-Redis crate 使用了 <a href="https://docs.rs/bytes/1/bytes/struct.Bytes.html"><code>bytes</code></a> crate 中的 <code>Bytes</code> 。使用 <code>Bytes</code> 的目的是为网络编程提供一个健壮的字节数组结构体。<code>Bytes</code> 比 <code>Vec&lt;u8&gt;</code> 多的一个最大的特点是它实现了浅拷贝。换句话说，在 <code>Bytes</code> 实例上调用 <code>clone()</code> 不会拷贝底层的数据。相反，一个 <code>Bytes</code> 实例是一个底层数据的 rc（引用计数器）句柄。<code>Bytes</code> 类型与 <code>Arc&lt;Vec&lt;u8&gt;&gt;</code> 相似，但是多了些附加的功能。</p>
+<p>为了引入 <code>bytes</code> 依赖，把下方的内容添加到你的 <code>Cargo.toml</code> 中的 <code>[dependencies]</code> 部分：</p>
+<pre><code class="language-toml">bytes = &quot;1&quot;
+</code></pre>
+<h2 id="initialize-the-hashmap-初始化-hashmap"><a class="header" href="#initialize-the-hashmap-初始化-hashmap">Initialize the <code>HashMap</code> （初始化 <code>HashMap</code>）</a></h2>
+<p><code>HashMap</code> 将会被跨多任务（并且可能会是多个线程）共享。为了能够做到这点，它将会被 <code>Arc&lt;Mutex&lt;_&gt;&gt;</code> 包裹。</p>
+<p>首先，方便起见，在 <code>use</code> 语句后加上下面的类型别名：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use bytes::Bytes;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+
+type Db = Arc&lt;Mutex&lt;HashMap&lt;String, Bytes&gt;&gt;&gt;;
+<span class="boring">}
+</span></code></pre></pre>
+<p>然后，改变 <code>main</code> 函数来初始化 <code>HashMap</code> 并且传递一个 <code>Arc</code> 句柄参数给 <code>process</code> 函数。使用 <code>Arc</code> 能够允许 <code>HashMap</code> 被多个任务并发地引用以及在多线程中运行。在整个 Tokio 中，这样的 <code>Arc</code> 句柄常见于用来引用一个提供了对某些共享状态的访问的值。</p>
+<pre><pre class="playground"><code class="language-rust">use tokio::net::TcpListener;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+
+#[tokio::main]
+async fn main() {
+    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+
+    println!(&quot;Listening&quot;);
+
+    let db = Arc::new(Mutex::new(HashMap::new()));
+
+    loop {
+        let (socket, _) = listener.accept().await.unwrap();
+        // Clone the handle to the hash map.
+        let db = db.clone();
+
+        println!(&quot;Accepted&quot;);
+        tokio::spawn(async move {
+            process(socket, db).await;
+        });
+    }
+}
+</code></pre></pre>
+<h3 id="使用-stdsyncmutex"><a class="header" href="#使用-stdsyncmutex">使用 <code>std::sync::Mutex</code></a></h3>
+<p>请注意，用的是 <code>std::sync::Mutex</code> 来保护 <code>HashMap</code> 而不是 <code>tokio::sync:Mutex</code> 。一个常见的错误是无条件的在异步代码中使用 <code>tokio::sync::Mutex</code> 。异步锁是用来锁定跨 <code>.await</code> 调用的互斥锁。</p>
+<p>一个同步的互斥锁在等待获取锁的时候会阻塞当前线程。所以反过来说，它会阻塞所在线程对其它任务的处理。但是，切换到 <code>tokio::sync::Mutex</code> 通常不能够有什么帮助，因为异步锁在内部也使用了同步锁。</p>
+<p>有这样一个经验法则，只要锁竞争保持在一个较低的水准并且锁没有跨 <code>.await</code> 持有，那么在异步代码中使用同步锁也很好。另外，可以考虑使用 <a href="https://docs.rs/parking_lot/0.10.2/parking_lot/type.Mutex.html"><code>parking_log::Mutex</code></a> 作为替代，它是比 <code>std::sync::Mutex</code> 更快的实现。</p>
+<h2 id="update-process-更新-process"><a class="header" href="#update-process-更新-process">Update <code>process()</code> （更新 <code>process()</code>）</a></h2>
+<p>这个函数不再初始化 <code>HashMap</code> 。相反，它接收一个共享的 <code>HashMap</code> 作为参数。它同样需要在使用前 lock 这个 <code>HashMap</code> 。请记住，HashMap 的值的类型现在是 <code>Bytes</code> （clone 它的代价非常低）了，所以也需要修改。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use tokio::net::TcpStream;
+use mini_redis::{Connection, Frame};
+
+async fn process(socket: TcpStream, db: Db) {
+    use mini_redis::Command::{self, Get, Set};
+
+    // Connection, provided by `mini-redis`, handles parsing frames from
+    // the socket
+    let mut connection = Connection::new(socket);
+
+    while let Some(frame) = connection.read_frame().await.unwrap() {
+        let response = match Command::from_frame(frame).unwrap() {
+            Set(cmd) =&gt; {
+                let mut db = db.lock().unwrap();
+                db.insert(cmd.key().to_string(), cmd.value().clone());
+                Frame::Simple(&quot;OK&quot;.to_string())
+            }           
+            Get(cmd) =&gt; {
+                let db = db.lock().unwrap();
+                if let Some(value) = db.get(cmd.key()) {
+                    Frame::Bulk(value.clone())
+                } else {
+                    Frame::Null
+                }
+            }
+            cmd =&gt; panic!(&quot;unimplemented {:?}&quot;, cmd),
+        };
+
+        // Write the response to the client
+        connection.write_frame(&amp;response).await.unwrap();
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="tasks-threads-and-contention-任务线程竞争"><a class="header" href="#tasks-threads-and-contention-任务线程竞争">Tasks, threads, and contention （任务、线程、竞争）</a></h3>
+<p>当锁竞争很小的时候，使用一个阻塞的锁来保护<code>短临界区</code> 是一种可接受的策略。当一个锁在被竞争，执行本任务的线程必须阻塞并且等待这个锁。这不仅仅会阻塞当前的任务，还会阻塞其他被调度到当前线程上的任务。</p>
+<p>默认情况下，Tokio runtime 使用一个多线程调度器。任务被调度到被 runtime 管理的任意数量的线程上。如果计划执行大量任务，并且它们都需要访问互斥锁，那么就会出现竞争。另一方面，如果 <a href="https://docs.rs/tokio/1.21.2/tokio/runtime/index.html#current-thread-scheduler"><code>current_thread</code></a> runtime 风格被启用，那么互斥锁将永远不会被竞争。</p>
+<blockquote>
+<p> <a href="https://docs.rs/tokio/1/tokio/runtime/struct.Builder.html#method.new_current_thread"><code>current_thread</code> runtime flavor</a> 是一个轻量、单线程的运行时。当只生成少量任务和打开不多的 sockets 时它是一个不错的选择。举个例子，当在异步客户端库之上桥接一个同步 API 时，这种选择效果很好（比如用new 一个 current_thread runtime，然后在它之上用 block_on 执行异步代码）。</p>
+</blockquote>
+<p>如果在同步锁上的竞争成为了一个问题，最好的解决方案是少量切换成 Tokio mutex。如果不采用前者方案，要考虑的选项有：</p>
+<ul>
+<li>
+<p>跑一个专门用来管理状态的任务，并且使用消息传递来共享状态。</p>
+</li>
+<li>
+<p>分片锁。</p>
+</li>
+<li>
+<p>重构代码来避开锁。</p>
+</li>
+</ul>
+<p>在我们目前的情况下，因为每个 key 都是独立的，所以分片锁的效果会很棒！为了做到这个，不能够只有一个单独的 <code>Mutex&lt;HashMap&lt;_,_&gt;&gt;</code> 实例，我们需要引入 <code>N</code> 个不同的实例：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>type ShardedDb = Arc&lt;Vec&lt;Mutex&lt;HashMap&lt;String, Vec&lt;u8&gt;&gt;&gt;&gt;&gt;;
+
+fn new_sharded_db(num_shards: usize) -&gt; ShardedDb {
+    let mut db = Vec::with_capacity(num_shards);
+    for _ in 0..num_shards {
+        db.push(Mutex::new(HashMap::new()));
+    }
+    Arc::new(db)
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>接着，找到给定 key 的的位置变成了两步过程。第一步，用 key 来确定在哪一个hash map 分片。第二步在 <code>HashMap</code> 中找 key：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let shard = db[hash(key) % db.len()].lock().unwrap();
+shard.insert(key, value);
+<span class="boring">}
+</span></code></pre></pre>
+<p>上面概述的简单实现需要使用固定数量的分片，并且一旦创建了 <code>SharedDb</code> 后分片的数量就不能改变了。<a href="https://docs.rs/dashmap">dashmap</a> crate 提供了一个更有经验验证的分片 hash map 实现。</p>
+<h2 id="holding-a-mutexguard-across-an-await-跨-await-持有一个-mutexguard"><a class="header" href="#holding-a-mutexguard-across-an-await-跨-await-持有一个-mutexguard">Holding a <code>MutexGuard</code> across an <code>.await</code> （跨 <code>.await</code> 持有一个 <code>MutexGuard</code>）</a></h2>
+<p>你可能会写出像下面这样的代码：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::{Mutex, MutexGuard};
+
+async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
+    let mut lock: MutexGuard&lt;i32&gt; = mutex.lock().unwrap();
+    *lock += 1;
+
+    do_something_async().await;
+} // 锁在这里超出作用域
+<span class="boring">}
+</span></code></pre></pre>
+<p>当你尝试 spawn 一些东西来调用这个函数，你会遇到下面的错误信息：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>error: future cannot be sent between threads safely
+   --&gt; src/lib.rs:13:5
+    |
+13  |     tokio::spawn(async move {
+    |     ^^^^^^^^^^^^ future created by async block is not `Send`
+    |
+   ::: /playground/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-0.2.21/src/task/spawn.rs:127:21
+    |
+127 |         T: Future + Send + 'static,
+    |                     ---- required by this bound in `tokio::task::spawn::spawn`
+    |
+    = help: within `impl std::future::Future`, the trait `std::marker::Send` is not implemented for `std::sync::MutexGuard&lt;'_, i32&gt;`
+note: future is not `Send` as this value is used across an await
+   --&gt; src/lib.rs:7:5
+    |
+4   |     let mut lock: MutexGuard&lt;i32&gt; = mutex.lock().unwrap();
+    |         -------- has type `std::sync::MutexGuard&lt;'_, i32&gt;` which is not `Send`
+...
+7   |     do_something_async().await;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^ await occurs here, with `mut lock` maybe used later
+8   | }
+    | - `mut lock` is later dropped here
+<span class="boring">}
+</span></code></pre></pre>
+<p>这个错误会发生是因为 <code>std::sync::MutexGuard</code> 类型没有实现 <code>Send</code> trait 。这意味着你不能传递一个同步锁到另一个线程，另一个原因是 Tokio runtime 在每个 <code>.await</code> 调用时能够在线程间 move 一个任务。为了避免这个错误，你应该重构你的代码来让互斥锁的析构函数在 <code>.await</code> 之前就运行完毕。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 这样就行了！
+async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
+    {
+        let mut lock: MutexGuard&lt;i32&gt; = mutex.lock().unwrap();
+        *lock += 1;
+    } // 锁在这里超出作用域
+
+    do_something_async().await;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>值得注意的是，下面这样不能正常运作：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::{Mutex, MutexGuard};
+
+// This fails too.
+async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
+    let mut lock: MutexGuard&lt;i32&gt; = mutex.lock().unwrap();
+    *lock += 1;
+    drop(lock);
+
+    do_something_async().await;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>这是因为编译器目前只是通过作用域信息来计算一个 future 是不是实现了 <code>Send</code> trait 。编译器未来有望被更新来支持显式的 drop，但是现在咱只能显式的加上作用范围。</p>
+<p>注意，这里讨论的错误在上一节的 <a href="https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound">Send Bound - Spawning</a> 也讨论过。</p>
+<p>你不应该尝试通过某种方式生成一个不需要实现 <code>Send</code> 的任务来规避这个问题，因为如果任务正持有锁，而 Tokio 在 <code>.await</code> 处暂停了你的任务，一些其它的任务可能会被调度到同样的线程上，并且其他任务也可能尝试获取锁，这会导致死锁，因为等待锁的任务会阻塞当前线程，这也就阻止了持有锁的任务释放锁。</p>
+<p>我们下面将要讨论一些解决这个错误信息的方法：</p>
+<h3 id="restructure-your-code-to-not-hold-the-lock-across-an-await-重构你的代码来让锁不再跨-await-持有"><a class="header" href="#restructure-your-code-to-not-hold-the-lock-across-an-await-重构你的代码来让锁不再跨-await-持有">Restructure your code to not hold the lock across an <code>.await</code> （重构你的代码来让锁不再跨 <code>.await</code> 持有）</a></h3>
+<p>我们已经在上面的片段中看到了一个例子，但是还有一些更鲁棒的解决方式。举个例子，你可以把互斥锁包装在一个结构体内，并且只将互斥锁锁定在该结构体上的非异步方法中。细节如下：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::Mutex;
+
+struct CanIncrement {
+    mutex: Mutex&lt;i32&gt;,
+}
+impl CanIncrement {
+    // This function is not marked async.
+    fn increment(&amp;self) {
+        let mut lock = self.mutex.lock().unwrap();
+        *lock += 1;
+    }
+}
+
+async fn increment_and_do_stuff(can_incr: &amp;CanIncrement) {
+    can_incr.increment();
+    do_something_async().await;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>这种模式保证了你不会进入到 <code>Send</code> 错误中去，因为 mutex guard 没有出现在异步函数的任何地方，它在自己的同步函数结束时已经被释放了。</p>
+<h3 id="spawn-a-task-to-manage-the-state-and-use-message-passing-to-operate-on-it生成一个任务来管理状态并且通过消息传递来操作"><a class="header" href="#spawn-a-task-to-manage-the-state-and-use-message-passing-to-operate-on-it生成一个任务来管理状态并且通过消息传递来操作">Spawn a task to manage the state and use message passing to operate on it（生成一个任务来管理状态，并且通过消息传递来操作）</a></h3>
+<p>这是本章节最开始提到的两种方法中的第二种，并且它常常在共享的资源是 I/O 资源的时候被采用。有关更多详细信息，请参阅下一章。</p>
+<h3 id="use-tokios-asynchronous-mutex使用-tokio-异步锁"><a class="header" href="#use-tokios-asynchronous-mutex使用-tokio-异步锁">Use Tokio's asynchronous mutex（使用 Tokio 异步锁）</a></h3>
+<p>Tokio 提供的 <code>tokio::sync:Mutex</code> 类型也能在这使用。Tokio mutex 的主要特点是它能够被跨 <code>.await</code> 持有而不会出现任何问题。换而言之，使用一个异步锁的开销肯定是大于使用一个普通的互斥锁的，通常最好使用另外两种方法之一。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use tokio::sync::Mutex; // note! This uses the Tokio mutex
+
+// This compiles!
+// (but restructuring the code would be better in this case)
+async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
+    let mut lock = mutex.lock().await;
+    *lock += 1;
+
+    do_something_async().await;
+} // lock goes out of scope here
+<span class="boring">}
+</span></code></pre></pre>
+
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../../rust/mini-redis/spawning.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../rust/mini-redis/channels.html" class="mobile-nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../../rust/mini-redis/spawning.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a rel="next" href="../../rust/mini-redis/channels.html" class="nav-chapters next" title="Next chapter"
+                aria-label="Next chapter" aria-keyshortcuts="Right">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </nav>
+
+    </div>
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+    <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "rust/mini-redis/shared_state.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../../assets/custom.js"></script>
+    <script type="text/javascript" src="../../assets/bigPicture.js"></script>
+</body>
+
+</html>
