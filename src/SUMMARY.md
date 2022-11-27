@@ -29,6 +29,7 @@
   - [pre-commit](./other-categories/pre-commit/pre-commit.md)
   - [minio](./other-categories/minio/minio.md)
   - [git](./other-categories/git/git.md)
+  - [croc](./other-categories/croc/croc.md)
 - [Blockchain](./blockchain/blockchain.md)
   - [substrate TODO](./blockchain/substrate/substrate.md)
 - [issues and solutions](./issues/issues.md)
