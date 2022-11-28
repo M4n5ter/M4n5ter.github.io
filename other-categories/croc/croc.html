@@ -195,7 +195,7 @@ croc 2151-school-biscuit-snow
 </code></pre>
 <p><code>models.DEFAULT_RELAY</code> 和 <code>models.DEFAULT_RELAY6</code> 的内容分别是 <code>&quot;croc.schollz.com&quot;</code> 和 <code>&quot;croc6.schollz.com&quot;</code> 。</p>
 <p>从这就能看出 <code>relay</code> 并不是真正意义上的无服务器，仍然需要需要一台发送者和接收者都能发现的中继服务器，而 schollz 本人提供了默认的中继服务器。</p>
-<p>中继服务器不需要提供真实的服务，正如其名，它仅仅只是负责中继（写到这时我并没有详细阅读 <code>croc</code> 源码，我猜测应该是像 <code>P2P</code> 一样使用类似 DNS hole-punch 的技术来让端对端彼此能够发现彼此）。</p>
+<p>中继服务器不需要提供真实的服务，正如其名，它仅仅只是负责中继（写到这时我并没有详细阅读 <code>croc</code> 源码，我猜测应该是像 <code>P2P</code> 一样使用类似 NAT hole punching 的技术来让端对端彼此能够发现彼此）。</p>
 <p><code>croc</code> 也提供了指定 <code>relay</code> 的参数，具体细节可以通过在<strong>命令/子命令</strong>后添加 <code>--help</code> 来查看。</p>
 <h2 id="relay-是如何工作的"><a class="header" href="#relay-是如何工作的">relay 是如何工作的</a></h2>
 <p>两端（指发送端和接收端）会连接到 relay（中继服务器），由 relay 为两端创建一个房间，该房间可容纳两个连接。连接会告诉中继服务器它需要一个房间，如果房间不存在就会创建一个新房间，如果房间已经存在并且没有满员，relay 就会将这条连接加入到它需要的房间（本情况说明这条连接是接收端，因为它想要的房间已经存在了，那个房间就是发送端向 relay 申请的房间）。</p>
@@ -225,7 +225,7 @@ croc 2151-school-biscuit-snow
     }
 }
 </code></pre>
-<p>relay 会读取一个连接中发送过来的内容，并直接将内容写入到另一个连接中。从这也能得出结论：croc 没有使用类似 DNS 穿孔这样的技术，而是由中继服务器来转发传输内容，因此传输速度依旧会受到中继服务器的带宽限制。</p>
+<p>relay 会读取一个连接中发送过来的内容，并直接将内容写入到另一个连接中。从这也能得出结论：croc 没有使用类似 nat hole punching 这样的技术，而是由中继服务器来转发传输内容，因此传输速度依旧会受到中继服务器的带宽限制。</p>
 <p>但是当两端互相可发现（比如处于同一个局域网内），<code>croc</code> 的 <code>--ip value</code> 可以允许接收方来指定发送方的 IP 来直接从接收方获取传输内容，这样就不会经过中继服务器了。</p>
 
                     <div id="giscus-container"></div>
