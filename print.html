@@ -203,8 +203,7 @@
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>async fn(Request) -&gt; Result&lt;Response, Error&gt;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这个抽象可以同时运用于客户端和服务端。同时 Tower 也提供了 超时处理、访问频率限制和负载均衡之类的组件，这些功能可以被抽象为在 inner Service 调用之前和之后进行一些操作所共同组成的Service。这些 Service 称为中间件(middleware)。</p>
 <p>Tower 库对 Service 的设计希望满足以下目标：</p>
 <ol>
@@ -226,8 +225,7 @@
 
   fn call(&amp;mut self, req: Request) -&gt; Self::Future;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="通过-service-trait-实现-timeout-中间件"><a class="header" href="#通过-service-trait-实现-timeout-中间件"><strong>通过 Service trait 实现 Timeout 中间件</strong></a></h3>
 <p>Timout 中间件用于对某个 request 的处理限定时间，如果超过时限还没有返回，则直接返回错误。Timout 应该有个用于进一步处理的里层serivce和一个时限。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -236,8 +234,7 @@
   service: T,
   duration: std::time::Duration
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>将 Timeout 也定义为一个 Service</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -245,8 +242,7 @@
 where
   S: Service&lt;R&gt;,
   S::Error: Into&lt;Box&lt;dyn std::error::Error + Send + Sync&gt;&gt; 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><code>poll_ready</code> 非常好处理，直接将调用里层 Service 的 poll_ready 函数。</p>
 <p>而 <code>call</code> 则要求返回一个 Future，如果要实现 Timeout 对应的行为逻辑，需要创建一个新的实现了 Future 的类型——ResponseFuture。我们希望它被poll时，首先会查看里层 Service 是否返回，如果已返回则返回结果，如果没有则检查是否已经timeout，如果没有则返回 Pending，如果已经超时则返回超时错误。</p>
 <p>因此我们创建了一个融合了里层 future 和超时 future 的类型</p>
@@ -259,8 +255,7 @@ struct ResponseFuture&lt;F&gt; {
   #[pin]
   sleep: tokio::time::Sleep
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>pin_project 可以使得 Pin 类型的字段也是 Pin 类型，在调用 poll 函数时需要用到。</p>
 <p>然后为 ResponseFuture 实现 Future trait</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -291,8 +286,7 @@ where
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="balance-中间件"><a class="header" href="#balance-中间件">Balance 中间件</a></h3>
 <p>从名字就可以看出来，Balance 模块用于提供负载均衡的服务，负载均衡会根据所有服务的负载程度来决定处理 request 的服务。</p>
 <p>在官方文档提供了两种 Balance 服务</p>
@@ -323,8 +317,7 @@ where T: Service&lt;Request&gt;
   failed: Option&lt;ServiceError&gt;,
   handle: Handle
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Worker 维护了一个 mpsc channel 的接收端rx，而每个 Buffer Service 维护了一个 mpsc channel 的发送端tx，且 Buffer 实现了 Clone trait，当 Buffer 被 clone 时，对应的 tx 也被clone。</p>
 <p>由于用户的 request 是由 Buffer 转交给 Worker 的，因此 request 的处理结果无法直接从 Buffer 获取。这里就体现了 Service trait 的灵活性，由于 Service 的call函数返回的是一个 Future，因此可以自定义一个 ResponseFuture，然后在 Worker 要处理的 Message 中包含一个 channel 的发送端，在call函数返回的 Future 中包含该 channel 的接收端，就可以使得 Worker 和用户之间可以直接通信。这个设计应该说是非常巧妙的。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -348,8 +341,7 @@ where
     }
   }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="discover-中间件"><a class="header" href="#discover-中间件">Discover 中间件</a></h3>
 <p>在前面的 Balance 中间件中提到了 Service 集的概念，有集合，就意味着有集合内元素的变动。各个中间件对于 Service 集合的实现可能并不相同，但是都对外提供了统一的增删接口，这个接口就是 Discover trait。</p>
 <p>Discover 为了方便对 Service 集进行管理，要求用户对每个 Service 定义一个唯一的标识符并且实现了 Eq。</p>
@@ -360,8 +352,7 @@ where
   Insert(K, V),
   Remove(K)
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>对于一个维护 Service 集的struct，其对 Service 集的修改选择交给用户，由用户提供一个实现 Discover trait 的 struct，而维护 Service 集的 struct 只需要调用 poll_discover 函数就可以获取外界对 Service 集的修改。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -374,8 +365,7 @@ where
     cx: &amp;mut Context&lt;'_&gt;
   ) -&gt; Poll&lt;Option&lt;Result&lt;Change&lt;Self::Key, Self::Service&gt;, Self::Error&gt;&gt;&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <blockquote>
 <p><em>Tips: 在Rust异步编程中，很多的poll及类似的函数的返回结果都是 Poll&lt;Option&lt;Result&lt;V, E&gt;&gt;&gt; 类型的。这种返回类型可以从结果上反映很多东西，通常用于需要被多次poll的函数。</em></p>
 </blockquote>
@@ -394,8 +384,7 @@ where
     D: TryStream&lt;Ok = Change&lt;K, S&gt;, Error = E&gt;,
     K: Eq,
 {}
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>也就是说，要实现 Discover 首先要实现 TryStream，而在 discover 中也为所有实现了 TryStream 的类型自动实现了 Discover trait:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -415,8 +404,7 @@ where
         TryStream::try_poll_next(self, cx)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>也就是将 Discover 抽象为流式操作，这样就可以用到很多现成的实现了 Stream 的工具来存储对于 Service 集的修改。</p>
 <h3 id="filter-中间件"><a class="header" href="#filter-中间件">Filter 中间件</a></h3>
 <p>Filter 顾名思义，对于 request 进行一次筛选，只有符合筛选条件的 request 才会提交给 Service 处理。</p>
@@ -426,8 +414,7 @@ where
   inner: T,
   predicate: U
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>可以看出，Filter 的初始定义非常自由，Filter 对 predicate 并没有任何限制，但是 Filter 必须要根据 predicate 的返回结果分别处理，所以 Filter 和 predicate 总是相关的。</p>
 <p>Filter 只对于当 predicate 实现了 Predicate trait 时实现了 Service trait。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -436,8 +423,7 @@ where
   type Request;
   fn check(&amp;mut self, request: Request) -&gt; Result&lt;Self::Request, Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>实现过程也很有意思，由于call函数要求返回一个 Future，因此当筛选不通过时，需要返回一个立刻返回 Ready(Err(_)) 的 Future</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -462,8 +448,7 @@ where
         })
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="async-predicate"><a class="header" href="#async-predicate"><strong>async predicate</strong></a></h3>
 <p>上面讲的predicate函数并不是异步的，这只适用于一些快速筛选的 Filter，如果 predicate 过程也需要等待IO等适合做成异步的场景，那么应该将 predicate 过程也做成异步形式。因此 Filter 模块还存在一个适用于异步场景的 AsyncFilter。</p>
 <p>这就导致在一个 Service 同时存在两种 Future，用户也不知道两种 Future 的先后关系，因此需要将两种 Future 放到一个 AsyncResponseFuture，由 AsyncResponseFuture 协调两个 Future。</p>
@@ -481,8 +466,7 @@ where
   state: State&lt;P::Future, S::Future&gt;,
   service: S
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>AsyncResponseFuture 的 poll 结果由当前 state 决定。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -511,8 +495,7 @@ where
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="limit-中间件"><a class="header" href="#limit-中间件">Limit 中间件</a></h3>
 <p>服务器的处理能力是有限的，如果短时间内到达的 request 过多，可能会导致系统宕机。Limit 中间件用于对 request 进行限制，主要分为两种方式：</p>
 <ul>
@@ -527,8 +510,7 @@ where
   num: u64,
   per: Duration
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>借助 tokio::time::sleep_util future，限制 now 到 now+per 这段时间内的 request 处理数量。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -562,8 +544,7 @@ where
     }
   }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="load-中间件"><a class="header" href="#load-中间件">Load 中间件</a></h3>
 <p>Load 是用于定量化表示一个 Service 的负载的中间件。调用 Balance layer 的 Service 集就要求 Service 必须实现 Load trait。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -572,8 +553,7 @@ where
   type Metric: PartialOrd,
   fn load(&amp;self) -&gt; Self::Metric;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Load 提供下列三个计算 Service 负载的模块：</p>
 <ul>
 <li>Constant：将 Service 的 Load 指标设为常数；</li>
@@ -590,8 +570,7 @@ where
   handle: Option&lt;H&gt;,
   completion: C
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>其中，handle 为通知 Service request 已经完成的柄，TrackCompletionFuture 只需要负责在 request 执行完成之后 drop handle，由具体的模块去实现 handle 被 drop 时需要实现的动作。</p>
 <p>比如 PeakEwma 模块的 handle 需要追踪从接收 request 到执行完成的时间：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -609,8 +588,7 @@ impl Drop for Handle {
     }
   }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>至于 PendingRequests 就更简单了，其 handle 直接就是一个 Arc&lt;()&gt; 类型的 wrap，直接调用 Arc 类型的 strong_count 函数就知道当前 Pending 的 request 数量。</p>
 <h3 id="loadshed-中间件"><a class="header" href="#loadshed-中间件">LoadShed 中间件</a></h3>
 <p>LoadShed 类似于 Rust 中的一些 try_xxx 函数，其 poll_ready 函数返回 <code>Poll&lt;Result&lt;(), E&gt;&gt;</code> 类型，当 poll_ready 被调用时，总是返回 Ready，但是根据里层的类型判断里层 Service 是否真的 Ready，这个中间件适用于一些特殊的场景。</p>
@@ -629,8 +607,7 @@ impl Drop for Handle {
   fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), Self::MakeError&gt;&gt;;
   fn make_service(&amp;mut self, target: Target) -&gt; Self::Future;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>MakeService 已经为所有 Response type 为 Service 类型的 Service 自动实现。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -652,15 +629,13 @@ where
         Service::call(self, target)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="service_fn-组件"><a class="header" href="#service_fn-组件"><strong>service_fn 组件</strong></a></h3>
 <p>Tower 提供了一个可以快速将一个签名为</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>async fn(req: Request) -&gt; Result&lt;Response, Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>的异步函数包装为一个 Service 的函数 service_fn，其就是一个 Make Service。这种包装很简单，因为每个异步函数在调用时编译器会自动生成一个 Future。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -683,8 +658,7 @@ where
         (self.f)(req)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="reconnect-中间件"><a class="header" href="#reconnect-中间件">Reconnect 中间件</a></h3>
 <p>Reconnect 是一个可以在发生错误时自动重连的中间件，一个 Reconnect Service 有三种状态：</p>
 <ul>
@@ -704,8 +678,7 @@ where
   fn retry(&amp;self, req: &amp;Req, result: Result&lt;&amp;Res, &amp;E&gt;) -&gt; Option&lt;Self::Future&gt;;
   fn clone_request(&amp;self, req: &amp;Req) -&gt; Option&lt;Req&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>其中 retry 函数用于决定是否应该继续 retry，如果返回 None 则停止，否则返回 Some(Future)。Future 可以在被 poll 时每次生成一个新的实现了 Policy 的 Retry Service，这意味着每次 retry 之后都可以产生新的 Service，而不是只能一直使用同一种 Policy，进一步增大了自由度。</p>
 <p>最后再看 Tower 给的 Retry Service 对于 call 函数的 ResponseFuture 的实现。ResponseFuture 包含三种状态：</p>
 <ul>
@@ -746,8 +719,7 @@ where
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>通过 ready_oneshot 函数将 Service 包装为一个 ReadyOneshot task，然后通过 tokio::spawn 传入 executor</p>
 <h3 id="steer-中间件"><a class="header" href="#steer-中间件">Steer 中间件</a></h3>
 <p>Steer 中间件用于管理 Service 数组，根据自定义的规则将 request 导向特定的 Service。</p>
@@ -756,8 +728,7 @@ where
 </span>trait Picker&lt;S, Req&gt; {
   fn pick(&amp;mut self, r: &amp;Req, services: &amp;[S]) -&gt; usize;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>由于 Steer 内部维护多个 Service，所以只有多个 Service 同时 ready， Steer 才会返回 Ready。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -807,8 +778,7 @@ where
         cl.call(req)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这样的处理实际会拖累整体的效率，如果某个 request 所需要的 Service 实际是 ready 的，但是可能为了等待其他的 Service 而延缓调用。但是为了兼容 Tower 的核心 API 不得不这么处理，毕竟 poll_ready 会与 request 相关的 Service 只有这一个。</p>
 <h3 id="结论"><a class="header" href="#结论">结论</a></h3>
 <p>Tower 将网络编程中常见的行为抽象为统一的 Service，对外的接口非常统一，并且可以相互叠加，而且是异步式，是一个扩展性非常强大的框架，值得学习一下。</p>
@@ -874,8 +844,7 @@ async fn main() -&gt; Result&lt;()&gt; {
     println!(&quot;从服务端得到了值; result={:?}&quot;, result);
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>确保 <code>Mini-Redis server</code> 正在运行，找个单独的终端窗口执行:</p>
 <pre><code class="language-zsh">mini-redis-server
 </code></pre>
@@ -891,8 +860,7 @@ async fn main() -&gt; Result&lt;()&gt; {
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><code>client::connect</code> 函数是由 <code>mini_redis</code> 这个 crate 提供的。它通过<strong>异步</strong>的方式向指定的地址建立一个 TCP 连接。一旦连接成功建立了，将会返回一个 <code>Client</code> handle(中文叫句柄)（这里给它起了个名 &quot;client&quot;）。</p>
 <p>即使这个操作是<strong>异步</strong>执行的，但是我们写的这个代码看起来像是<strong>同步</strong>的。通过 <code>.await</code> 操作符来表明这是一个异步操作。</p>
 <h3 id="何为异步编程"><a class="header" href="#何为异步编程">何为异步编程？</a></h3>
@@ -922,8 +890,7 @@ use tokio::net::ToSocketAddrs;
 pub async fn connect&lt;T: ToSocketAddrs&gt;(addr: T) -&gt; Result&lt;Client&gt; {
     // ...
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><strong><code>async fn</code></strong> 这样的定义方式看起来像是一个常规的同步函数，但是以异步的方式运行。</p>
 <p>Rust 在<strong>编译期将</strong> <strong><code>async fn</code></strong> 转化为一个异步运行的 <code>routine</code> （不是 <code>coroutine</code>，不要理解错误）。</p>
 <p>在 <code>async fn</code> 中对 <code>.await</code> 的任何调用都会将控制权返回给线程（即让出当前线程），此时这个操作会被放在后台，而线程可能会去做一些别的事情。</p>
@@ -950,8 +917,7 @@ async fn main() {
 
     // 对 `op` 调用 `.await`。
     op.await;
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>输出会是下面这样的：</p>
 <pre><code class="language-zsh">hello
 world
@@ -974,16 +940,14 @@ world
 <pre><pre class="playground"><code class="language-rust">#[tokio::main]
 async fn main() {
     println!(&quot;hello&quot;);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>被转化成：</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
     let mut rt = tokio::runtime::Runtime::new().unwrap();
     rt.block_on(async {
         println!(&quot;hello&quot;);
     })
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>tokio runtime</code> 的细节将在后面介绍。</p>
 <h3 id="cargo-features"><a class="header" href="#cargo-features">Cargo features</a></h3>
 <p>在本教程引入 <code>tokio</code> 依赖时，<code>full</code> feature flag 被启用了。</p>
@@ -1032,8 +996,7 @@ async fn process(socket: TcpStream) {
         let response = Frame::Error(&quot;unimplemented&quot;.to_string());
         connection.write_frame(&amp;response).await.unwrap();
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>现在把它跑起来：</p>
 <pre><code class="language-zsh">cargo run
 </code></pre>
@@ -1070,8 +1033,7 @@ async fn main() {
             process(socket).await;
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="tasks"><a class="header" href="#tasks">Tasks</a></h3>
 <p>一个 Tokio 任务是一个异步的 green thread。他们是通过 <code>async</code> 块传递给 <code>tokio::spawn</code>  来创建的。<code>tokio::spawn</code> 函数返回一个 <code>JoinHandle</code>，使得 <code>JoinHandle</code>  的调用者可以与生成的任务进行交互。<code>async</code> 块可以拥有返回值，调用者通过在 <code>JoinHandle</code> 上使用 <code>.await</code> 来获取返回值。</p>
 <p>举个栗子：</p>
@@ -1086,8 +1048,7 @@ async fn main() {
 
     let out = handle.await.unwrap();
     println!(&quot;GOT {}&quot;, out);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>.await</code> 会让出当前线程的控制权，并等待 <code>JoinHandle</code> 返回一个 <code>Result</code>。当一个任务在执行期间遇到了一个错误，<code>JoinHandle</code> 将会返回一个 <code>Err</code> ，当任务 panic 又或者是因为 <code>runtime</code> 关闭而被强制取消也会发生前面那个事件。</p>
 <p>Task 是由 scheduler 管理的执行单位。Spawn (生产) 一个任务会把任务提交给 Tokio scheduler来确保任务在有工作要做时执行。生产出来的任务可能会在它们被生产的线程上执行，也有可能会在不一样的 <code>runtime thread</code> 上被执行。任务被生产后也能够在不同线程间移动。</p>
 <p>任务在 Tokio 中是非常非常轻量的。在底层，它们只需要一次分配和64字节的内存。应用程序应该可以随意生成数千甚至数百万个任务。</p>
@@ -1106,8 +1067,7 @@ async fn main() {
     task::spawn(async {
         println!(&quot;Here's a vec: {:?}&quot;, v);
     });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>尝试编译它会有如下报错：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1137,8 +1097,7 @@ help: to force the async block to take ownership of `v` (and any other
 8 |         println!(&quot;Here's a vec: {:?}&quot;, v);
 9 |     });
   |
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这种情况会发生是因为默认情况下，变量不会被 <strong>move</strong> 到 async block。这个 <code>v</code>  Vector 被 <code>main</code> 函数保留了所有权。<code>println!</code> 只是借用了 <code>v</code>。rust 编译器向我们解释了这一点，甚至提出了修复建议！（rust 编译器还是一如既往的牛逼！尽管它的严格经常会让我很挫败:( ）</p>
 <p>按 rust 编译器说的来，在第 7 行处为 async block 加上 <code>move</code> ，现在这个 task 就拥有了 v 的所有权而不是借用，并且让它变成了 <code>'static</code>。</p>
 <p>如果必须同时从多个任务访问单个数据，那么就必须使用 <code>Arc</code> 等同步原语共享它。</p>
@@ -1176,8 +1135,7 @@ async fn main() {
             println!(&quot;{:?}&quot;, a);
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>error: future cannot be sent between threads safely
@@ -1199,8 +1157,7 @@ note: required by a bound in `tokio::spawn`
     |                     ^^^^ required by this bound in `tokio::spawn`
 
 error: could not compile `my-redis` due to previous error
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>因为用了 <code>.await</code> 后，当前任务会让出线程控制权，任务的当前状态会被整个打包，并且可能会在多个线程间传递这个任务，存在任务会在不同的线程被执行的可能，而数据在线程间传递要求实现 <code>Send</code> trait 。</p>
 <p>下面是官方给出的两个例子：</p>
 <p>成功：</p>
@@ -1220,8 +1177,7 @@ async fn main() {
         // the task yields to the scheduler
         yield_now().await;
     });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>失败：</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::task::yield_now;
 use std::rc::Rc;
@@ -1237,8 +1193,7 @@ async fn main() {
 
         println!(&quot;{}&quot;, rc);
     });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>错误报告：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1269,8 +1224,7 @@ note: future is not `Send` as this value is used across an await
 11  |         println!(&quot;{}&quot;, rc);
 12  |     });
     |     - `rc` is later dropped here
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>我们会在下一节 Shared state 来更深入的探讨这个错误的特殊情况。</p>
 <h2 id="store-values存储值"><a class="header" href="#store-values存储值">Store values（存储值）</a></h2>
 <p>我们现在将要实现 <code>process</code> 函数来处理发送过来的命令。我们使用 <code>HashMap</code> 来存储值。<code>SET</code> 命令将会插入数据到 <code>HashMap</code> ，<code>GET</code> 值会加载数据。另外，我们将会使用一个 loop 来接受每个连接的多个命令。</p>
@@ -1326,8 +1280,7 @@ async fn process(socket: TcpStream) {
         // Write the response to the client
         connection.write_frame(&amp;response).await.unwrap();
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>让我们来试一试：</p>
 <pre><code class="language-zsh">cargo run
 </code></pre>
@@ -1368,8 +1321,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 type Db = Arc&lt;Mutex&lt;HashMap&lt;String, Bytes&gt;&gt;&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>然后，改变 <code>main</code> 函数来初始化 <code>HashMap</code> 并且传递一个 <code>Arc</code> 句柄参数给 <code>process</code> 函数。使用 <code>Arc</code> 能够允许 <code>HashMap</code> 被多个任务并发地引用以及在多线程中运行。在整个 Tokio 中，这样的 <code>Arc</code> 句柄常见于用来引用一个提供了对某些共享状态的访问的值。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::net::TcpListener;
 use std::collections::HashMap;
@@ -1393,8 +1345,7 @@ async fn main() {
             process(socket, db).await;
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="使用-stdsyncmutex"><a class="header" href="#使用-stdsyncmutex">使用 <code>std::sync::Mutex</code></a></h3>
 <p>请注意，用的是 <code>std::sync::Mutex</code> 来保护 <code>HashMap</code> 而不是 <code>tokio::sync:Mutex</code> 。一个常见的错误是无条件的在异步代码中使用 <code>tokio::sync::Mutex</code> 。异步锁是用来锁定跨 <code>.await</code> 调用的互斥锁。</p>
 <p>一个同步的互斥锁在等待获取锁的时候会阻塞当前线程。所以反过来说，它会阻塞所在线程对其它任务的处理。但是，切换到 <code>tokio::sync::Mutex</code> 通常不能够有什么帮助，因为异步锁在内部也使用了同步锁。</p>
@@ -1435,8 +1386,7 @@ async fn process(socket: TcpStream, db: Db) {
         connection.write_frame(&amp;response).await.unwrap();
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="tasks-threads-and-contention-任务线程竞争"><a class="header" href="#tasks-threads-and-contention-任务线程竞争">Tasks, threads, and contention （任务、线程、竞争）</a></h3>
 <p>当锁竞争很小的时候，使用一个阻塞的锁来保护<code>短临界区</code> 是一种可接受的策略。当一个锁在被竞争，执行本任务的线程必须阻塞并且等待这个锁。这不仅仅会阻塞当前的任务，还会阻塞其他被调度到当前线程上的任务。</p>
 <p>默认情况下，Tokio runtime 使用一个多线程调度器。任务被调度到被 runtime 管理的任意数量的线程上。如果计划执行大量任务，并且它们都需要访问互斥锁，那么就会出现竞争。另一方面，如果 <a href="https://docs.rs/tokio/1.21.2/tokio/runtime/index.html#current-thread-scheduler"><code>current_thread</code></a> runtime 风格被启用，那么互斥锁将永远不会被竞争。</p>
@@ -1467,15 +1417,13 @@ fn new_sharded_db(num_shards: usize) -&gt; ShardedDb {
     }
     Arc::new(db)
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>接着，找到给定 key 的的位置变成了两步过程。第一步，用 key 来确定在哪一个hash map 分片。第二步在 <code>HashMap</code> 中找 key：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let shard = db[hash(key) % db.len()].lock().unwrap();
 shard.insert(key, value);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>上面概述的简单实现需要使用固定数量的分片，并且一旦创建了 <code>SharedDb</code> 后分片的数量就不能改变了。<a href="https://docs.rs/dashmap">dashmap</a> crate 提供了一个更有经验验证的分片 hash map 实现。</p>
 <h2 id="holding-a-mutexguard-across-an-await-跨-await-持有一个-mutexguard"><a class="header" href="#holding-a-mutexguard-across-an-await-跨-await-持有一个-mutexguard">Holding a <code>MutexGuard</code> across an <code>.await</code> （跨 <code>.await</code> 持有一个 <code>MutexGuard</code>）</a></h2>
 <p>你可能会写出像下面这样的代码：</p>
@@ -1489,8 +1437,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 } // 锁在这里超出作用域
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当你尝试 spawn 一些东西来调用这个函数，你会遇到下面的错误信息：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1516,8 +1463,7 @@ note: future is not `Send` as this value is used across an await
     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^ await occurs here, with `mut lock` maybe used later
 8   | }
     | - `mut lock` is later dropped here
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这个错误会发生是因为 <code>std::sync::MutexGuard</code> 类型没有实现 <code>Send</code> trait 。这意味着你不能传递一个同步锁到另一个线程，另一个原因是 Tokio runtime 在每个 <code>.await</code> 调用时能够在线程间 move 一个任务。为了避免这个错误，你应该重构你的代码来让互斥锁的析构函数在 <code>.await</code> 之前就运行完毕。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1530,8 +1476,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>值得注意的是，下面这样不能正常运作：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1545,8 +1490,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这是因为编译器目前只是通过作用域信息来计算一个 future 是不是实现了 <code>Send</code> trait 。编译器未来有望被更新来支持显式的 drop，但是现在咱只能显式的加上作用范围。</p>
 <p>注意，这里讨论的错误在上一节的 <a href="https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound">Send Bound - Spawning</a> 也讨论过。</p>
 <p>你不应该尝试通过某种方式生成一个不需要实现 <code>Send</code> 的任务来规避这个问题，因为如果任务正持有锁，而 Tokio 在 <code>.await</code> 处暂停了你的任务，一些其它的任务可能会被调度到同样的线程上，并且其他任务也可能尝试获取锁，这会导致死锁，因为等待锁的任务会阻塞当前线程，这也就阻止了持有锁的任务释放锁。</p>
@@ -1572,8 +1516,7 @@ async fn increment_and_do_stuff(can_incr: &amp;CanIncrement) {
     can_incr.increment();
     do_something_async().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这种模式保证了你不会进入到 <code>Send</code> 错误中去，因为 mutex guard 没有出现在异步函数的任何地方，它在自己的同步函数结束时已经被释放了。</p>
 <h3 id="spawn-a-task-to-manage-the-state-and-use-message-passing-to-operate-on-it生成一个任务来管理状态并且通过消息传递来操作"><a class="header" href="#spawn-a-task-to-manage-the-state-and-use-message-passing-to-operate-on-it生成一个任务来管理状态并且通过消息传递来操作">Spawn a task to manage the state and use message passing to operate on it（生成一个任务来管理状态，并且通过消息传递来操作）</a></h3>
 <p>这是本章节最开始提到的两种方法中的第二种，并且它常常在共享的资源是 I/O 资源的时候被采用。有关更多详细信息，请参阅下一章。</p>
@@ -1591,8 +1534,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 } // lock goes out of scope here
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="channels"><a class="header" href="#channels">Channels</a></h2>
 <p>现在我们已经了解了一些关于 Tokio 的并发，让我们把它们应用到客户端侧吧。把我们先前写的服务端的代码移动到一个显式的二进制文件里去：</p>
 <pre><code class="language-zsh">mkdir src/bin
@@ -1602,8 +1544,7 @@ mv src/main.rs src/bin/server.rs
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>touch src/bin/client.rs
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>在这个文件中，我们将会写关于本节的代码。无论何时你想运行它，请先启动 server 端：</p>
 <pre><code class="language-zsh">cargo run --bin server
 </code></pre>
@@ -1631,8 +1572,7 @@ async fn main() {
 
     t1.await.unwrap();
     t2.await.unwrap();
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>不幸的是呢，编译器阻止了我们继续，因为两个任务都需要用某种方式访问 <code>client</code> 。由于</p>
 <p><code>Client</code> 并没有实现 <code>Copy</code> trait ，所以如果没有一些代码来促成 <code>client</code> 的共享是不能被编译通过的。再说，<code>Client::set</code> 需要 <code>&amp;mut self</code> ，这意味着调用它的时候需要独占 <code>Client</code> 的访问。我们可以为每个连接打开一个任务，但是这并不理想。因为 <code>.await</code> 需要带着锁被调用，所以我们不能使用 <code>std::sync::Mutex</code> 。我们可以使用 <code>tokio::sync::Mutex</code> ，但是这会导致同一时间只能有一个请求（即 singleflight 单飞）。如果客户端实现了 <a href="https://redis.io/topics/pipelining">pipelining</a> ，一个异步锁会导致连接的低利用率。</p>
 <h2 id="message-passing-消息传递"><a class="header" href="#message-passing-消息传递">Message passing （消息传递）</a></h2>
@@ -1672,8 +1612,7 @@ enum Command {
         val: Bytes,
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h2 id="create-the-channel-创建通道"><a class="header" href="#create-the-channel-创建通道">Create the channel （创建通道）</a></h2>
 <p>在 <code>main</code> 函数中，我们创建一个 <code>mpsc</code> channel。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::mpsc;
@@ -1684,8 +1623,7 @@ async fn main() {
     let (tx, mut rx) = mpsc::channel(32);
 
     // ... Rest comes here
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>mpsc</code> 用来<strong>发送</strong>命令给管理 redis connection 的任务。多生产者的容量允许消息可以从多个任务中发送。创建 channel 会返回两个值，一个 sender（习惯上命名为 <code>tx</code>） 和一个 receiver （习惯上命名为 <code>rx</code>）。这俩句柄是分开使用的，它们可能会被移动到不同的任务中去。</p>
 <p>这里的 channel 创建时指定了 32 个容量。如果消息发的比收的快，那么 channel 会把没来得及被接收的消息存起来。一旦 channel 中的 32 个位置都被消息填满了，这时候再调用 <code>send(...).await</code> 将会 sleep 直到有 1 个消息被 receiver 拿走去消费。</p>
 <p>从多个任务发送消息是通过 clone <code>Sender</code> 做到的。例如：</p>
@@ -1707,8 +1645,7 @@ async fn main() {
     while let Some(message) = rx.recv().await {
         println!(&quot;GOT = {}&quot;, message);
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>两条消息都被发送到了单个 <code>Receiver</code> 句柄。在 <code>mpsc</code> channel 中克隆 receiver 是不被允许的。</p>
 <p>当每个 <code>Sender</code> 超出作用域或者因为其他原因被 drop 了，就不再能往这个 channel 发送更多消息了。此时，在 <code>Receiver</code> 上调用 <code>recv</code> 将会返回 <code>None</code>，这意味着所有的 sender 都不在了，channel 被关闭了。 </p>
 <p>在我们的场景下，管理 redis connection 的任务知道一旦 channel 被关闭，就得关闭 redis connection，因为 connection 不会再被使用了。</p>
@@ -1736,8 +1673,7 @@ let manager = tokio::spawn(async move {
         }
     }
 });
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，更新这两个任务以通过通道发送命令，而不是直接在Redis连接上发出它们。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1762,16 +1698,14 @@ let t2 = tokio::spawn(async move {
 
     tx2.send(cmd).await.unwrap();
 });
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>在 <code>main</code> 函数的底部，我们 <code>.await</code> 这些 <a href="https://docs.rs/tokio/latest/tokio/task/struct.JoinHandle.html"><code>JoinHandle</code></a> 来确保commands 能够在进程退出前完全完成。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>t1.await.unwrap();
 t2.await.unwrap();
 manager.await.unwrap();
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h2 id="receive-responses-接收响应"><a class="header" href="#receive-responses-接收响应">Receive responses （接收响应）</a></h2>
 <p>最后一步是从管理器任务接收响应(response)。<code>GET</code> command 需要获取 value 并且 <code>SET</code> command 需要知道它的操作是否成功完成。</p>
 <p>为了传递响应，我们使用一个 <code>oneshot</code> channel。<code>oneshot</code> channel 是一个单生产者，单消费者的 channel，针对发送单一值进行了优化。在我们的场景下，响应就是单一值。</p>
@@ -1781,8 +1715,7 @@ manager.await.unwrap();
 </span>use tokio::sync::oneshot;
 
 let (tx, rx) = oneshot::channel();
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>不像 <code>mpsc</code> ，<code>oneshot</code> 不需要指定容量，因为它的容量始终是 1。另外，<code>oneshot</code> 的两个句柄都不能被 clone。</p>
 <p>为了从管理器任务接收响应，在发送一个 command 之前，要先创建一个 <code>oneshot</code> channel。<code>oneshot</code> 的 <code>Sender</code> 会被包含在发给管理器任务中的 command 中。而 <code>Receiver</code> 用来接收管理器任务用 <code>oneshot</code> 的 <code>Sender</code> 发送的消息。</p>
 <p>首先，改变 <code>Command</code> 来包含 <code>Sender</code> 。方便起见，用了一个类型别名来使用 <code>Sender</code>。</p>
@@ -1808,8 +1741,7 @@ enum Command {
 /// Provided by the requester and used by the manager task to send
 /// the command response back to the requester.
 type Responder&lt;T&gt; = oneshot::Sender&lt;mini_redis::Result&lt;T&gt;&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，改变发送 command 的任务，让它包含一个 <code>oneshot::Sender</code>。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1843,8 +1775,7 @@ let t2 = tokio::spawn(async move {
     let res = resp_rx.await;
     println!(&quot;GOT = {:?}&quot;, res);
 });
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>在 <code>oneshot::Sender</code> 上的 <code>send</code> 调用是立即完成的，<strong>不需要</strong>一个 <code>.await</code> 。这是因为 <code>oneshot</code> channel 上的 <code>send</code> 总是立即返回 succeed 或者 fail ，而不需要任何形式的等待。</p>
 <p>当接收端被 drop 时，往一个 oneshot channel 发送一个值会返回 <code>Err</code> 。这表示接收端不再对结果感兴趣了。在我们的假设中，接收端(想发命令的任务)不再对 response(管理器任务返回的结果) 感兴趣的情况是可接受的。所以通过 <code>resp.send(...)</code>  返回的 <code>Err</code>  就没必要处理了。</p>
 <p>可以在<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/channels/src/main.rs">这里</a>看到完整代码。</p>
@@ -1857,8 +1788,7 @@ let t2 = tokio::spawn(async move {
 </span>loop {
     async_op();
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>如果异步操作迫切的希望被运行，loop 循环在没有确保先前的操作完成的情况下，反复将新的 <code>async_op</code> 排进一个队列来运行，这会导致隐式的无界队列。基于回调（callback）和基于勤奋 future（rust 是惰性 future）的系统会特别容易受到这种影响。</p>
 <p>然而~，使用 Tokio 和异步 Rust ，上述片段根本就不会被运行。这是因为 <code>.await</code> 从未被调用。如果上述片段改成使用 <code>.await</code> ，那么这个循环就会在重新开始之前等待操作执行完毕。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -1867,8 +1797,7 @@ let t2 = tokio::spawn(async move {
     // 在 `async_op` 完成之前是不会重新开始循环的
     async_op().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>并发和队列必须被显式地引入。这么做的方法包括：</p>
 <ul>
 <li>
@@ -1908,8 +1837,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 
     println!(&quot;The bytes: {:?}&quot;, &amp;buffer[..n]);
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="async-fn-read_to_end"><a class="header" href="#async-fn-read_to_end"><code>async fn read_to_end()</code></a></h3>
 <p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read_to_end"><code>AsyncReadExt::read_to_end</code></a> 会从 stream 读取所有的字节直到 EOF。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncReadExt};
@@ -1923,8 +1851,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     // read the whole file
     f.read_to_end(&amp;mut buffer).await?;
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="async-fn-write"><a class="header" href="#async-fn-write"><code>async fn write()</code></a></h3>
 <p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write"><code>AsyncWriteExt::write</code></a> 把一个 buffer 写入到 writer，返回写入的字节数。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncWriteExt};
@@ -1939,8 +1866,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 
     println!(&quot;Wrote the first {} bytes of 'some bytes'.&quot;, n);
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="async-fn-write_all"><a class="header" href="#async-fn-write_all"><code>async fn write_all()</code></a></h3>
 <p><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_all"><code>AsyncWriteExt::write_all</code></a> 把整个 buffer 写入 writer，与上面那个不一样，这哥们就不返回写入的字节数了。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::io::{self, AsyncWriteExt};
@@ -1952,8 +1878,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 
     file.write_all(b&quot;some bytes&quot;).await?;
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这两个特征都包括许多其他有用的方法。有关完整的方法列表，请参阅API文档。</p>
 <h2 id="helper-functions-辅助函数"><a class="header" href="#helper-functions-辅助函数">Helper functions （辅助函数）</a></h2>
 <p>此外，就像 <code>std</code>， <a href="https://docs.rs/tokio/1/tokio/io/index.html"><code>tokio::io</code></a> 模块包含了一些有用的工具函数以及用于处理 <a href="https://docs.rs/tokio/1/tokio/io/fn.stdin.html">standard input</a>、 <a href="https://docs.rs/tokio/1/tokio/io/fn.stdout.html">standard output</a> 和 <a href="https://docs.rs/tokio/1/tokio/io/fn.stderr.html">standard error</a> 的API。例如，<a href="https://docs.rs/tokio/1/tokio/io/fn.copy.html"><code>tokio::io::copy</code></a> 异步的将 reader 的全部内容 copy 到一个 writer 。</p>
@@ -1967,8 +1892,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 
     io::copy(&amp;mut reader, &amp;mut file).await?;
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>请注意，这种用法体现了 <code>&amp;[u8]</code> 也实现 <code>AsyncRead</code> 的事实。</p>
 <h2 id="echo-server-回声服务"><a class="header" href="#echo-server-回声服务">Echo server （回声服务）</a></h2>
 <p>让我们做些玩意儿来练习下异步I/O。我们将要写一个回声服务。</p>
@@ -1998,15 +1922,13 @@ async fn main() -&gt; io::Result&lt;()&gt; {
             // Copy data here
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>就像前面说的，这个工具函数接收一个 reader 参数和一个 writer 参数，并且将数据从一个 copy 到另一个中。然而啊，我们只有一个 <code>TcpStream</code> ，这单个值同时实现了 <code>AsyncRead</code> 和 <code>AsyncWrite</code> 。可是由于 <code>io::copy</code> 对 reader 和 writer 都要求 <code>&amp;mut</code> ，这 socket 不能同时作为放到这两个参数上。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// 这是无法编译的
 io::copy(&amp;mut socket, &amp;mut socket).await
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="splitting-a-reader--writer"><a class="header" href="#splitting-a-reader--writer">Splitting a reader + writer</a></h3>
 <p>为了解决这个难题，我们必须把 socket 分离成一个 reader 句柄和一个 writer 句柄。拆分 reader/writer 组合的最佳方法是使用 <a href="https://docs.rs/tokio/1/tokio/io/fn.split.html"><code>io::split</code></a>。</p>
 <p>任何同时实现了 reader + writer 的类型都能够使用 <a href="https://docs.rs/tokio/1/tokio/io/fn.split.html"><code>io::split</code></a> 实用工具来拆分。这个函数接收单个的值并返回分离的 reader 和 writer 句柄。这两个句柄可以被独立使用，包括分别在两个单独的任务中使用。</p>
@@ -2041,8 +1963,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     }
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>因为 <code>io::split</code> 支持<strong>任何</strong>实现了 <code>AsyncRead + AsyncWrite</code> 的值，并返回独立的句柄，<code>io::split</code> 在内部使用了一个 <code>Arc</code> 和 一个 <code>Mutex</code> （这意味着会有蛮大的开销）。如果 socket 是 <code>TcpStream</code> 的情况就能避免这种开销。<code>TcpStream</code> 提供了两个专门的函数（<a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split"><code>into_split</code></a>）。</p>
 <p><a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 接收一个 <code>&amp;mut TcpStream</code> 并返回一个 reader 和 一个 writer 句柄。正因为使用的是引用，所以这两个句柄必须跟 <code>split()</code> 调用待在<strong>同一</strong>任务中。虽然有前面这个限制，但是它的这种专门实现是<strong>零开销</strong>的，没有 <code>Arc</code> 也没有 <code>Mutex</code> 。<code>TcpStream</code> 也提供了 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.into_split"><code>into_split</code></a> 来支持处理可跨任务使用的场景，开销缩减到了只有一个 <code>Arc</code>。</p>
 <p>因为 <code>io::copy()</code> 调用是跟持有 <code>TcpStream</code> 的任务是同一个任务（跟上面那段代码中的情况不同，上面的代码的 rd 跟 wr 在不同的任务中），这就意味着我们完全可以使用 <a href="https://docs.rs/tokio/1/tokio/net/struct.TcpStream.html#method.split"><code>TcpStream::split</code></a> 。在 server 处理 echo 逻辑的任务变成了下面这样：</p>
@@ -2055,8 +1976,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
         eprintln!(&quot;failed to copy&quot;);
     }
 });
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>可以在<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server-copy.rs">这里</a>找到完整代码。</p>
 <h3 id="manual-copying-手动-copy"><a class="header" href="#manual-copying-手动-copy">Manual copying （手动 copy）</a></h3>
 <p>现在，来看一下我们要如何通过手动 copy data 来写 echo server。为了做到这点，我们使用 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncReadExt.html#method.read"><code>AsyncReadExt::read</code></a> 和 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_all"><code>AsyncWriteExt::write_all</code></a> 。</p>
@@ -2096,8 +2016,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
             }
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>（你可以把这段代码放到 <code>src/bin/echo-server.rs</code>  并用 <code>cargo run --bin echo-server</code> 启动它）</p>
 <p>我是 arch linux ：</p>
 <pre><code class="language-zsh">yay -S netcat
@@ -2107,15 +2026,13 @@ echo 你好 | nc 127.0.0.1 6142
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="allocating-a-buffer-申请缓冲区"><a class="header" href="#allocating-a-buffer-申请缓冲区">Allocating a buffer （申请缓冲区）</a></h3>
 <p>这种策略是为了从 socket 读取一些数据到缓冲区，然后再把缓冲区的内容写回 socket。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let mut buf = vec![0;1024];
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>显式地避免了栈上缓冲区。回顾一下<a href="https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound">之前</a> ，我们注意到所有的跨 <code>.await</code> 调用的数据都得由任务本身存储。而在这个场景， <code>buf</code> 被用来跨 <code>.await</code> 。所有的任务数据被存储在同一个内存块。你可以把它想象成一个 <code>enum</code> ，<code>enum</code> 内的变量都是需要为一个特定的 <code>.await</code> 存储的数据。</p>
 <p>如果这个 <code>buf</code> 是一个栈数组，每个被生成的用来接受 socket 的任务的内部结构可能看起来会像这样：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -2134,9 +2051,8 @@ echo 你好 | nc 127.0.0.1 6142
 
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
-<p>如果一个栈数组被用来当做 buffer type，它将会被内联在任务结构体中。这会导致任务结构体非常庞大。另外，缓冲区大小通常是 page size (<em>Modern hardware and software tend to load data into RAM (and transfer data from RAM to disk) in discrete chunk called pages</em>)。这反过来又会使任务的大小变得尴尬：<code>\$page-size + 几个字节</code>。</p>
+<span class="boring">}</span></code></pre></pre>
+<p>如果一个栈数组被用来当做 buffer type，它将会被内联在任务结构体中。这会导致任务结构体非常庞大。另外，缓冲区大小通常是 page size (<em>Modern hardware and software tend to load data into RAM (and transfer data from RAM to disk) in discrete chunk called pages</em>)。这反过来又会使任务的大小变得尴尬：<code>$page-size + 几个字节</code>。</p>
 <p>Linus 有一篇吐槽贴说:</p>
 <blockquote>
 <p>Just do the math. I've done it. 4kB is good. 8kB is borderline ok. 16kB or more is simply not acceptable.</p>
@@ -2157,8 +2073,7 @@ echo 你好 | nc 127.0.0.1 6142
         // ... other cases handled here
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>忘记退出 read loop 通常会导致 100% CPU占用的无限循环。这是因为 socket 关闭后，<code>socket.read()</code> 会立即返回，循环就会永远的重复下去。</p>
 <p>完整代码看<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/io/src/echo-server.rs">这里</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="framing"><a class="header" href="#framing">Framing</a></h2>
@@ -2175,8 +2090,7 @@ enum Frame {
     Null,
     Array(Vec&lt;Frame&gt;),
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>注意 Frame 是如何包含没有任何语义的数据的， Command 解析和实现发生再更高级的层，而不在 Frame。</p>
 <p>对于 HTTP 来说，一个 frame 可能看起来像这样：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -2197,8 +2111,7 @@ enum Frame {
         chunk: Bytes,
     },
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>为了实现 Mini-Redis 的 frame，我们将会实现一个 <code>Connecton</code> 结构来包装一个 <code>TcpStream</code> 和 reads/writes <code>mini_redis::Frame</code> values。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2227,8 +2140,7 @@ impl Connection {
         // implementation here
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>可以在<a href="https://redis.io/topics/protocol">这里</a> 找到 Redis wire protocal 的细节。完整的 <code>Connection</code> 代码在<a href="https://github.com/tokio-rs/mini-redis/blob/tutorial/src/connection.rs">这里</a> 。</p>
 <h2 id="buffered-reads-带缓冲地读"><a class="header" href="#buffered-reads-带缓冲地读">Buffered reads （带缓冲地读）</a></h2>
 <p><code>read_frame</code> 方法在返回前会等待一个完整的 frame 被接收。单个 <code>TcpStream::read()</code> 调用可能会返回一个任意数量的数据。这个数据可能是一个完整的 frame、一个不完整 frame 或者多个 frame。如果接收到了一个不完整的 frame，数据会被放入 buffer 并且会继续从 socket 读更多数据。如果接收到了多个 frame，第一个帧会被返回，剩下的数据会被放入 buffer 直到下次 <code>read_frame</code> 调用。</p>
@@ -2253,8 +2165,7 @@ impl Connection {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>下面，我们实现 <code>read_frame()</code> 方法。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2291,8 +2202,7 @@ pub async fn read_frame(&amp;mut self)
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>让我们来分析一下它。 <code>read_frame</code> 方法操作了一个 loop。首先，<code>self.parse_frame()</code> 被调用。它会尝试从 <code>self.buffer</code> 解析 redis frame。如果 <code>self.buffer</code> 里的数据足够解析出一个 frame，那么这个解析出来的 frame 会从 <code>read_frame()</code> 返回。如果数据不够解析成一个 frame，我们就尝试从 socket 读取更多数据到 buffer。在读取更多数据后循环会重新开始， <code>parse_frame()</code> 会被再次调用，如此往复。这次，如果接收到了足够的数据，解析可能就会成功了。 </p>
 <p>当从 stream 读取的时候，返回了一个 <code>0</code> 表示没有更多数据可以从对端接收了。如果这时候 read buffer 中还留有数据，这表示接收到的是个不完整的 frame 并且对端被意外中断了。这是一个错误条件，我们返回一个 <code>Err</code> 。</p>
 <h3 id="the-buf-trait"><a class="header" href="#the-buf-trait">The <code>Buf</code> trait</a></h3>
@@ -2318,8 +2228,7 @@ impl Connection {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>然后是我们在 <code>Connection</code> 的 <code>read_frame()</code> 函数：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2356,8 +2265,7 @@ pub async fn read_frame(&amp;mut self)
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当使用字节数组和 <code>read</code> 时，我们也必须维护一个 cursor（用来定位当前有效数据的位置）来跟踪已经有多少数据被放入了 buffer 。我们必须确保传递 buffer 的空的部分（cursor 后面的那些位置）给 <code>read()</code>，否则会覆盖掉已经塞入 buffer 的数据。如果我们的 buffer 被填满了，我们还必须为 buffer 扩容来保证可以保持读取。在 <code>parse_frame()</code> （没包含在上面），我们需要解析 <code>self.buffer[..self.cursor]</code> 中包含的数据。</p>
 <p>因为将 byte array 和 cursor 配对是非常常见的，所以 <code>bytes</code> crate 提供了一个抽象来代表一个 byte array 和一个 cursor 。<code>Buf</code> trait 可以从能被 read 的数据实现。<code>Buf</code> trait 可以从能被 write 的数据实现。当传递一个 <code>T: BufMut</code> 给 <code>read_buf()</code> ，这个 buffer 内部的 cursor 会被 <code>read_buf</code> 自动更新。正因如此，我们这个版本的 <code>read_frame</code> 不需要管理自己的 cursor 。</p>
 <p>此外，当使用 <code>Vec&lt;u8&gt;</code> 的时候，buffer 必须被<strong>初始化</strong>。<code>vec![0;4096]</code> 这个宏申请了一个 4k 字节的数组并且往 Vector 中的每个条目写了 0 。这个初始化过程不是免费的。当使用 <code>BytesMut</code> 和 <code>BufMut</code> 的时候，容量是<strong>不需要</strong>初始化的（这个特性棒:D）。<code>BytesMut</code> 这个抽象会阻止我们从未初始化的内存中进行读，这使得我们避开了初始化的步骤。</p>
@@ -2422,14 +2330,13 @@ fn parse_frame(&amp;mut self)
         Err(e) =&gt; Err(e.into()),
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>完整的 <a href="https://github.com/tokio-rs/mini-redis/blob/tutorial/src/frame.rs#L65-L103"><code>Frame::check</code></a> 函数可以在<a href="https://github.com/tokio-rs/mini-redis/blob/tutorial/src/frame.rs#L65-L103">这里</a>找到。我们的教程不会完全覆盖到它。</p>
 <p>需要注意的相关事项是 <code>Buf</code> 的 “byte iterator” 样式 API 被使用了。这些 API 被用来获取数据并推进内部的 cursor 。举个例子，为了操作一个 frame，首个字节被检查来决定这个 frame 的类型。这个被使用的函数是 <a href="https://docs.rs/bytes/1/bytes/buf/trait.Buf.html#method.get_u8"><code>Buf::get_u8</code></a> ，它会获取当前 cursor 的位置上的一个字节并且推 cursor 一个单位。</p>
 <p> <a href="https://docs.rs/bytes/1/bytes/buf/trait.Buf.html"><code>Buf</code></a> 还有很多更有用的方法。可以去 <a href="https://docs.rs/bytes/1/bytes/buf/trait.Buf.html">API docs</a> 看更多细节。</p>
 <h2 id="buffered-writes带缓冲地写"><a class="header" href="#buffered-writes带缓冲地写">Buffered writes（带缓冲地写）</a></h2>
 <p>framing 的另外一半 API 是 <code>write_frame(frame)</code> 函数。这个函数会把一个完整的 frame 写入到 socket 。为了最小化 <code>write</code> 系统调用的次数，写入操作都会被缓冲(buffered)。一个 write buffer 会被维护并且在往 socket 写入之前， frame 都会被 encode 到这个 buffer。然而，不同于 <code>read_frame()</code> ，在写入 socket 之前，并不总是会缓冲一整个 frame 。</p>
-<p>思考一下有一个批量 frame 的流 (a bulk stream frame)，被写入的值是 <code>Frame::Bulk(Bytes)</code> 。bulk frame 的报文格式是 frame 头是一个 <code>\$</code> 字符，然后跟着等同于数据字节数的长度，最后是数据本身。大部分 frame 都是 <code>Bytes</code> 的内容。如果数据很庞大，把它 copy 到一个中间缓冲区的开销会很大（这就是上一段末尾提到的）。</p>
+<p>思考一下有一个批量 frame 的流 (a bulk stream frame)，被写入的值是 <code>Frame::Bulk(Bytes)</code> 。bulk frame 的报文格式是 frame 头是一个 <code>$</code> 字符，然后跟着等同于数据字节数的长度，最后是数据本身。大部分 frame 都是 <code>Bytes</code> 的内容。如果数据很庞大，把它 copy 到一个中间缓冲区的开销会很大（这就是上一段末尾提到的）。</p>
 <p>为了实现带缓冲的写入操作，我们将会使用 <a href="https://docs.rs/tokio/1/tokio/io/struct.BufWriter.html"><code>BufWriter</code> struct</a> 。这个结构体使用 <code>T: AsyncWrite</code> 来初始化（<code>BufWriter::new(T)</code>，这个 T 得是 <code>AsyncWrite</code>），并且它本身也实现了 <code>AsyncWrite</code> 。当 <code>write</code> 在 <code>BufWriter</code> 上被调用，write 并不会直接作用到内部的 writer 上，而是作用到一个内部的 buffer 上。当这个 buffer 满了后，buffer 的内容会被刷到内部的 writer 上，同时清空这个 buffer 。我们还会有一些优化允许在某些情况下绕过缓冲区（上一段提到的情况）。</p>
 <p>我们不会尝试把 <code>write_frame()</code> 的完整实现作为教程的一部分。所以完整实现请看<a href="https://github.com/tokio-rs/mini-redis/blob/tutorial/src/connection.rs#L159-L184">这里</a>。</p>
 <p>首先， <code>Connection</code> 结构体需要改变成如下：</p>
@@ -2452,8 +2359,7 @@ impl Connection {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>接下来会实现 <code>write_frame()</code>：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2496,8 +2402,7 @@ async fn write_frame(&amp;mut self, frame: &amp;Frame)
 
     Ok(())
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>下面这些被用到的函数都由 <a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html"><code>AsyncWriteExt</code></a> trait 提供。他们在 <code>TcpStream</code> 上也是可用的，但不建议在没有中间缓冲区的情况下发出单字节写入（一次就发一个字节，会导致太多的 syscall，太浪费资源了）。</p>
 <ul>
 <li><a href="https://docs.rs/tokio/1/tokio/io/trait.AsyncWriteExt.html#method.write_u8"><code>write_u8</code></a> 把单个字节写入 writer。</li>
@@ -2519,8 +2424,7 @@ async fn my_async_fn() {
     let _socket = TcpStream::connect(&quot;127.0.0.1:3000&quot;).await.unwrap();
     println!(&quot;async TCP operation complete&quot;);
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>我们调用了这个函数，并且返回了某个值，对这个值调用 <code>.await</code>。</p>
 <pre><pre class="playground"><code class="language-rust">#[tokio::main]
 async fn main() {
@@ -2529,8 +2433,7 @@ async fn main() {
     what_is_this.await;
     // Text has been printed and socket has been
     // established and closed.
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>my_async_fn()</code> 返回的值是一个 future ，future 是一个实现了标准库提供的  <a href="https://doc.rust-lang.org/std/future/trait.Future.html"><code>std::future::Future</code></a> trait 的值。它们是包含正在进行的异步计算的值。</p>
 <p> <a href="https://doc.rust-lang.org/std/future/trait.Future.html"><code>std::future::Future</code></a> trait 的定义如下：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -2544,8 +2447,7 @@ pub trait Future {
     fn poll(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context)
         -&gt; Poll&lt;Self::Output&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>关联类型( <a href="https://doc.rust-lang.org/book/ch19-03-advanced-traits.html#specifying-placeholder-types-in-trait-definitions-with-associated-types">associated type</a> ) <code>Output</code> 是 future 一旦完成后会产生的类型。可以通过看标准库文档（<a href="https://doc.rust-lang.org/std/pin/index.html">standard library</a>）得到更多细节。</p>
 <p>不像其它语言实现的 future ，一个 Rust 的 future 不是代表一个正在后台发生的计算，而是 Rust future 就是计算本身。future 的所有者负责通过 poll the future 来推动计算，这就是 <code>Future::poll</code> 所做的事。</p>
 <h3 id="implementing-future-实现-future"><a class="header" href="#implementing-future-实现-future">Implementing <code>Future</code> （实现 <code>Future</code>）</a></h3>
@@ -2594,8 +2496,7 @@ async fn main() {
 
     let out = future.await;
     assert_eq!(out, &quot;done&quot;);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="async-fn-as-a-future-异步函数作为-future"><a class="header" href="#async-fn-as-a-future-异步函数作为-future">Async fn as a Future （异步函数作为 future）</a></h3>
 <p>在 main 函数中，我们实例化一个 future 并对它调用 <code>.await</code> 。在异步函数中，我们可以对任何实现了 <code>Future</code> 的值调用 <code>.await</code> 。相反，调用一个 <code>async</code> function 返回一个实现了 <code>Future</code> 的匿名类型。<code>async fn main()</code> 所生成的 future 类似于：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -2649,8 +2550,7 @@ impl Future for MainFuture {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Rust 的 future 是<strong>状态机</strong>(<code>state machine</code>) 。此处，<code>MainFuture</code> 代表着由一个 future 可能的状态构成的 <code>enum</code> 。这个 future 从 <code>State0</code> 状态开始，当 <code>poll</code> 被调用时，这个 future 会尽可能地尝试推动其内部的状态。如果这个 future 能够完成了，<code>Poll::Ready</code> 会返回它包含的异步计算的输出结果。</p>
 <p>如果这个 future <strong>不</strong>能够完成，通常是由于资源问题，这种情况它一般还在等着被调度，等着变成 <code>Poll::Ready</code> ，这时会返回 <code>Poll::Pending</code> 表示 future 还没完成。收到 <code>Poll::Pending</code> 表示告诉 future 的调用者，这个 future 将会在之后一段时间被完成，并且调用者应该在之后再次调用 <code>poll</code> 。</p>
 <p>我们也看到了 future 由 其他 future 构成（future 可以嵌套）。对外层的 future 调用 <code>poll</code> 会导致内部的 future 的 <code>poll</code> 函数也被调用。</p>
@@ -2711,8 +2611,7 @@ impl MiniTokio {
             }
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>运行了一个 async block，使用自定义的 delay  创建了一个 <code>Delay</code> future 实例并且调用了 <code>.await</code> 。然而，我们的目前为止的实现有一个重大的<strong>污点</strong>，那就是我们的执行者永远不会 sleep，执行者在持续不断的循环所有生成的 future 并且 poll 它们。大多数时候，future 们都没有准备好执行更多的工作并且会再次返回 <code>Poll:Pending</code> （所以应该需要有一定的间隔，而不是没有 sleep 的无限循环去 poll）。这个过程会大量消耗 CPU 资源并且通常并不高效。</p>
 <p>理想情况下，我们希望 mini-tokio 只在 future 能够取得进展时才进行 poll 。这种情况会发生在当任务被阻塞时的资源准备好去执行被请求的操作的时候。如果任务想要从一个 TCP socket 读取数据，那么我们只希望当 TCP socket 已经接收到数据的时候才去 poll 任务（而不是 socket 里啥都没有的时候去疯狂 poll） 。在我们的场景下，任务被阻塞直到给出的 <code>Istant</code> 到达，理想情况下，mini-tokio 应该只在那一时刻刚过后去 poll 任务。</p>
 <p>为了实现这个目的，当一个资源被 poll，并且这个资源<strong>没有</strong>准备好时，这个资源将会在它转变成 ready state 的时候主动发送一个通知。</p>
@@ -2723,8 +2622,7 @@ impl MiniTokio {
 </span><span class="boring">fn main() {
 </span>fn poll(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context)
     -&gt; Poll&lt;Self::Output&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>可以发现想要 poll future 的时候需要携带一个 <a href="https://doc.rust-lang.org/std/task/struct.Context.html"><code>Context</code></a> ，而它有一个 <code>waker()</code> 方法，这个方法返回一个 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>Waker</code></a> 绑定到当前任务。这个 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>Waker</code></a> 有一个 <code>wake()</code> 方法，这个方法正是我们要的，调用这个方法会发送信号给 executor，表示相关联的任务应该被调度来执行了。当资源转变成 ready state 的时候调用 <code>wake()</code> 方法来通知 executor 可以 poll 任务来获取进展。</p>
 <h3 id="updating-delay"><a class="header" href="#updating-delay">Updating <code>Delay</code></a></h3>
 <p>我们可以更新 <code>Delay</code> 来使用 wakers ：</p>
@@ -2769,8 +2667,7 @@ impl Future for Delay {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，一旦指定的时间到了，调用的任务会通知 executor 并且 executor 能够确保任务再次被调度。下一步就是更新 mini-tokio 来监听 wake notifications（通知）。</p>
 <p>这里我们的 <code>Delay</code> 实现仍然留有一些问题。我们将会在后面修复它们。</p>
 <blockquote>
@@ -2796,8 +2693,7 @@ impl Future for Delay {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当时被注释暂时先忽略的那一行：咱返回 <code>Poll::Pending</code> 前，我们调用了 <code>cx.waker().wake_by_ref()</code> 。这是为了满足 future 的约定。通过返回 <code>Poll::Pending</code> 我们负责向 waker 发送 wake 信号。。因为我们暂时还没有实现 timer thread，所以我们直接用 inline 的方式向 waker 发送了信号。这么做会导致这个 future 被立即再调度(re-scheduled)，再次执行，并且可能还是没有转变成 ready state 。</p>
 <p>请注意，你可以更频繁的向 waker 发送信号，而不必是必须必要的时候才发送信号。在这种特殊情况下，我们向 waker 发送信号，即使我们根本还没准备好继续操作。除了会浪费一些 CPU 资源外没有任何不对的。然而这种特殊的实现将会导致一个 busy loop 。</p>
 <h3 id="updating-mini-tokio"><a class="header" href="#updating-mini-tokio">Updating Mini Tokio</a></h3>
@@ -2824,8 +2720,7 @@ struct MiniTokio {
 struct Task {
     // This will be filled in soon.
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Wakers 是 <code>Sync</code> 并且可以被 clone。当 <code>wake</code> 被调用，任务必须被调度来执行。为了实现这个目的，我们整了个 channel 。当 <code>wake()</code> 在 waker 身上被调用时，任务会被推进 channel 的 send 的那一半（channel 被拆成两半，一半 send 一半 receive）。我们的 <code>Task</code> 结构体将会实现 wake 逻辑。为了做到这点，它需要同时包含生成的任务和 channel 的 send 。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2847,8 +2742,7 @@ impl Task {
         self.executor.send(self.clone());
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>为了调度任务，<code>Arc</code> 会被 clone 然后通过 channel 发送出去。现在，我们需要将我们的 <code>schedule</code> 函数和 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>std::task::Waker</code></a> 挂钩。标注版酷提供了一个低层次 API ，通过 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html">manual vtable construction</a> （手动构造 vtable，vtable 能够产生晚绑定行为，只有在运行时才知道调用的是什么函数，例如调用 vtable 中的 A，然后会把 A 映射的函数指针 *B 拿出来执行）来做这件事。这个方案为实现者提供了最大程度的灵活性，但是要求一大堆 unsafe 样板代码。与直接使用 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html"><code>RawWakerVTable</code></a> 相反，我们将会使用  <a href="https://docs.rs/futures/"><code>futures</code></a> crate 提供的 <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>ArcWake</code></a> trait，它允许我们通过实现一个简单的 trait 来暴露我们的 <code>Task</code> 结构体作为一个 waker 。</p>
 <p>把下面的依赖加入到 <code>Cargo.toml</code>。</p>
 <pre><code class="language-toml">futures = &quot;0.3&quot;
@@ -2863,8 +2757,7 @@ impl ArcWake for Task {
         arc_self.schedule();
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当之前的那个 timer thread 调用 <code>waker.wake()</code> ，任务会被推进 channel 。接着我们实现一下 <code>MiniTokio::run()</code> 函数中的接收并执行任务的部分。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2928,8 +2821,7 @@ impl Task {
     }
 
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这里发生了很多事情。首先，<code>MiniTokio::run()</code> 被实现了，这个函数启动了一个 loop 从 channel 接收被调度的任务。因为任务在被唤醒的时候会被推进这个 channel，所以这些任务能够在要执行的时候顺利取得进展。</p>
 <p>此外，<code>MiniTokio::new()</code> 和 <code>MiniTokio::spawn()</code> 函数被调整为使用一个 channel 而不是一个 <code>VecDeque</code> 。当新的任务产生，它们会被给到这个 channel 的 send 的 clone，使得任务可以在运行时调度自己（通过把自己塞进 send 里送到 channel 中去）。</p>
 <p><code>Task::poll()</code> 函数会通过手动为  <code>Task</code> 实现的 <code>future</code> crate 中的  <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>ArcWake</code></a> trait 来创建 waker 。这个 waker 被用来创建一个 <code>task::Context</code> ，然后这个 <code>task::Context</code> 被传给 <code>poll</code> 。</p>
@@ -2976,8 +2868,7 @@ async fn main() {
 
         Poll::Ready(())
     }).await;
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>poll_fn</code> 函数使用闭包创建了一个 <code>Future</code> 实例，上面的片段中创建一个 <code>Delay</code> 实例，poll 了一下它，然后把 <code>Delay</code> 实例发送到了一个新的任务中去进行 <code>.await</code> 。在这个例子里， <code>Delay::poll</code> 被<strong>不同</strong>的 <code>Waker</code> 调用了超过一次。当发生这种情况，你必须确保在 传递给了<em>最近的</em> 那次 <code>poll</code> 的 <code>Waker</code> 上的 <code>wake</code> 被调用。</p>
 <p>当实现一个 future 的时候，假设每次对 <code>poll</code> 的调用<strong>可能</strong>被应用到一个不同的 <code>Waker</code>  实例是非常重要的。poll 函数必须更新任何先前记录的 waker 为最新传给它的 waker 。</p>
 <p>我们先前实现的 <code>Delay</code> 在每次被 poll 的时候都会生成一个新的线程。这当然也 ok，但是如果它被 poll 的太频繁的话就会变得非常低效。（e.g. 如果你对这个 future 和其它 future 使用了 <code>select!</code> ，那么不论他俩哪个发生了事件，两者都会被调用）。一种方法是记住你是否已经创建过一个线程，并且只在你没有创建过时去生成一个新线程。然而，如果你这么做了，你必须确保线程的 <code>Waker</code> 被更新为最近的一次 poll 的 <code>Waker</code> ，因为你不这么做的话就无法唤醒最近的那个 <code>Waker</code> 。</p>
@@ -3051,8 +2942,7 @@ impl Future for Delay {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这有一点复杂，但是我们的想法是，对每个 <code>poll</code> 的调用，future 都会检查当前 <code>poll</code> 给的 waker 跟之前记录的 waker 是不是匹配的。如果两个 waker 匹配，那么就不会做其它的事情了。如果它们不匹配，那么就记录最新的 <code>poll</code> 里的 waker。</p>
 <h3 id="notify-utility"><a class="header" href="#notify-utility"><code>Notify</code> utility</a></h3>
 <p>我们演示了如果使用 waker 来手动实现 <code>Delay</code> future。Wakers 是异步 Rust 如何去工作的基础。通常，没有必要去降低到那样的 level（手动实现 future 是一种偏向底层的行为）。举个例子，在这个 <code>Delay</code> 的场景，我们可以通过使用 <a href="https://docs.rs/tokio/1/tokio/sync/struct.Notify.html"><code>tokio::sync::Notify</code></a> 实用工具纯使用 <code>async/await</code> 来实现它。这个实用工具提供了一个基本的任务通知机制，它会处理 waker 的细节，包括确保记录的 waker 匹配当前的 task 。</p>
@@ -3082,8 +2972,7 @@ async fn delay(dur: Duration) {
 
     notify.notified().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="select"><a class="header" href="#select">Select</a></h2>
 <p>目前为止，我们想要为系统增加并发的话，我们需要生成一个新的任务。我们现在将介绍一些其它的方式来使用 Tokio 并发的执行异步代码。</p>
 <h2 id="tokioselect"><a class="header" href="#tokioselect"><code>tokio::select!</code></a></h2>
@@ -3112,8 +3001,7 @@ async fn main() {
             println!(&quot;rx2 completed first with {:?}&quot;, val);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>使用了两个 oneshot channel，它俩中的任何一个都可以第一个完成。<code>select!</code> 语句会在这两个 channel 上 await ，并且绑定 <code>val</code> 到任务的返回值上。当 <code>tx1</code> 或 <code>tx2</code> 完成，相关联的 block 会被执行。</p>
 <p><strong>没有</strong>完成的分支会被直接 drop 掉。在这个例子中，计算会 await 在每个 channel 的 <code>oneshot::Receiver</code> 上。没有完成的 <code>oneshot::Receiver</code> 会被丢弃。</p>
 <h3 id="cancellation"><a class="header" href="#cancellation">Cancellation</a></h3>
@@ -3157,8 +3045,7 @@ async fn main() {
             println!(&quot;rx2 completed first with {:?}&quot;, val);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="the-future-implementation"><a class="header" href="#the-future-implementation">The <code>Future</code> implementation</a></h3>
 <p>为了更好的理解 <code>select!</code> 的工作方式，让我们看一下假设的 <code>Future</code> 实现会是什么样子。这是一个简化版本，在实践中，<code>select!</code> 包含了其它的功能，例如随机选择第一个被 poll 的分支。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::oneshot;
@@ -3200,8 +3087,7 @@ async fn main() {
         rx1,
         rx2,
     }.await;
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这个 <code>MySelect</code> future 包含了每个分支的 future。当 <code>MySelect</code> 被 poll，第一个分支会被 pol，如果它就绪了，它返回出来的 val 就会被用掉，并且 <code>MySelect</code> 会立即结束。在 <code>.await</code> 从 future 收到输出后，future 会被 drop 掉，这导致 future 内的两个分支也会被 drop 。因为有一个分支没有完成，这个分支的操作实际上被取消了。</p>
 <p>记住上一节的内容：</p>
 <blockquote>
@@ -3213,8 +3099,7 @@ async fn main() {
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>&lt;pattern&gt; = &lt;async expression&gt; =&gt; &lt;handler&gt;,
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当 <code>select</code> 宏被执行，所有的 <code>&lt;async expression&gt;</code> 会被聚合起来，然后并发执行。当有一个表达式率先完成，表达式的结果会被匹配到 <code>&lt;pattern&gt;</code> 。如果结果匹配了模式，那么所有剩余的 <code>&lt;async expression&gt;</code> 会被 drop 掉，并且完成了的那个表达式的 <code>&lt;handler&gt;</code> 被执行。<code>&lt;handler&gt;</code> 表达式可以访问 <code>&lt;pattern&gt;</code> 建立的任何绑定。</p>
 <p><code>&lt;pattern&gt;</code> 最基本的情况就是一个变量名，<code>&lt;async expression&gt;</code> 的结果会被绑定到这个变量名，并且 <code>&lt;handler&gt;</code> 能访问这个变量。这就是为什么最开始的例子里在 <code>&lt;pattern&gt;</code> 和 <code>&lt;handler&gt;</code> 被使用的 <code>val</code> 是访问的 <code>&lt;async expression&gt;</code> 的 <code>val</code> 。</p>
 <p>如果 <code>&lt;pattern&gt;</code> <strong>没有</strong>成功匹配异步计算的结果，那么剩下的异步表达式继续并发执行，直到出现下一个先执行完的 <code>&lt;async expression&gt;</code> 。然后相同的逻辑会继续应用到结果上，以此类推。</p>
@@ -3240,8 +3125,7 @@ async fn main() {
             println!(&quot;received message first {:?}&quot;, msg);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这里，我们 select 一个 oneshot 和从 <code>TcpListener</code> 接收 sockets 。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::net::TcpListener;
 use tokio::sync::oneshot;
@@ -3273,8 +3157,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     }
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这个 accept loop 会一直运行直到遇到 error 或者 <code>rx</code> 收到一个值。<code>_</code> 模式表示我们对异步计算返回的值并不感兴趣。</p>
 <h2 id="return-value"><a class="header" href="#return-value">Return value</a></h2>
 <p><code>tokio::select!</code> 宏会返回 <code>&lt;handler&gt;</code> 表达式计算出的结果。</p>
@@ -3294,8 +3177,7 @@ async fn main() {
     };
 
     println!(&quot;Got = {}&quot;, out);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>因为这个，它要求<strong>每个</strong>分支的 <code>&lt;handler&gt;</code> 表达式计算出同样的类型。如果 <code>select!</code> 的输出不被需要，一个不错的实践是让表达式返回 <code>()</code></p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <p>使用 <code>?</code> 操作符从表达式传播错误。它如何工作取决于 <code>?</code> 是从异步表达式还是从 handler 使用。在异步表达式中使用 <code>?</code> 把错误从异步表达式中传播出去，这会使这个异步表达式的输出变成 <code>Result</code> 。在 handler 中使用 <code>?</code> 会立即将错误传播到 <code>select!</code> 表达式外部。让我们再来看看这个 accpet loop ：</p>
@@ -3327,16 +3209,14 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     }
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>请关注 <code>listener.accept().await?</code> 。这个 <code>?</code> 操作符把错误传播出了 <code>&lt;async expression&gt;</code> 并且绑定到了 <code>res</code> 。发生错误时 <code>res</code> 会被设置成 <code>Err(_)</code> ，然后在 handler 中，<code>?</code> 操作符再次被使用，<code>res?</code> 语句会把错误传播出 <code>main</code> 函数。</p>
 <h2 id="pattern-matching"><a class="header" href="#pattern-matching">Pattern matching</a></h2>
 <p>回顾一下 <code>select!</code> 宏的分支语法定义：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>&lt;pattern&gt; = &lt;async expression&gt; =&gt; &lt;handler&gt;,
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>目前为止，我们仅仅在 <code>&lt;pattern&gt;</code> 上使用了变量绑定。然而，任何 Rust 模式都可以被使用，举个例子，如果说我们从多个 MPSC channels 接收，我们可能会这么做：</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::mpsc;
 
@@ -3360,8 +3240,7 @@ async fn main() {
             println!(&quot;Both channels closed&quot;);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>在这个例子中， <code>select!</code> 表达式等待从 <code>rx1</code> 和 <code>rx2</code> 接收一个 value 。如果一个 channel 关闭了，<code>recv()</code> 会返回 <code>None</code> ，这将<strong>无法</strong>匹配例子中的模式，并且当前分支会被禁用。这个 <code>select!</code> 表达式将会继续在剩余的分支上 wait 。</p>
 <p>请注意例子中的 <code>select!</code> 表达式包含一个 <code>else</code> 分支。这个 <code>select!</code> 表达式必须计算出一个 value，当使用模式匹配，可能<strong>没有</strong>一条分支能成功匹配它们所关联的模式，如果这种情况发生了， <code>else</code> 分支就会被计算。</p>
 <h2 id="borrowing"><a class="header" href="#borrowing">Borrowing</a></h2>
@@ -3395,8 +3274,7 @@ async fn race(
 
     Ok(())
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这里的 <code>data</code> 变量是被下面的两个异步表达式<strong>不可变借用</strong>的。当其中一个操作成功完成，另一个将会被 drop。因为我们使用 <code>Ok(_)</code> 来模式匹配，如果一个表达式失败了，另一个会继续执行。</p>
 <p>当来到每条分支的 <code>&lt;handler&gt;</code> ，<code>select!</code> 保证只有单个 <code>&lt;handler&gt;</code> 会运行。正因如此，每个 <code>&lt;handler&gt;</code> 可以<strong>不可变借用</strong>相同的数据。</p>
 <p>下面这个例子在两个 handler 中都对 <code>out</code> 进行了修改：</p>
@@ -3423,8 +3301,7 @@ async fn main() {
     }
 
     println!(&quot;{}&quot;, out);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h2 id="loops"><a class="header" href="#loops">Loops</a></h2>
 <p><code>select!</code> 宏经常被用在循环中。这一部分将会通过几个示例来展示在循环中使用 <code>select!</code> 宏的常见方式。我们通过 select 多个 channels 开始：</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::mpsc;
@@ -3447,8 +3324,7 @@ async fn main() {
     }
 
     println!(&quot;All channels have been closed.&quot;);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这个例子在三个 channel 的 rx 上select。当从任意一个 channel 中接收到一条消息，会将其打印到 STDOUT 。当有一条 channel close 了， <code>recv()</code> 会返回 <code>None</code> ，通过使用模式匹配，<code>select!</code> 宏会继续在剩余的 channels 上等待。当所有的 channel 都 close 了，这里的 <code>else</code> 分支会被计算，并且循环会终止。</p>
 <p><code>select!</code> 宏随机选中分支来先检查一下是否就绪。当多个 channel 挂起了它们的 value，一个随机的 channel 会被选中，并从它上面接收值。这是为了处理 receive loop 处理消息的速度比消息被推进 channel 的速度慢的情况，意味着 channel 开始被填满了。如果 <code>select!</code> <strong>没有</strong>随机选中一个分支来第一个检查，那么每次循环在迭代的时候， <code>rx1</code> 都会被第一个检查，如果 <code>rx1</code> 总是持有新消息，那么剩余的 channel 永远都不会被检查。</p>
 <blockquote>
@@ -3477,8 +3353,7 @@ async fn main() {
             }
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>请注意，与在 <code>select!</code> 宏内调用 <code>action()</code> 不同，它在循环<strong>外部</strong>被调用。<code>action()</code> 的返回值被分配到了 <code>operation</code> 且<strong>没有</strong>调用 <code>.await</code> 。然后我们对 <code>operation</code> 调用了 <code>tokio::pin!</code> 。</p>
 <p>在 <code>select!</code> 循环内，与传入 <code>operation</code> 不同，我们传入了 <code>&amp;mut operation</code> 。这个 <code>operation</code> 变量正在跟踪执行中的异步操作。每次循环迭代使用这个相同的 operation 而不是来一次新的 <code>action()</code> 调用。</p>
 <p><code>select!</code> 的另一个分支从 channel 接收消息，如果消息是一个偶数，我们就结束循环。否则，再次开始 <code>select!</code> </p>
@@ -3506,8 +3381,7 @@ async fn main() {
            `impl std::future::Future: std::marker::Unpin`
            which is required by
            `&amp;mut impl std::future::Future: std::future::Future`
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>尽管我们已经在 <a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a> 了解了 <code>Future</code> ，但是这个错误对我们来说仍然不是很清晰。如果你在尝试对一个<strong>reference</strong> 调用 <code>.await</code> 时碰到了这样的一个关于 &quot; <code>Future</code> 没有实现... &quot; 的错误，那么这个 future 可能需要被 pin 。</p>
 <p>从 <a href="https://doc.rust-lang.org/std/pin/index.html">standard library</a> 阅读更多关于 <a href="https://doc.rust-lang.org/std/pin/index.html"><code>Pin</code></a> 的细节。</p>
 <h3 id="modifying-a-branch"><a class="header" href="#modifying-a-branch">Modifying a branch</a></h3>
@@ -3578,8 +3452,7 @@ async fn main() {
             }
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>我们使用了和之前那个例子相似的方法。这个异步函数在循环外被调用，并且分配到 <code>operation</code> 。这个 <code>operation</code> 变量被 pin 了。这个循环会在 <code>operation</code> 和 channel receiver 上 select 。</p>
 <p>请注意 <code>action</code> 是如何携带 <code>Option&lt;i32&gt;</code> 作为一个参数的。在我们接收到第一个偶数之前，我们需要实例化一个 <code>operation</code> 。我们使 <code>action</code> 携带 <code>Option</code> 并且返回 <code>Option</code> 。如果 <code>None</code> 被传递进去了，会返回  <code>None</code> 。第一次循环迭代， <code>operation</code> 会立即完成并返回 <code>None</code> （因为我们实例化它的时候穿的是 <code>None</code>）。</p>
 <p>这个例子使用了一些新语法。这第一个分支包括 <code>,if !done</code> ，这是一个分支先决条件。在解释它是如何工作的之前，让我们看下如果省略这个先决条件会发生什么。移除 <code>,if !done</code> 并且运行例子会导致以下输出：</p>
@@ -3587,8 +3460,7 @@ async fn main() {
 </span><span class="boring">fn main() {
 </span>thread 'main' panicked at '`async fn` resumed after completion', src/main.rs:1:55
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当尝试在 <code>operation</code> 已经完成<strong>之后</strong>使用它时，这个错误发生了。一般来说，当使用 <code>.await</code> ，这个被 await 的值就被消费掉了。在这个例子中，我们 await 了一个引用，这意味着 <code>operation</code> 在它完成后仍然存在。</p>
 <p>为了避免这个 panic，如果 <code>operation</code> 已经完成，我们必须小心地禁用第一条分支。这里的 <code>done</code> 变量被用来跟踪 <code>operation</code> 是否完成。一个 <code>select!</code> 分支可能会包含一个 <strong>precondition</strong> （先决条件），这个先决条件会在 <code>select!</code> await 当前分支<strong>之前</strong>被检查（虽然顺序上它被写在后面，但是不影响它是一个 &quot;先决条件&quot;）。如果先决条件计算出了 <code>false</code> 那么该分支会被禁用。<code>done</code> 变量被初始化为 <code>false</code> 。当 <code>operation</code> 完成，<code>done</code> 会被设置为 <code>true</code> ，这样在下次循环迭代的时候将会禁用 <code>operation</code> 分支。当一个偶数消息从 channel 被接收，<code>operation</code> 会被重置，并且 <code>done</code> 会被设置为 <code>false</code> 。</p>
 <h2 id="per-task-concurrency"><a class="header" href="#per-task-concurrency">Per-task concurrency</a></h2>
@@ -3613,8 +3485,7 @@ async fn main() {
     while let Some(v) = stream.next().await {
         println!(&quot;GOT = {:?}&quot;, v);
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>像迭代器一样，<code>next()</code> 方法返回 <code>Option&lt;T&gt;</code> ，T 是 stream 里的值的类型。接收到 <code>None</code> 表示这个 stream iteration 终止了。</p>
 <h3 id="mini-redis-broadcast-mini-redis-广播"><a class="header" href="#mini-redis-broadcast-mini-redis-广播">Mini-Redis broadcast （Mini-Redis 广播）</a></h3>
 <p>让我们使用 Mini-Redis client 来回顾一个稍微更复杂的例子。</p>
@@ -3660,8 +3531,7 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
     println!(&quot;DONE&quot;);
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>一个任务被生成来发布消息到 Mini-Redis server 上的 &quot;numbers&quot; channel 。然后，在主要的任务中，我们订阅 &quot;numbers&quot; channel 并且打印接收到的消息。</p>
 <p>订阅之后，我们在返回的 subscriber 上调用 <a href="https://docs.rs/mini-redis/0.4/mini_redis/client/struct.Subscriber.html#method.into_stream"><code>into_stream()</code></a> 。这个方法会消费掉这个 <code>Subscriber</code> ，返回一个能在消息到达的时候生成消息的 stream 。在我们开始迭代消息之前，注意这个 stream 通过<a href="https://docs.rs/tokio/1/tokio/macro.pin.html"><code>tokio::pin!</code></a> 被  <a href="https://doc.rust-lang.org/std/pin/index.html">pin</a> 到了栈上。 在一个 stream 上调用 <code>next()</code> 要求这个 stream 是 <a href="https://doc.rust-lang.org/std/pin/index.html">pinned</a> （这也是上面用 <code>tokio::pin!</code> 的原因）。<code>into_stream()</code> 函数返回一个没有被 pin 的 stream，为了迭代这个 stream ，我们必须显式地 pin 它。</p>
 <blockquote>
@@ -3685,8 +3555,7 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
    = note: required because of the requirements on the impl of `Unpin` for `tokio_stream::map::Map&lt;tokio_stream::filter::Filter&lt;impl Stream, [closure@streams/src/main.rs:22:17: 25:10]&gt;, [closure@streams/src/main.rs:26:14: 26:40]&gt;`
    = note: required because it appears within the type `tokio_stream::take::_::__Origin&lt;'_, tokio_stream::map::Map&lt;tokio_stream::filter::Filter&lt;impl Stream, [closure@streams/src/main.rs:22:17: 25:10]&gt;, [closure@streams/src/main.rs:26:14: 26:40]&gt;&gt;`
    = note: required because of the requirements on the impl of `Unpin` for `tokio_stream::take::Take&lt;tokio_stream::map::Map&lt;tokio_stream::filter::Filter&lt;impl Stream, [closure@streams/src/main.rs:22:17: 25:10]&gt;, [closure@streams/src/main.rs:26:14: 26:40]&gt;&gt;`
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>如果你遇到了类似这样的错误信息，请尝试 pin 这个值！！！</p>
 <p>在尝试运行这个之前，先把 Mini-Redis server 跑起来：</p>
 <pre><code class="language-zsh">mini-redis-server
@@ -3709,8 +3578,7 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
 </span>let messages = subscriber
     .into_stream()
     .take(3);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到了：</p>
 <pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
 got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;two&quot; })
@@ -3727,8 +3595,7 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
         _ =&gt; false,
     })
     .take(3);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到：</p>
 <pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
 got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
@@ -3746,8 +3613,7 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
     })
     .map(|msg| msg.unwrap().content)
     .take(3);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，输出是：</p>
 <pre><code class="language-textile">got = b&quot;1&quot;
 got = b&quot;3&quot;
@@ -3774,8 +3640,7 @@ pub trait Stream {
         (0, None)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><code>Stream::poll_next()</code> 函数非常像 <code>Future::poll</code> ，除了它可以被反复调用来从 stream 接收许多值。正如我们在<a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a>了解到的一样，当一个 stream <strong>没有</strong>准备好返回一个值的时候，<code>Poll::Pending</code> 会被返回。任务的 waker 会被注册，一旦 stream 应该被再次 poll 的时候，waker 会被通知。</p>
 <p>这里的 <code>size_hint()</code> 方法的使用方式跟 <a href="https://doc.rust-lang.org/book/ch13-02-iterators.html">iterators</a> 里的一样，它会返回 stream 剩余长度是上下界，<code>(0,</code> <a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.None" title="None"><code>None</code></a><code>)</code> 是它的默认实现，这对任何 stream 来说都是正确的。</p>
 <p>通常来说，当手动实现一个 <code>Stream</code> 的时候，它是通过组合 future 和其它 stream 来完成的。作为一个示例，让我们重建在<a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a>实现的 <code>Delay</code> future，我们将会把它转换成一个以 10 ms 为间隔，生成 3 次 <code>()</code> 的 stream 。</p>
@@ -3813,8 +3678,7 @@ impl Stream for Interval {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="async-stream"><a class="header" href="#async-stream"><code>async-stream</code></a></h3>
 <p>手动用 <a href="https://docs.rs/futures-core/0.3/futures_core/stream/trait.Stream.html"><code>Stream</code></a> trait 来实现 stream 是非常冗长乏味的。不幸的是，Rust 编程语言还不支持 <code>async/await</code> 来定义 stream 。这项工作正在做，但是还没就绪。</p>
 <p><a href="https://docs.rs/async-stream"><code>async-stream</code></a> crate 可以作为一个临时解决方案使用，这个 crate 提供了一个 <code>stream!</code> 宏，它能将输入转化成一个 stream。通过使用这个 crate，上面的 interval 可以像这样被实现：</p>
@@ -3832,8 +3696,7 @@ stream! {
         when += Duration::from_millis(10);
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="tokio"><a class="header" href="#tokio">Tokio</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="topics"><a class="header" href="#topics">Topics</a></h2>
 <p>Tokio topics 部分包含与编写异步应用程序时出现的各种主题相关的独立文章。</p>
@@ -4089,7 +3952,7 @@ Jun 23 17:18:33 tompc pacman[7079]: upgraded chromium (75.0.3770.90-3 -&gt; 75.0
 <h2 id="emoji-支持"><a class="header" href="#emoji-支持">emoji 支持</a></h2>
 <pre><code class="language-shell">#!/bin/sh
 set -e
-if [[ \$(id -u) -ne 0 ]] ; then echo &quot;请使用 root 用户执行本脚本&quot; ; exit 1 ; fi
+if [[ $(id -u) -ne 0 ]] ; then echo &quot;请使用 root 用户执行本脚本&quot; ; exit 1 ; fi
 echo &quot;开始设置 Noto Emoji font...&quot;
 # 1 - 安装  noto-fonts-emoji 包
 pacman -S noto-fonts-emoji --needed
@@ -4374,7 +4237,7 @@ scoop install mkcert
 </code></pre>
 <h3 id="改变-ca-文件的位置"><a class="header" href="#改变-ca-文件的位置">改变 CA 文件的位置</a></h3>
 <p>CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般来说你不会想去关注它的位置，因为它会被自动装载。但是你可以通过 <code>mkcert -CAROOT</code> 来打印这个目录位置。</p>
-<p>如果你想要管理单独的 CA 们，你可以使用 <code>\$CAROOT</code> 环境变量来设置 mkcert 放置和寻找 CA files 的路径。</p>
+<p>如果你想要管理单独的 CA 们，你可以使用 <code>$CAROOT</code> 环境变量来设置 mkcert 放置和寻找 CA files 的路径。</p>
 <h3 id="在其它系统上安装-ca"><a class="header" href="#在其它系统上安装-ca">在其它系统上安装 CA</a></h3>
 <p>安装 trust store 不需要 CA key（只要 CA），所以你可以导出 CA，并且使用 <code>mkcert</code> 来安装到其它机器上。</p>
 <ul>
@@ -4385,7 +4248,7 @@ scoop install mkcert
 <p>把它 copy 到别的机器上。</p>
 </li>
 <li>
-<p>设置 <code>\$CAROOT</code> 为 <code>rootCA.pem</code> 所在目录。</p>
+<p>设置 <code>$CAROOT</code> 为 <code>rootCA.pem</code> 所在目录。</p>
 </li>
 <li>
 <p>运行 <code>mkcert -install</code>(arch linux 可以 <code>sudo trust anchor --store rootCA.pem</code>，其它发行版可以用自带的命令手动添加来信任 CA)</p>
@@ -4547,9 +4410,9 @@ sudo systemctl enable --now aria2
 <div style="break-before: page; page-break-before: always;"></div><h1 id="postgres"><a class="header" href="#postgres">Postgres</a></h1>
 <h2 id="利用-docker-快速在-当前工作目录pwd-启动一个本地-postgres-环境"><a class="header" href="#利用-docker-快速在-当前工作目录pwd-启动一个本地-postgres-环境">利用 Docker 快速在 <strong>当前工作目录(<code>pwd</code>)</strong> 启动一个本地 postgres 环境</a></h2>
 <p>使用 alpine based image，并且挂载了 unix socket。</p>
-<pre><code class="language-bash">\$ mkdir conf
-\$ docker run -i --rm postgres:15-alpine cat /usr/local/share/postgresql/postgresql.conf.sample &gt; conf/postgresql.conf
-\$ docker run -d \
+<pre><code class="language-bash">$ mkdir conf
+$ docker run -i --rm postgres:15-alpine cat /usr/local/share/postgresql/postgresql.conf.sample &gt; conf/postgresql.conf
+$ docker run -d \
 -v `pwd`/conf/postgresql.conf:/etc/postgresql/postgresql.conf \
 -v `pwd`/data:/var/lib/postgresql/data \
 -v /var/run/postgresql:/var/run/postgresql \
@@ -4561,16 +4424,16 @@ sudo systemctl enable --now aria2
 postgres:15-alpine -c 'config_file=/etc/postgresql/postgresql.conf'
 </code></pre>
 <h2 id="使用-pgcli-来获得拥有更友好的客户端"><a class="header" href="#使用-pgcli-来获得拥有更友好的客户端">使用 <code>pgcli</code> 来获得拥有更友好的客户端</a></h2>
-<pre><code class="language-bash">\$ sudo pacman -S pgcli
+<pre><code class="language-bash">$ sudo pacman -S pgcli
 # -or-
-\$ sudo apt-get install pgcli
+$ sudo apt-get install pgcli
 # -or-
-\$ brew install pgcli
+$ brew install pgcli
 # -or-
-\$ pip install -U pgcli
+$ pip install -U pgcli
 </code></pre>
 <h3 id="默认启动直接通过-unix-socket-连接-postgres"><a class="header" href="#默认启动直接通过-unix-socket-连接-postgres">默认启动直接通过 unix socket 连接 postgres</a></h3>
-<pre><code class="language-bash">\$ pgcli
+<pre><code class="language-bash">$ pgcli
 Server: PostgreSQL 15.1
 Version: 3.5.0
 Home: http://pgcli.com
@@ -4596,12 +4459,12 @@ sed -i -E 's/,?&quot;([A-Z0-9]+)&quot;:\{([^\}]+)},?//g' ~/.config/navicat/Premi
 <div style="break-before: page; page-break-before: always;"></div><h1 id="pre-commit"><a class="header" href="#pre-commit">pre-commit</a></h1>
 <p>一个用于 git commit 提交自动前处理自定义操作的工具</p>
 <h2 id="安装-2"><a class="header" href="#安装-2">安装</a></h2>
-<pre><code class="language-bash">\$ pip3 install pre-commit
+<pre><code class="language-bash">$ pip3 install pre-commit
 </code></pre>
 <h2 id="示例"><a class="header" href="#示例">示例</a></h2>
-<pre><code class="language-bash">\$ mkdir example-registry &amp;&amp; cd example-registry
-\$ git init
-\$ touch .pre-commit-config.yaml
+<pre><code class="language-bash">$ mkdir example-registry &amp;&amp; cd example-registry
+$ git init
+$ touch .pre-commit-config.yaml
 ......
 </code></pre>
 <p>.pre-commit-config.yaml:</p>
@@ -4633,40 +4496,40 @@ repos:
         description: Format files with rustfmt.
         entry: bash -c 'cargo fmt -- --check'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         args: []
       - id: cargo-deny
         name: cargo deny check
         description: Check cargo dependencies
         entry: bash -c 'cargo deny check'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         args: []
       - id: cargo-check
         name: cargo check
         description: Check the package for errors.
         entry: bash -c 'cargo check --all'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
       - id: cargo-clippy
         name: cargo clippy
         description: Lint rust sources
         entry: bash -c 'cargo clippy --all-targets --all-features --tests --benches -- -D warnings'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
       - id: cargo-test
         name: cargo test
         description: unit test for the project
         entry: bash -c 'cargo nextest run --all-features'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
 
 </code></pre>
 <pre><code class="language-bash"># 这将会在 .git 内创建 hooks，来保证在 git commit 之前顺序执行 .pre-commit-config.yaml 中定义的步骤
-\$ pre-commit install
+$ pre-commit install
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="docker-compose-示例"><a class="header" href="#docker-compose-示例">Docker compose 示例</a></h2>
 <p><strong>docker-compose.yml</strong></p>
@@ -4752,9 +4615,9 @@ events {
 
 
 stream {
-        #log_format basic '\$remote_addr [\$time_local] '
-        #         '\$protocol \$status \$bytes_sent \$bytes_received '
-        #         '\$session_time';
+        #log_format basic '$remote_addr [$time_local] '
+        #         '$protocol $status $bytes_sent $bytes_received '
+        #         '$session_time';
         #access_log /var/log/nginx/stream-access.log basic buffer=32k;
 
 
@@ -4800,10 +4663,10 @@ http {
         add_header Access-Control-Allow-Methods *;
 
          location / {
-               proxy_set_header X-Real-IP \$remote_addr;
-               proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-               proxy_set_header X-Forwarded-Proto \$scheme;
-               proxy_set_header Host \$http_host; # 主要是此处，保护 host header
+               proxy_set_header X-Real-IP $remote_addr;
+               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+               proxy_set_header X-Forwarded-Proto $scheme;
+               proxy_set_header Host $http_host; # 主要是此处，保护 host header
 
                proxy_connect_timeout 300;
                # 默认是 HTTP/1, keepalive 需要 HTTP/1.1
@@ -4818,9 +4681,9 @@ http {
 </code></pre>
 <h2 id="快速启动"><a class="header" href="#快速启动">快速启动</a></h2>
 <p>将 <code>docker-compose.yml</code> 与 <code>nginx.conf</code> 置于统一目录下，然后执行：</p>
-<pre><code class="language-bash">\$ docker compose up -d
+<pre><code class="language-bash">$ docker compose up -d
 # -or-
-\$ docker-compose up -d
+$ docker-compose up -d
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="git-基本操作"><a class="header" href="#git-基本操作">Git 基本操作</a></h1>
 <p>下面介绍常见的 git 使用姿势：</p>
@@ -4987,7 +4850,7 @@ http {
 <h2 id="relay--uploading"><a class="header" href="#relay--uploading">relay &gt; uploading</a></h2>
 <p>relay &gt; uploading 是在上方那篇博客中提到的一个重要理念，<code>croc</code> 使用<strong>中继</strong>而不是上传的方式来进行文件传输。</p>
 <p>我在一开始使用 <code>croc send &lt;file&gt;</code> 时还曾思考（当时还没有看到 croc 使用 <code>relay</code>）为何这条命令并没有携带任何关于传输给<strong>谁</strong>的参数，例如：</p>
-<pre><code class="language-bash">\$ croc send cv_debug.log
+<pre><code class="language-bash">$ croc send cv_debug.log
 Sending 'cv_debug.log' (282 B)   
 Code is: 2151-school-biscuit-snow
 On the other computer run
@@ -5120,13 +4983,13 @@ mysql_port=&quot;xxxx&quot;
 backup_dir=/opt/mysql_backup
 
 dt=`date +'%Y%m%d_%H%M'`
-echo &quot;Backup Begin Date:&quot; \$(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
+echo &quot;Backup Begin Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
 
 # 备份全部数据库
-mysqldump -h\$mysql_host -P\$mysql_port -u\$mysql_user -p\$mysql_password -R -E --all-databases --single-transaction &gt; \$backup_dir/mysql_backup_\$dt.sql
+mysqldump -h$mysql_host -P$mysql_port -u$mysql_user -p$mysql_password -R -E --all-databases --single-transaction &gt; $backup_dir/mysql_backup_$dt.sql
 
-find \$backup_dir -mtime +7 -type f -name '*.sql' -exec rm -rf {} \;
-echo &quot;Backup Succeed Date:&quot; \$(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
+find $backup_dir -mtime +7 -type f -name '*.sql' -exec rm -rf {} \;
+echo &quot;Backup Succeed Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="这一部分是-gitea-相关的问题"><a class="header" href="#这一部分是-gitea-相关的问题">这一部分是 gitea 相关的问题</a></h2>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="unable-to-create-internal-queue-for-xxx-error-unable-to-create-queue-level-for-xxx-with-cfg-"><a class="header" href="#unable-to-create-internal-queue-for-xxx-error-unable-to-create-queue-level-for-xxx-with-cfg-">Unable to create internal queue for XXX Error: Unable to create queue level for XXX with cfg ...</a></h2>
@@ -5151,10 +5014,10 @@ echo &quot;Backup Succeed Date:&quot; \$(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
  proxy_buffering off;
 
  location / {
-   proxy_set_header X-Real-IP \$remote_addr;
-   proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-   proxy_set_header X-Forwarded-Proto \$scheme;
-   proxy_set_header Host \$http_host; # 主要是此处，保护 host header
+   proxy_set_header X-Real-IP $remote_addr;
+   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+   proxy_set_header X-Forwarded-Proto $scheme;
+   proxy_set_header Host $http_host; # 主要是此处，保护 host header
 
    proxy_connect_timeout 300;
    # Default is HTTP/1, keepalive is only enabled in HTTP/1.1

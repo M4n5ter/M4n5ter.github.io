@@ -181,8 +181,7 @@ mv src/main.rs src/bin/server.rs
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>touch src/bin/client.rs
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>在这个文件中，我们将会写关于本节的代码。无论何时你想运行它，请先启动 server 端：</p>
 <pre><code class="language-zsh">cargo run --bin server
 </code></pre>
@@ -210,8 +209,7 @@ async fn main() {
 
     t1.await.unwrap();
     t2.await.unwrap();
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>不幸的是呢，编译器阻止了我们继续，因为两个任务都需要用某种方式访问 <code>client</code> 。由于</p>
 <p><code>Client</code> 并没有实现 <code>Copy</code> trait ，所以如果没有一些代码来促成 <code>client</code> 的共享是不能被编译通过的。再说，<code>Client::set</code> 需要 <code>&amp;mut self</code> ，这意味着调用它的时候需要独占 <code>Client</code> 的访问。我们可以为每个连接打开一个任务，但是这并不理想。因为 <code>.await</code> 需要带着锁被调用，所以我们不能使用 <code>std::sync::Mutex</code> 。我们可以使用 <code>tokio::sync::Mutex</code> ，但是这会导致同一时间只能有一个请求（即 singleflight 单飞）。如果客户端实现了 <a href="https://redis.io/topics/pipelining">pipelining</a> ，一个异步锁会导致连接的低利用率。</p>
 <h2 id="message-passing-消息传递"><a class="header" href="#message-passing-消息传递">Message passing （消息传递）</a></h2>
@@ -251,8 +249,7 @@ enum Command {
         val: Bytes,
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h2 id="create-the-channel-创建通道"><a class="header" href="#create-the-channel-创建通道">Create the channel （创建通道）</a></h2>
 <p>在 <code>main</code> 函数中，我们创建一个 <code>mpsc</code> channel。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::mpsc;
@@ -263,8 +260,7 @@ async fn main() {
     let (tx, mut rx) = mpsc::channel(32);
 
     // ... Rest comes here
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>mpsc</code> 用来<strong>发送</strong>命令给管理 redis connection 的任务。多生产者的容量允许消息可以从多个任务中发送。创建 channel 会返回两个值，一个 sender（习惯上命名为 <code>tx</code>） 和一个 receiver （习惯上命名为 <code>rx</code>）。这俩句柄是分开使用的，它们可能会被移动到不同的任务中去。</p>
 <p>这里的 channel 创建时指定了 32 个容量。如果消息发的比收的快，那么 channel 会把没来得及被接收的消息存起来。一旦 channel 中的 32 个位置都被消息填满了，这时候再调用 <code>send(...).await</code> 将会 sleep 直到有 1 个消息被 receiver 拿走去消费。</p>
 <p>从多个任务发送消息是通过 clone <code>Sender</code> 做到的。例如：</p>
@@ -286,8 +282,7 @@ async fn main() {
     while let Some(message) = rx.recv().await {
         println!(&quot;GOT = {}&quot;, message);
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>两条消息都被发送到了单个 <code>Receiver</code> 句柄。在 <code>mpsc</code> channel 中克隆 receiver 是不被允许的。</p>
 <p>当每个 <code>Sender</code> 超出作用域或者因为其他原因被 drop 了，就不再能往这个 channel 发送更多消息了。此时，在 <code>Receiver</code> 上调用 <code>recv</code> 将会返回 <code>None</code>，这意味着所有的 sender 都不在了，channel 被关闭了。 </p>
 <p>在我们的场景下，管理 redis connection 的任务知道一旦 channel 被关闭，就得关闭 redis connection，因为 connection 不会再被使用了。</p>
@@ -315,8 +310,7 @@ let manager = tokio::spawn(async move {
         }
     }
 });
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，更新这两个任务以通过通道发送命令，而不是直接在Redis连接上发出它们。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -341,16 +335,14 @@ let t2 = tokio::spawn(async move {
 
     tx2.send(cmd).await.unwrap();
 });
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>在 <code>main</code> 函数的底部，我们 <code>.await</code> 这些 <a href="https://docs.rs/tokio/latest/tokio/task/struct.JoinHandle.html"><code>JoinHandle</code></a> 来确保commands 能够在进程退出前完全完成。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>t1.await.unwrap();
 t2.await.unwrap();
 manager.await.unwrap();
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h2 id="receive-responses-接收响应"><a class="header" href="#receive-responses-接收响应">Receive responses （接收响应）</a></h2>
 <p>最后一步是从管理器任务接收响应(response)。<code>GET</code> command 需要获取 value 并且 <code>SET</code> command 需要知道它的操作是否成功完成。</p>
 <p>为了传递响应，我们使用一个 <code>oneshot</code> channel。<code>oneshot</code> channel 是一个单生产者，单消费者的 channel，针对发送单一值进行了优化。在我们的场景下，响应就是单一值。</p>
@@ -360,8 +352,7 @@ manager.await.unwrap();
 </span>use tokio::sync::oneshot;
 
 let (tx, rx) = oneshot::channel();
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>不像 <code>mpsc</code> ，<code>oneshot</code> 不需要指定容量，因为它的容量始终是 1。另外，<code>oneshot</code> 的两个句柄都不能被 clone。</p>
 <p>为了从管理器任务接收响应，在发送一个 command 之前，要先创建一个 <code>oneshot</code> channel。<code>oneshot</code> 的 <code>Sender</code> 会被包含在发给管理器任务中的 command 中。而 <code>Receiver</code> 用来接收管理器任务用 <code>oneshot</code> 的 <code>Sender</code> 发送的消息。</p>
 <p>首先，改变 <code>Command</code> 来包含 <code>Sender</code> 。方便起见，用了一个类型别名来使用 <code>Sender</code>。</p>
@@ -387,8 +378,7 @@ enum Command {
 /// Provided by the requester and used by the manager task to send
 /// the command response back to the requester.
 type Responder&lt;T&gt; = oneshot::Sender&lt;mini_redis::Result&lt;T&gt;&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，改变发送 command 的任务，让它包含一个 <code>oneshot::Sender</code>。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -422,8 +412,7 @@ let t2 = tokio::spawn(async move {
     let res = resp_rx.await;
     println!(&quot;GOT = {:?}&quot;, res);
 });
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>在 <code>oneshot::Sender</code> 上的 <code>send</code> 调用是立即完成的，<strong>不需要</strong>一个 <code>.await</code> 。这是因为 <code>oneshot</code> channel 上的 <code>send</code> 总是立即返回 succeed 或者 fail ，而不需要任何形式的等待。</p>
 <p>当接收端被 drop 时，往一个 oneshot channel 发送一个值会返回 <code>Err</code> 。这表示接收端不再对结果感兴趣了。在我们的假设中，接收端(想发命令的任务)不再对 response(管理器任务返回的结果) 感兴趣的情况是可接受的。所以通过 <code>resp.send(...)</code>  返回的 <code>Err</code>  就没必要处理了。</p>
 <p>可以在<a href="https://github.com/tokio-rs/website/blob/master/tutorial-code/channels/src/main.rs">这里</a>看到完整代码。</p>
@@ -436,8 +425,7 @@ let t2 = tokio::spawn(async move {
 </span>loop {
     async_op();
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>如果异步操作迫切的希望被运行，loop 循环在没有确保先前的操作完成的情况下，反复将新的 <code>async_op</code> 排进一个队列来运行，这会导致隐式的无界队列。基于回调（callback）和基于勤奋 future（rust 是惰性 future）的系统会特别容易受到这种影响。</p>
 <p>然而~，使用 Tokio 和异步 Rust ，上述片段根本就不会被运行。这是因为 <code>.await</code> 从未被调用。如果上述片段改成使用 <code>.await</code> ，那么这个循环就会在重新开始之前等待操作执行完毕。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -446,8 +434,7 @@ let t2 = tokio::spawn(async move {
     // 在 `async_op` 完成之前是不会重新开始循环的
     async_op().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>并发和队列必须被显式地引入。这么做的方法包括：</p>
 <ul>
 <li>

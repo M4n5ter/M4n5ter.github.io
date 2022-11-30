@@ -178,8 +178,7 @@
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>async fn(Request) -&gt; Result&lt;Response, Error&gt;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这个抽象可以同时运用于客户端和服务端。同时 Tower 也提供了 超时处理、访问频率限制和负载均衡之类的组件，这些功能可以被抽象为在 inner Service 调用之前和之后进行一些操作所共同组成的Service。这些 Service 称为中间件(middleware)。</p>
 <p>Tower 库对 Service 的设计希望满足以下目标：</p>
 <ol>
@@ -201,8 +200,7 @@
 
   fn call(&amp;mut self, req: Request) -&gt; Self::Future;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="通过-service-trait-实现-timeout-中间件"><a class="header" href="#通过-service-trait-实现-timeout-中间件"><strong>通过 Service trait 实现 Timeout 中间件</strong></a></h3>
 <p>Timout 中间件用于对某个 request 的处理限定时间，如果超过时限还没有返回，则直接返回错误。Timout 应该有个用于进一步处理的里层serivce和一个时限。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -211,8 +209,7 @@
   service: T,
   duration: std::time::Duration
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>将 Timeout 也定义为一个 Service</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -220,8 +217,7 @@
 where
   S: Service&lt;R&gt;,
   S::Error: Into&lt;Box&lt;dyn std::error::Error + Send + Sync&gt;&gt; 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><code>poll_ready</code> 非常好处理，直接将调用里层 Service 的 poll_ready 函数。</p>
 <p>而 <code>call</code> 则要求返回一个 Future，如果要实现 Timeout 对应的行为逻辑，需要创建一个新的实现了 Future 的类型——ResponseFuture。我们希望它被poll时，首先会查看里层 Service 是否返回，如果已返回则返回结果，如果没有则检查是否已经timeout，如果没有则返回 Pending，如果已经超时则返回超时错误。</p>
 <p>因此我们创建了一个融合了里层 future 和超时 future 的类型</p>
@@ -234,8 +230,7 @@ struct ResponseFuture&lt;F&gt; {
   #[pin]
   sleep: tokio::time::Sleep
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>pin_project 可以使得 Pin 类型的字段也是 Pin 类型，在调用 poll 函数时需要用到。</p>
 <p>然后为 ResponseFuture 实现 Future trait</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -266,8 +261,7 @@ where
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="balance-中间件"><a class="header" href="#balance-中间件">Balance 中间件</a></h3>
 <p>从名字就可以看出来，Balance 模块用于提供负载均衡的服务，负载均衡会根据所有服务的负载程度来决定处理 request 的服务。</p>
 <p>在官方文档提供了两种 Balance 服务</p>
@@ -298,8 +292,7 @@ where T: Service&lt;Request&gt;
   failed: Option&lt;ServiceError&gt;,
   handle: Handle
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Worker 维护了一个 mpsc channel 的接收端rx，而每个 Buffer Service 维护了一个 mpsc channel 的发送端tx，且 Buffer 实现了 Clone trait，当 Buffer 被 clone 时，对应的 tx 也被clone。</p>
 <p>由于用户的 request 是由 Buffer 转交给 Worker 的，因此 request 的处理结果无法直接从 Buffer 获取。这里就体现了 Service trait 的灵活性，由于 Service 的call函数返回的是一个 Future，因此可以自定义一个 ResponseFuture，然后在 Worker 要处理的 Message 中包含一个 channel 的发送端，在call函数返回的 Future 中包含该 channel 的接收端，就可以使得 Worker 和用户之间可以直接通信。这个设计应该说是非常巧妙的。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -323,8 +316,7 @@ where
     }
   }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="discover-中间件"><a class="header" href="#discover-中间件">Discover 中间件</a></h3>
 <p>在前面的 Balance 中间件中提到了 Service 集的概念，有集合，就意味着有集合内元素的变动。各个中间件对于 Service 集合的实现可能并不相同，但是都对外提供了统一的增删接口，这个接口就是 Discover trait。</p>
 <p>Discover 为了方便对 Service 集进行管理，要求用户对每个 Service 定义一个唯一的标识符并且实现了 Eq。</p>
@@ -335,8 +327,7 @@ where
   Insert(K, V),
   Remove(K)
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>对于一个维护 Service 集的struct，其对 Service 集的修改选择交给用户，由用户提供一个实现 Discover trait 的 struct，而维护 Service 集的 struct 只需要调用 poll_discover 函数就可以获取外界对 Service 集的修改。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -349,8 +340,7 @@ where
     cx: &amp;mut Context&lt;'_&gt;
   ) -&gt; Poll&lt;Option&lt;Result&lt;Change&lt;Self::Key, Self::Service&gt;, Self::Error&gt;&gt;&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <blockquote>
 <p><em>Tips: 在Rust异步编程中，很多的poll及类似的函数的返回结果都是 Poll&lt;Option&lt;Result&lt;V, E&gt;&gt;&gt; 类型的。这种返回类型可以从结果上反映很多东西，通常用于需要被多次poll的函数。</em></p>
 </blockquote>
@@ -369,8 +359,7 @@ where
     D: TryStream&lt;Ok = Change&lt;K, S&gt;, Error = E&gt;,
     K: Eq,
 {}
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>也就是说，要实现 Discover 首先要实现 TryStream，而在 discover 中也为所有实现了 TryStream 的类型自动实现了 Discover trait:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -390,8 +379,7 @@ where
         TryStream::try_poll_next(self, cx)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>也就是将 Discover 抽象为流式操作，这样就可以用到很多现成的实现了 Stream 的工具来存储对于 Service 集的修改。</p>
 <h3 id="filter-中间件"><a class="header" href="#filter-中间件">Filter 中间件</a></h3>
 <p>Filter 顾名思义，对于 request 进行一次筛选，只有符合筛选条件的 request 才会提交给 Service 处理。</p>
@@ -401,8 +389,7 @@ where
   inner: T,
   predicate: U
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>可以看出，Filter 的初始定义非常自由，Filter 对 predicate 并没有任何限制，但是 Filter 必须要根据 predicate 的返回结果分别处理，所以 Filter 和 predicate 总是相关的。</p>
 <p>Filter 只对于当 predicate 实现了 Predicate trait 时实现了 Service trait。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -411,8 +398,7 @@ where
   type Request;
   fn check(&amp;mut self, request: Request) -&gt; Result&lt;Self::Request, Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>实现过程也很有意思，由于call函数要求返回一个 Future，因此当筛选不通过时，需要返回一个立刻返回 Ready(Err(_)) 的 Future</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -437,8 +423,7 @@ where
         })
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="async-predicate"><a class="header" href="#async-predicate"><strong>async predicate</strong></a></h3>
 <p>上面讲的predicate函数并不是异步的，这只适用于一些快速筛选的 Filter，如果 predicate 过程也需要等待IO等适合做成异步的场景，那么应该将 predicate 过程也做成异步形式。因此 Filter 模块还存在一个适用于异步场景的 AsyncFilter。</p>
 <p>这就导致在一个 Service 同时存在两种 Future，用户也不知道两种 Future 的先后关系，因此需要将两种 Future 放到一个 AsyncResponseFuture，由 AsyncResponseFuture 协调两个 Future。</p>
@@ -456,8 +441,7 @@ where
   state: State&lt;P::Future, S::Future&gt;,
   service: S
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>AsyncResponseFuture 的 poll 结果由当前 state 决定。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -486,8 +470,7 @@ where
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="limit-中间件"><a class="header" href="#limit-中间件">Limit 中间件</a></h3>
 <p>服务器的处理能力是有限的，如果短时间内到达的 request 过多，可能会导致系统宕机。Limit 中间件用于对 request 进行限制，主要分为两种方式：</p>
 <ul>
@@ -502,8 +485,7 @@ where
   num: u64,
   per: Duration
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>借助 tokio::time::sleep_util future，限制 now 到 now+per 这段时间内的 request 处理数量。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -537,8 +519,7 @@ where
     }
   }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="load-中间件"><a class="header" href="#load-中间件">Load 中间件</a></h3>
 <p>Load 是用于定量化表示一个 Service 的负载的中间件。调用 Balance layer 的 Service 集就要求 Service 必须实现 Load trait。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -547,8 +528,7 @@ where
   type Metric: PartialOrd,
   fn load(&amp;self) -&gt; Self::Metric;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Load 提供下列三个计算 Service 负载的模块：</p>
 <ul>
 <li>Constant：将 Service 的 Load 指标设为常数；</li>
@@ -565,8 +545,7 @@ where
   handle: Option&lt;H&gt;,
   completion: C
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>其中，handle 为通知 Service request 已经完成的柄，TrackCompletionFuture 只需要负责在 request 执行完成之后 drop handle，由具体的模块去实现 handle 被 drop 时需要实现的动作。</p>
 <p>比如 PeakEwma 模块的 handle 需要追踪从接收 request 到执行完成的时间：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -584,8 +563,7 @@ impl Drop for Handle {
     }
   }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>至于 PendingRequests 就更简单了，其 handle 直接就是一个 Arc&lt;()&gt; 类型的 wrap，直接调用 Arc 类型的 strong_count 函数就知道当前 Pending 的 request 数量。</p>
 <h3 id="loadshed-中间件"><a class="header" href="#loadshed-中间件">LoadShed 中间件</a></h3>
 <p>LoadShed 类似于 Rust 中的一些 try_xxx 函数，其 poll_ready 函数返回 <code>Poll&lt;Result&lt;(), E&gt;&gt;</code> 类型，当 poll_ready 被调用时，总是返回 Ready，但是根据里层的类型判断里层 Service 是否真的 Ready，这个中间件适用于一些特殊的场景。</p>
@@ -604,8 +582,7 @@ impl Drop for Handle {
   fn poll_ready(&amp;mut self, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;(), Self::MakeError&gt;&gt;;
   fn make_service(&amp;mut self, target: Target) -&gt; Self::Future;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>MakeService 已经为所有 Response type 为 Service 类型的 Service 自动实现。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -627,15 +604,13 @@ where
         Service::call(self, target)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="service_fn-组件"><a class="header" href="#service_fn-组件"><strong>service_fn 组件</strong></a></h3>
 <p>Tower 提供了一个可以快速将一个签名为</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>async fn(req: Request) -&gt; Result&lt;Response, Box&lt;dyn std::error::Error + Send + Sync&gt;&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>的异步函数包装为一个 Service 的函数 service_fn，其就是一个 Make Service。这种包装很简单，因为每个异步函数在调用时编译器会自动生成一个 Future。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -658,8 +633,7 @@ where
         (self.f)(req)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="reconnect-中间件"><a class="header" href="#reconnect-中间件">Reconnect 中间件</a></h3>
 <p>Reconnect 是一个可以在发生错误时自动重连的中间件，一个 Reconnect Service 有三种状态：</p>
 <ul>
@@ -679,8 +653,7 @@ where
   fn retry(&amp;self, req: &amp;Req, result: Result&lt;&amp;Res, &amp;E&gt;) -&gt; Option&lt;Self::Future&gt;;
   fn clone_request(&amp;self, req: &amp;Req) -&gt; Option&lt;Req&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>其中 retry 函数用于决定是否应该继续 retry，如果返回 None 则停止，否则返回 Some(Future)。Future 可以在被 poll 时每次生成一个新的实现了 Policy 的 Retry Service，这意味着每次 retry 之后都可以产生新的 Service，而不是只能一直使用同一种 Policy，进一步增大了自由度。</p>
 <p>最后再看 Tower 给的 Retry Service 对于 call 函数的 ResponseFuture 的实现。ResponseFuture 包含三种状态：</p>
 <ul>
@@ -721,8 +694,7 @@ where
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>通过 ready_oneshot 函数将 Service 包装为一个 ReadyOneshot task，然后通过 tokio::spawn 传入 executor</p>
 <h3 id="steer-中间件"><a class="header" href="#steer-中间件">Steer 中间件</a></h3>
 <p>Steer 中间件用于管理 Service 数组，根据自定义的规则将 request 导向特定的 Service。</p>
@@ -731,8 +703,7 @@ where
 </span>trait Picker&lt;S, Req&gt; {
   fn pick(&amp;mut self, r: &amp;Req, services: &amp;[S]) -&gt; usize;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>由于 Steer 内部维护多个 Service，所以只有多个 Service 同时 ready， Steer 才会返回 Ready。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -782,8 +753,7 @@ where
         cl.call(req)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这样的处理实际会拖累整体的效率，如果某个 request 所需要的 Service 实际是 ready 的，但是可能为了等待其他的 Service 而延缓调用。但是为了兼容 Tower 的核心 API 不得不这么处理，毕竟 poll_ready 会与 request 相关的 Service 只有这一个。</p>
 <h3 id="结论"><a class="header" href="#结论">结论</a></h3>
 <p>Tower 将网络编程中常见的行为抽象为统一的 Service，对外的接口非常统一，并且可以相互叠加，而且是异步式，是一个扩展性非常强大的框架，值得学习一下。</p>

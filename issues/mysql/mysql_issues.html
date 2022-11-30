@@ -190,13 +190,13 @@ mysql_port=&quot;xxxx&quot;
 backup_dir=/opt/mysql_backup
 
 dt=`date +'%Y%m%d_%H%M'`
-echo &quot;Backup Begin Date:&quot; \$(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
+echo &quot;Backup Begin Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
 
 # 备份全部数据库
-mysqldump -h\$mysql_host -P\$mysql_port -u\$mysql_user -p\$mysql_password -R -E --all-databases --single-transaction &gt; \$backup_dir/mysql_backup_\$dt.sql
+mysqldump -h$mysql_host -P$mysql_port -u$mysql_user -p$mysql_password -R -E --all-databases --single-transaction &gt; $backup_dir/mysql_backup_$dt.sql
 
-find \$backup_dir -mtime +7 -type f -name '*.sql' -exec rm -rf {} \;
-echo &quot;Backup Succeed Date:&quot; \$(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
+find $backup_dir -mtime +7 -type f -name '*.sql' -exec rm -rf {} \;
+echo &quot;Backup Succeed Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
 </code></pre>
 
                     <div id="giscus-container"></div>

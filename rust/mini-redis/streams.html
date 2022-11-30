@@ -191,8 +191,7 @@ async fn main() {
     while let Some(v) = stream.next().await {
         println!(&quot;GOT = {:?}&quot;, v);
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>像迭代器一样，<code>next()</code> 方法返回 <code>Option&lt;T&gt;</code> ，T 是 stream 里的值的类型。接收到 <code>None</code> 表示这个 stream iteration 终止了。</p>
 <h3 id="mini-redis-broadcast-mini-redis-广播"><a class="header" href="#mini-redis-broadcast-mini-redis-广播">Mini-Redis broadcast （Mini-Redis 广播）</a></h3>
 <p>让我们使用 Mini-Redis client 来回顾一个稍微更复杂的例子。</p>
@@ -238,8 +237,7 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
     println!(&quot;DONE&quot;);
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>一个任务被生成来发布消息到 Mini-Redis server 上的 &quot;numbers&quot; channel 。然后，在主要的任务中，我们订阅 &quot;numbers&quot; channel 并且打印接收到的消息。</p>
 <p>订阅之后，我们在返回的 subscriber 上调用 <a href="https://docs.rs/mini-redis/0.4/mini_redis/client/struct.Subscriber.html#method.into_stream"><code>into_stream()</code></a> 。这个方法会消费掉这个 <code>Subscriber</code> ，返回一个能在消息到达的时候生成消息的 stream 。在我们开始迭代消息之前，注意这个 stream 通过<a href="https://docs.rs/tokio/1/tokio/macro.pin.html"><code>tokio::pin!</code></a> 被  <a href="https://doc.rust-lang.org/std/pin/index.html">pin</a> 到了栈上。 在一个 stream 上调用 <code>next()</code> 要求这个 stream 是 <a href="https://doc.rust-lang.org/std/pin/index.html">pinned</a> （这也是上面用 <code>tokio::pin!</code> 的原因）。<code>into_stream()</code> 函数返回一个没有被 pin 的 stream，为了迭代这个 stream ，我们必须显式地 pin 它。</p>
 <blockquote>
@@ -263,8 +261,7 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
    = note: required because of the requirements on the impl of `Unpin` for `tokio_stream::map::Map&lt;tokio_stream::filter::Filter&lt;impl Stream, [closure@streams/src/main.rs:22:17: 25:10]&gt;, [closure@streams/src/main.rs:26:14: 26:40]&gt;`
    = note: required because it appears within the type `tokio_stream::take::_::__Origin&lt;'_, tokio_stream::map::Map&lt;tokio_stream::filter::Filter&lt;impl Stream, [closure@streams/src/main.rs:22:17: 25:10]&gt;, [closure@streams/src/main.rs:26:14: 26:40]&gt;&gt;`
    = note: required because of the requirements on the impl of `Unpin` for `tokio_stream::take::Take&lt;tokio_stream::map::Map&lt;tokio_stream::filter::Filter&lt;impl Stream, [closure@streams/src/main.rs:22:17: 25:10]&gt;, [closure@streams/src/main.rs:26:14: 26:40]&gt;&gt;`
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>如果你遇到了类似这样的错误信息，请尝试 pin 这个值！！！</p>
 <p>在尝试运行这个之前，先把 Mini-Redis server 跑起来：</p>
 <pre><code class="language-zsh">mini-redis-server
@@ -287,8 +284,7 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
 </span>let messages = subscriber
     .into_stream()
     .take(3);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到了：</p>
 <pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
 got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;two&quot; })
@@ -305,8 +301,7 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
         _ =&gt; false,
     })
     .take(3);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到：</p>
 <pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
 got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
@@ -324,8 +319,7 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
     })
     .map(|msg| msg.unwrap().content)
     .take(3);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，输出是：</p>
 <pre><code class="language-textile">got = b&quot;1&quot;
 got = b&quot;3&quot;
@@ -352,8 +346,7 @@ pub trait Stream {
         (0, None)
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><code>Stream::poll_next()</code> 函数非常像 <code>Future::poll</code> ，除了它可以被反复调用来从 stream 接收许多值。正如我们在<a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a>了解到的一样，当一个 stream <strong>没有</strong>准备好返回一个值的时候，<code>Poll::Pending</code> 会被返回。任务的 waker 会被注册，一旦 stream 应该被再次 poll 的时候，waker 会被通知。</p>
 <p>这里的 <code>size_hint()</code> 方法的使用方式跟 <a href="https://doc.rust-lang.org/book/ch13-02-iterators.html">iterators</a> 里的一样，它会返回 stream 剩余长度是上下界，<code>(0,</code> <a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.None" title="None"><code>None</code></a><code>)</code> 是它的默认实现，这对任何 stream 来说都是正确的。</p>
 <p>通常来说，当手动实现一个 <code>Stream</code> 的时候，它是通过组合 future 和其它 stream 来完成的。作为一个示例，让我们重建在<a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a>实现的 <code>Delay</code> future，我们将会把它转换成一个以 10 ms 为间隔，生成 3 次 <code>()</code> 的 stream 。</p>
@@ -391,8 +384,7 @@ impl Stream for Interval {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="async-stream"><a class="header" href="#async-stream"><code>async-stream</code></a></h3>
 <p>手动用 <a href="https://docs.rs/futures-core/0.3/futures_core/stream/trait.Stream.html"><code>Stream</code></a> trait 来实现 stream 是非常冗长乏味的。不幸的是，Rust 编程语言还不支持 <code>async/await</code> 来定义 stream 。这项工作正在做，但是还没就绪。</p>
 <p><a href="https://docs.rs/async-stream"><code>async-stream</code></a> crate 可以作为一个临时解决方案使用，这个 crate 提供了一个 <code>stream!</code> 宏，它能将输入转化成一个 stream。通过使用这个 crate，上面的 interval 可以像这样被实现：</p>
@@ -410,8 +402,7 @@ stream! {
         when += Duration::from_millis(10);
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 
                     <div id="giscus-container"></div>
                 </main>

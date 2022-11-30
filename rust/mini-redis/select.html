@@ -200,8 +200,7 @@ async fn main() {
             println!(&quot;rx2 completed first with {:?}&quot;, val);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>使用了两个 oneshot channel，它俩中的任何一个都可以第一个完成。<code>select!</code> 语句会在这两个 channel 上 await ，并且绑定 <code>val</code> 到任务的返回值上。当 <code>tx1</code> 或 <code>tx2</code> 完成，相关联的 block 会被执行。</p>
 <p><strong>没有</strong>完成的分支会被直接 drop 掉。在这个例子中，计算会 await 在每个 channel 的 <code>oneshot::Receiver</code> 上。没有完成的 <code>oneshot::Receiver</code> 会被丢弃。</p>
 <h3 id="cancellation"><a class="header" href="#cancellation">Cancellation</a></h3>
@@ -245,8 +244,7 @@ async fn main() {
             println!(&quot;rx2 completed first with {:?}&quot;, val);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="the-future-implementation"><a class="header" href="#the-future-implementation">The <code>Future</code> implementation</a></h3>
 <p>为了更好的理解 <code>select!</code> 的工作方式，让我们看一下假设的 <code>Future</code> 实现会是什么样子。这是一个简化版本，在实践中，<code>select!</code> 包含了其它的功能，例如随机选择第一个被 poll 的分支。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::oneshot;
@@ -288,8 +286,7 @@ async fn main() {
         rx1,
         rx2,
     }.await;
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这个 <code>MySelect</code> future 包含了每个分支的 future。当 <code>MySelect</code> 被 poll，第一个分支会被 pol，如果它就绪了，它返回出来的 val 就会被用掉，并且 <code>MySelect</code> 会立即结束。在 <code>.await</code> 从 future 收到输出后，future 会被 drop 掉，这导致 future 内的两个分支也会被 drop 。因为有一个分支没有完成，这个分支的操作实际上被取消了。</p>
 <p>记住上一节的内容：</p>
 <blockquote>
@@ -301,8 +298,7 @@ async fn main() {
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>&lt;pattern&gt; = &lt;async expression&gt; =&gt; &lt;handler&gt;,
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当 <code>select</code> 宏被执行，所有的 <code>&lt;async expression&gt;</code> 会被聚合起来，然后并发执行。当有一个表达式率先完成，表达式的结果会被匹配到 <code>&lt;pattern&gt;</code> 。如果结果匹配了模式，那么所有剩余的 <code>&lt;async expression&gt;</code> 会被 drop 掉，并且完成了的那个表达式的 <code>&lt;handler&gt;</code> 被执行。<code>&lt;handler&gt;</code> 表达式可以访问 <code>&lt;pattern&gt;</code> 建立的任何绑定。</p>
 <p><code>&lt;pattern&gt;</code> 最基本的情况就是一个变量名，<code>&lt;async expression&gt;</code> 的结果会被绑定到这个变量名，并且 <code>&lt;handler&gt;</code> 能访问这个变量。这就是为什么最开始的例子里在 <code>&lt;pattern&gt;</code> 和 <code>&lt;handler&gt;</code> 被使用的 <code>val</code> 是访问的 <code>&lt;async expression&gt;</code> 的 <code>val</code> 。</p>
 <p>如果 <code>&lt;pattern&gt;</code> <strong>没有</strong>成功匹配异步计算的结果，那么剩下的异步表达式继续并发执行，直到出现下一个先执行完的 <code>&lt;async expression&gt;</code> 。然后相同的逻辑会继续应用到结果上，以此类推。</p>
@@ -328,8 +324,7 @@ async fn main() {
             println!(&quot;received message first {:?}&quot;, msg);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这里，我们 select 一个 oneshot 和从 <code>TcpListener</code> 接收 sockets 。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::net::TcpListener;
 use tokio::sync::oneshot;
@@ -361,8 +356,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     }
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这个 accept loop 会一直运行直到遇到 error 或者 <code>rx</code> 收到一个值。<code>_</code> 模式表示我们对异步计算返回的值并不感兴趣。</p>
 <h2 id="return-value"><a class="header" href="#return-value">Return value</a></h2>
 <p><code>tokio::select!</code> 宏会返回 <code>&lt;handler&gt;</code> 表达式计算出的结果。</p>
@@ -382,8 +376,7 @@ async fn main() {
     };
 
     println!(&quot;Got = {}&quot;, out);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>因为这个，它要求<strong>每个</strong>分支的 <code>&lt;handler&gt;</code> 表达式计算出同样的类型。如果 <code>select!</code> 的输出不被需要，一个不错的实践是让表达式返回 <code>()</code></p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <p>使用 <code>?</code> 操作符从表达式传播错误。它如何工作取决于 <code>?</code> 是从异步表达式还是从 handler 使用。在异步表达式中使用 <code>?</code> 把错误从异步表达式中传播出去，这会使这个异步表达式的输出变成 <code>Result</code> 。在 handler 中使用 <code>?</code> 会立即将错误传播到 <code>select!</code> 表达式外部。让我们再来看看这个 accpet loop ：</p>
@@ -415,16 +408,14 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     }
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>请关注 <code>listener.accept().await?</code> 。这个 <code>?</code> 操作符把错误传播出了 <code>&lt;async expression&gt;</code> 并且绑定到了 <code>res</code> 。发生错误时 <code>res</code> 会被设置成 <code>Err(_)</code> ，然后在 handler 中，<code>?</code> 操作符再次被使用，<code>res?</code> 语句会把错误传播出 <code>main</code> 函数。</p>
 <h2 id="pattern-matching"><a class="header" href="#pattern-matching">Pattern matching</a></h2>
 <p>回顾一下 <code>select!</code> 宏的分支语法定义：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>&lt;pattern&gt; = &lt;async expression&gt; =&gt; &lt;handler&gt;,
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>目前为止，我们仅仅在 <code>&lt;pattern&gt;</code> 上使用了变量绑定。然而，任何 Rust 模式都可以被使用，举个例子，如果说我们从多个 MPSC channels 接收，我们可能会这么做：</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::mpsc;
 
@@ -448,8 +439,7 @@ async fn main() {
             println!(&quot;Both channels closed&quot;);
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>在这个例子中， <code>select!</code> 表达式等待从 <code>rx1</code> 和 <code>rx2</code> 接收一个 value 。如果一个 channel 关闭了，<code>recv()</code> 会返回 <code>None</code> ，这将<strong>无法</strong>匹配例子中的模式，并且当前分支会被禁用。这个 <code>select!</code> 表达式将会继续在剩余的分支上 wait 。</p>
 <p>请注意例子中的 <code>select!</code> 表达式包含一个 <code>else</code> 分支。这个 <code>select!</code> 表达式必须计算出一个 value，当使用模式匹配，可能<strong>没有</strong>一条分支能成功匹配它们所关联的模式，如果这种情况发生了， <code>else</code> 分支就会被计算。</p>
 <h2 id="borrowing"><a class="header" href="#borrowing">Borrowing</a></h2>
@@ -483,8 +473,7 @@ async fn race(
 
     Ok(())
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这里的 <code>data</code> 变量是被下面的两个异步表达式<strong>不可变借用</strong>的。当其中一个操作成功完成，另一个将会被 drop。因为我们使用 <code>Ok(_)</code> 来模式匹配，如果一个表达式失败了，另一个会继续执行。</p>
 <p>当来到每条分支的 <code>&lt;handler&gt;</code> ，<code>select!</code> 保证只有单个 <code>&lt;handler&gt;</code> 会运行。正因如此，每个 <code>&lt;handler&gt;</code> 可以<strong>不可变借用</strong>相同的数据。</p>
 <p>下面这个例子在两个 handler 中都对 <code>out</code> 进行了修改：</p>
@@ -511,8 +500,7 @@ async fn main() {
     }
 
     println!(&quot;{}&quot;, out);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h2 id="loops"><a class="header" href="#loops">Loops</a></h2>
 <p><code>select!</code> 宏经常被用在循环中。这一部分将会通过几个示例来展示在循环中使用 <code>select!</code> 宏的常见方式。我们通过 select 多个 channels 开始：</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::mpsc;
@@ -535,8 +523,7 @@ async fn main() {
     }
 
     println!(&quot;All channels have been closed.&quot;);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>这个例子在三个 channel 的 rx 上select。当从任意一个 channel 中接收到一条消息，会将其打印到 STDOUT 。当有一条 channel close 了， <code>recv()</code> 会返回 <code>None</code> ，通过使用模式匹配，<code>select!</code> 宏会继续在剩余的 channels 上等待。当所有的 channel 都 close 了，这里的 <code>else</code> 分支会被计算，并且循环会终止。</p>
 <p><code>select!</code> 宏随机选中分支来先检查一下是否就绪。当多个 channel 挂起了它们的 value，一个随机的 channel 会被选中，并从它上面接收值。这是为了处理 receive loop 处理消息的速度比消息被推进 channel 的速度慢的情况，意味着 channel 开始被填满了。如果 <code>select!</code> <strong>没有</strong>随机选中一个分支来第一个检查，那么每次循环在迭代的时候， <code>rx1</code> 都会被第一个检查，如果 <code>rx1</code> 总是持有新消息，那么剩余的 channel 永远都不会被检查。</p>
 <blockquote>
@@ -565,8 +552,7 @@ async fn main() {
             }
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>请注意，与在 <code>select!</code> 宏内调用 <code>action()</code> 不同，它在循环<strong>外部</strong>被调用。<code>action()</code> 的返回值被分配到了 <code>operation</code> 且<strong>没有</strong>调用 <code>.await</code> 。然后我们对 <code>operation</code> 调用了 <code>tokio::pin!</code> 。</p>
 <p>在 <code>select!</code> 循环内，与传入 <code>operation</code> 不同，我们传入了 <code>&amp;mut operation</code> 。这个 <code>operation</code> 变量正在跟踪执行中的异步操作。每次循环迭代使用这个相同的 operation 而不是来一次新的 <code>action()</code> 调用。</p>
 <p><code>select!</code> 的另一个分支从 channel 接收消息，如果消息是一个偶数，我们就结束循环。否则，再次开始 <code>select!</code> </p>
@@ -594,8 +580,7 @@ async fn main() {
            `impl std::future::Future: std::marker::Unpin`
            which is required by
            `&amp;mut impl std::future::Future: std::future::Future`
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>尽管我们已经在 <a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a> 了解了 <code>Future</code> ，但是这个错误对我们来说仍然不是很清晰。如果你在尝试对一个<strong>reference</strong> 调用 <code>.await</code> 时碰到了这样的一个关于 &quot; <code>Future</code> 没有实现... &quot; 的错误，那么这个 future 可能需要被 pin 。</p>
 <p>从 <a href="https://doc.rust-lang.org/std/pin/index.html">standard library</a> 阅读更多关于 <a href="https://doc.rust-lang.org/std/pin/index.html"><code>Pin</code></a> 的细节。</p>
 <h3 id="modifying-a-branch"><a class="header" href="#modifying-a-branch">Modifying a branch</a></h3>
@@ -666,8 +651,7 @@ async fn main() {
             }
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>我们使用了和之前那个例子相似的方法。这个异步函数在循环外被调用，并且分配到 <code>operation</code> 。这个 <code>operation</code> 变量被 pin 了。这个循环会在 <code>operation</code> 和 channel receiver 上 select 。</p>
 <p>请注意 <code>action</code> 是如何携带 <code>Option&lt;i32&gt;</code> 作为一个参数的。在我们接收到第一个偶数之前，我们需要实例化一个 <code>operation</code> 。我们使 <code>action</code> 携带 <code>Option</code> 并且返回 <code>Option</code> 。如果 <code>None</code> 被传递进去了，会返回  <code>None</code> 。第一次循环迭代， <code>operation</code> 会立即完成并返回 <code>None</code> （因为我们实例化它的时候穿的是 <code>None</code>）。</p>
 <p>这个例子使用了一些新语法。这第一个分支包括 <code>,if !done</code> ，这是一个分支先决条件。在解释它是如何工作的之前，让我们看下如果省略这个先决条件会发生什么。移除 <code>,if !done</code> 并且运行例子会导致以下输出：</p>
@@ -675,8 +659,7 @@ async fn main() {
 </span><span class="boring">fn main() {
 </span>thread 'main' panicked at '`async fn` resumed after completion', src/main.rs:1:55
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当尝试在 <code>operation</code> 已经完成<strong>之后</strong>使用它时，这个错误发生了。一般来说，当使用 <code>.await</code> ，这个被 await 的值就被消费掉了。在这个例子中，我们 await 了一个引用，这意味着 <code>operation</code> 在它完成后仍然存在。</p>
 <p>为了避免这个 panic，如果 <code>operation</code> 已经完成，我们必须小心地禁用第一条分支。这里的 <code>done</code> 变量被用来跟踪 <code>operation</code> 是否完成。一个 <code>select!</code> 分支可能会包含一个 <strong>precondition</strong> （先决条件），这个先决条件会在 <code>select!</code> await 当前分支<strong>之前</strong>被检查（虽然顺序上它被写在后面，但是不影响它是一个 &quot;先决条件&quot;）。如果先决条件计算出了 <code>false</code> 那么该分支会被禁用。<code>done</code> 变量被初始化为 <code>false</code> 。当 <code>operation</code> 完成，<code>done</code> 会被设置为 <code>true</code> ，这样在下次循环迭代的时候将会禁用 <code>operation</code> 分支。当一个偶数消息从 channel 被接收，<code>operation</code> 会被重置，并且 <code>done</code> 会被设置为 <code>false</code> 。</p>
 <h2 id="per-task-concurrency"><a class="header" href="#per-task-concurrency">Per-task concurrency</a></h2>

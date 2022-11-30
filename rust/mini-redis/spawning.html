@@ -213,8 +213,7 @@ async fn process(socket: TcpStream) {
         let response = Frame::Error(&quot;unimplemented&quot;.to_string());
         connection.write_frame(&amp;response).await.unwrap();
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>现在把它跑起来：</p>
 <pre><code class="language-zsh">cargo run
 </code></pre>
@@ -251,8 +250,7 @@ async fn main() {
             process(socket).await;
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="tasks"><a class="header" href="#tasks">Tasks</a></h3>
 <p>一个 Tokio 任务是一个异步的 green thread。他们是通过 <code>async</code> 块传递给 <code>tokio::spawn</code>  来创建的。<code>tokio::spawn</code> 函数返回一个 <code>JoinHandle</code>，使得 <code>JoinHandle</code>  的调用者可以与生成的任务进行交互。<code>async</code> 块可以拥有返回值，调用者通过在 <code>JoinHandle</code> 上使用 <code>.await</code> 来获取返回值。</p>
 <p>举个栗子：</p>
@@ -267,8 +265,7 @@ async fn main() {
 
     let out = handle.await.unwrap();
     println!(&quot;GOT {}&quot;, out);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>.await</code> 会让出当前线程的控制权，并等待 <code>JoinHandle</code> 返回一个 <code>Result</code>。当一个任务在执行期间遇到了一个错误，<code>JoinHandle</code> 将会返回一个 <code>Err</code> ，当任务 panic 又或者是因为 <code>runtime</code> 关闭而被强制取消也会发生前面那个事件。</p>
 <p>Task 是由 scheduler 管理的执行单位。Spawn (生产) 一个任务会把任务提交给 Tokio scheduler来确保任务在有工作要做时执行。生产出来的任务可能会在它们被生产的线程上执行，也有可能会在不一样的 <code>runtime thread</code> 上被执行。任务被生产后也能够在不同线程间移动。</p>
 <p>任务在 Tokio 中是非常非常轻量的。在底层，它们只需要一次分配和64字节的内存。应用程序应该可以随意生成数千甚至数百万个任务。</p>
@@ -287,8 +284,7 @@ async fn main() {
     task::spawn(async {
         println!(&quot;Here's a vec: {:?}&quot;, v);
     });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>尝试编译它会有如下报错：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -318,8 +314,7 @@ help: to force the async block to take ownership of `v` (and any other
 8 |         println!(&quot;Here's a vec: {:?}&quot;, v);
 9 |     });
   |
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这种情况会发生是因为默认情况下，变量不会被 <strong>move</strong> 到 async block。这个 <code>v</code>  Vector 被 <code>main</code> 函数保留了所有权。<code>println!</code> 只是借用了 <code>v</code>。rust 编译器向我们解释了这一点，甚至提出了修复建议！（rust 编译器还是一如既往的牛逼！尽管它的严格经常会让我很挫败:( ）</p>
 <p>按 rust 编译器说的来，在第 7 行处为 async block 加上 <code>move</code> ，现在这个 task 就拥有了 v 的所有权而不是借用，并且让它变成了 <code>'static</code>。</p>
 <p>如果必须同时从多个任务访问单个数据，那么就必须使用 <code>Arc</code> 等同步原语共享它。</p>
@@ -357,8 +352,7 @@ async fn main() {
             println!(&quot;{:?}&quot;, a);
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>error: future cannot be sent between threads safely
@@ -380,8 +374,7 @@ note: required by a bound in `tokio::spawn`
     |                     ^^^^ required by this bound in `tokio::spawn`
 
 error: could not compile `my-redis` due to previous error
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>因为用了 <code>.await</code> 后，当前任务会让出线程控制权，任务的当前状态会被整个打包，并且可能会在多个线程间传递这个任务，存在任务会在不同的线程被执行的可能，而数据在线程间传递要求实现 <code>Send</code> trait 。</p>
 <p>下面是官方给出的两个例子：</p>
 <p>成功：</p>
@@ -401,8 +394,7 @@ async fn main() {
         // the task yields to the scheduler
         yield_now().await;
     });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>失败：</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::task::yield_now;
 use std::rc::Rc;
@@ -418,8 +410,7 @@ async fn main() {
 
         println!(&quot;{}&quot;, rc);
     });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>错误报告：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -450,8 +441,7 @@ note: future is not `Send` as this value is used across an await
 11  |         println!(&quot;{}&quot;, rc);
 12  |     });
     |     - `rc` is later dropped here
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>我们会在下一节 Shared state 来更深入的探讨这个错误的特殊情况。</p>
 <h2 id="store-values存储值"><a class="header" href="#store-values存储值">Store values（存储值）</a></h2>
 <p>我们现在将要实现 <code>process</code> 函数来处理发送过来的命令。我们使用 <code>HashMap</code> 来存储值。<code>SET</code> 命令将会插入数据到 <code>HashMap</code> ，<code>GET</code> 值会加载数据。另外，我们将会使用一个 loop 来接受每个连接的多个命令。</p>
@@ -507,8 +497,7 @@ async fn process(socket: TcpStream) {
         // Write the response to the client
         connection.write_frame(&amp;response).await.unwrap();
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>让我们来试一试：</p>
 <pre><code class="language-zsh">cargo run
 </code></pre>

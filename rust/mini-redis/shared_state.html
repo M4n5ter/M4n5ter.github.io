@@ -201,8 +201,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 type Db = Arc&lt;Mutex&lt;HashMap&lt;String, Bytes&gt;&gt;&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>然后，改变 <code>main</code> 函数来初始化 <code>HashMap</code> 并且传递一个 <code>Arc</code> 句柄参数给 <code>process</code> 函数。使用 <code>Arc</code> 能够允许 <code>HashMap</code> 被多个任务并发地引用以及在多线程中运行。在整个 Tokio 中，这样的 <code>Arc</code> 句柄常见于用来引用一个提供了对某些共享状态的访问的值。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::net::TcpListener;
 use std::collections::HashMap;
@@ -226,8 +225,7 @@ async fn main() {
             process(socket, db).await;
         });
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="使用-stdsyncmutex"><a class="header" href="#使用-stdsyncmutex">使用 <code>std::sync::Mutex</code></a></h3>
 <p>请注意，用的是 <code>std::sync::Mutex</code> 来保护 <code>HashMap</code> 而不是 <code>tokio::sync:Mutex</code> 。一个常见的错误是无条件的在异步代码中使用 <code>tokio::sync::Mutex</code> 。异步锁是用来锁定跨 <code>.await</code> 调用的互斥锁。</p>
 <p>一个同步的互斥锁在等待获取锁的时候会阻塞当前线程。所以反过来说，它会阻塞所在线程对其它任务的处理。但是，切换到 <code>tokio::sync::Mutex</code> 通常不能够有什么帮助，因为异步锁在内部也使用了同步锁。</p>
@@ -268,8 +266,7 @@ async fn process(socket: TcpStream, db: Db) {
         connection.write_frame(&amp;response).await.unwrap();
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <h3 id="tasks-threads-and-contention-任务线程竞争"><a class="header" href="#tasks-threads-and-contention-任务线程竞争">Tasks, threads, and contention （任务、线程、竞争）</a></h3>
 <p>当锁竞争很小的时候，使用一个阻塞的锁来保护<code>短临界区</code> 是一种可接受的策略。当一个锁在被竞争，执行本任务的线程必须阻塞并且等待这个锁。这不仅仅会阻塞当前的任务，还会阻塞其他被调度到当前线程上的任务。</p>
 <p>默认情况下，Tokio runtime 使用一个多线程调度器。任务被调度到被 runtime 管理的任意数量的线程上。如果计划执行大量任务，并且它们都需要访问互斥锁，那么就会出现竞争。另一方面，如果 <a href="https://docs.rs/tokio/1.21.2/tokio/runtime/index.html#current-thread-scheduler"><code>current_thread</code></a> runtime 风格被启用，那么互斥锁将永远不会被竞争。</p>
@@ -300,15 +297,13 @@ fn new_sharded_db(num_shards: usize) -&gt; ShardedDb {
     }
     Arc::new(db)
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>接着，找到给定 key 的的位置变成了两步过程。第一步，用 key 来确定在哪一个hash map 分片。第二步在 <code>HashMap</code> 中找 key：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let shard = db[hash(key) % db.len()].lock().unwrap();
 shard.insert(key, value);
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>上面概述的简单实现需要使用固定数量的分片，并且一旦创建了 <code>SharedDb</code> 后分片的数量就不能改变了。<a href="https://docs.rs/dashmap">dashmap</a> crate 提供了一个更有经验验证的分片 hash map 实现。</p>
 <h2 id="holding-a-mutexguard-across-an-await-跨-await-持有一个-mutexguard"><a class="header" href="#holding-a-mutexguard-across-an-await-跨-await-持有一个-mutexguard">Holding a <code>MutexGuard</code> across an <code>.await</code> （跨 <code>.await</code> 持有一个 <code>MutexGuard</code>）</a></h2>
 <p>你可能会写出像下面这样的代码：</p>
@@ -322,8 +317,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 } // 锁在这里超出作用域
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当你尝试 spawn 一些东西来调用这个函数，你会遇到下面的错误信息：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -349,8 +343,7 @@ note: future is not `Send` as this value is used across an await
     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^ await occurs here, with `mut lock` maybe used later
 8   | }
     | - `mut lock` is later dropped here
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这个错误会发生是因为 <code>std::sync::MutexGuard</code> 类型没有实现 <code>Send</code> trait 。这意味着你不能传递一个同步锁到另一个线程，另一个原因是 Tokio runtime 在每个 <code>.await</code> 调用时能够在线程间 move 一个任务。为了避免这个错误，你应该重构你的代码来让互斥锁的析构函数在 <code>.await</code> 之前就运行完毕。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -363,8 +356,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>值得注意的是，下面这样不能正常运作：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -378,8 +370,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这是因为编译器目前只是通过作用域信息来计算一个 future 是不是实现了 <code>Send</code> trait 。编译器未来有望被更新来支持显式的 drop，但是现在咱只能显式的加上作用范围。</p>
 <p>注意，这里讨论的错误在上一节的 <a href="https://m4n5ter.github.io/rust/mini-redis/spawning.html#send-bound">Send Bound - Spawning</a> 也讨论过。</p>
 <p>你不应该尝试通过某种方式生成一个不需要实现 <code>Send</code> 的任务来规避这个问题，因为如果任务正持有锁，而 Tokio 在 <code>.await</code> 处暂停了你的任务，一些其它的任务可能会被调度到同样的线程上，并且其他任务也可能尝试获取锁，这会导致死锁，因为等待锁的任务会阻塞当前线程，这也就阻止了持有锁的任务释放锁。</p>
@@ -405,8 +396,7 @@ async fn increment_and_do_stuff(can_incr: &amp;CanIncrement) {
     can_incr.increment();
     do_something_async().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这种模式保证了你不会进入到 <code>Send</code> 错误中去，因为 mutex guard 没有出现在异步函数的任何地方，它在自己的同步函数结束时已经被释放了。</p>
 <h3 id="spawn-a-task-to-manage-the-state-and-use-message-passing-to-operate-on-it生成一个任务来管理状态并且通过消息传递来操作"><a class="header" href="#spawn-a-task-to-manage-the-state-and-use-message-passing-to-operate-on-it生成一个任务来管理状态并且通过消息传递来操作">Spawn a task to manage the state and use message passing to operate on it（生成一个任务来管理状态，并且通过消息传递来操作）</a></h3>
 <p>这是本章节最开始提到的两种方法中的第二种，并且它常常在共享的资源是 I/O 资源的时候被采用。有关更多详细信息，请参阅下一章。</p>
@@ -424,8 +414,7 @@ async fn increment_and_do_stuff(mutex: &amp;Mutex&lt;i32&gt;) {
 
     do_something_async().await;
 } // lock goes out of scope here
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 
                     <div id="giscus-container"></div>
                 </main>

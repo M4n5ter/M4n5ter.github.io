@@ -185,8 +185,7 @@ async fn my_async_fn() {
     let _socket = TcpStream::connect(&quot;127.0.0.1:3000&quot;).await.unwrap();
     println!(&quot;async TCP operation complete&quot;);
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>我们调用了这个函数，并且返回了某个值，对这个值调用 <code>.await</code>。</p>
 <pre><pre class="playground"><code class="language-rust">#[tokio::main]
 async fn main() {
@@ -195,8 +194,7 @@ async fn main() {
     what_is_this.await;
     // Text has been printed and socket has been
     // established and closed.
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>my_async_fn()</code> 返回的值是一个 future ，future 是一个实现了标准库提供的  <a href="https://doc.rust-lang.org/std/future/trait.Future.html"><code>std::future::Future</code></a> trait 的值。它们是包含正在进行的异步计算的值。</p>
 <p> <a href="https://doc.rust-lang.org/std/future/trait.Future.html"><code>std::future::Future</code></a> trait 的定义如下：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -210,8 +208,7 @@ pub trait Future {
     fn poll(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context)
         -&gt; Poll&lt;Self::Output&gt;;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>关联类型( <a href="https://doc.rust-lang.org/book/ch19-03-advanced-traits.html#specifying-placeholder-types-in-trait-definitions-with-associated-types">associated type</a> ) <code>Output</code> 是 future 一旦完成后会产生的类型。可以通过看标准库文档（<a href="https://doc.rust-lang.org/std/pin/index.html">standard library</a>）得到更多细节。</p>
 <p>不像其它语言实现的 future ，一个 Rust 的 future 不是代表一个正在后台发生的计算，而是 Rust future 就是计算本身。future 的所有者负责通过 poll the future 来推动计算，这就是 <code>Future::poll</code> 所做的事。</p>
 <h3 id="implementing-future-实现-future"><a class="header" href="#implementing-future-实现-future">Implementing <code>Future</code> （实现 <code>Future</code>）</a></h3>
@@ -260,8 +257,7 @@ async fn main() {
 
     let out = future.await;
     assert_eq!(out, &quot;done&quot;);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <h3 id="async-fn-as-a-future-异步函数作为-future"><a class="header" href="#async-fn-as-a-future-异步函数作为-future">Async fn as a Future （异步函数作为 future）</a></h3>
 <p>在 main 函数中，我们实例化一个 future 并对它调用 <code>.await</code> 。在异步函数中，我们可以对任何实现了 <code>Future</code> 的值调用 <code>.await</code> 。相反，调用一个 <code>async</code> function 返回一个实现了 <code>Future</code> 的匿名类型。<code>async fn main()</code> 所生成的 future 类似于：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -315,8 +311,7 @@ impl Future for MainFuture {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Rust 的 future 是<strong>状态机</strong>(<code>state machine</code>) 。此处，<code>MainFuture</code> 代表着由一个 future 可能的状态构成的 <code>enum</code> 。这个 future 从 <code>State0</code> 状态开始，当 <code>poll</code> 被调用时，这个 future 会尽可能地尝试推动其内部的状态。如果这个 future 能够完成了，<code>Poll::Ready</code> 会返回它包含的异步计算的输出结果。</p>
 <p>如果这个 future <strong>不</strong>能够完成，通常是由于资源问题，这种情况它一般还在等着被调度，等着变成 <code>Poll::Ready</code> ，这时会返回 <code>Poll::Pending</code> 表示 future 还没完成。收到 <code>Poll::Pending</code> 表示告诉 future 的调用者，这个 future 将会在之后一段时间被完成，并且调用者应该在之后再次调用 <code>poll</code> 。</p>
 <p>我们也看到了 future 由 其他 future 构成（future 可以嵌套）。对外层的 future 调用 <code>poll</code> 会导致内部的 future 的 <code>poll</code> 函数也被调用。</p>
@@ -377,8 +372,7 @@ impl MiniTokio {
             }
         }
     }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>运行了一个 async block，使用自定义的 delay  创建了一个 <code>Delay</code> future 实例并且调用了 <code>.await</code> 。然而，我们的目前为止的实现有一个重大的<strong>污点</strong>，那就是我们的执行者永远不会 sleep，执行者在持续不断的循环所有生成的 future 并且 poll 它们。大多数时候，future 们都没有准备好执行更多的工作并且会再次返回 <code>Poll:Pending</code> （所以应该需要有一定的间隔，而不是没有 sleep 的无限循环去 poll）。这个过程会大量消耗 CPU 资源并且通常并不高效。</p>
 <p>理想情况下，我们希望 mini-tokio 只在 future 能够取得进展时才进行 poll 。这种情况会发生在当任务被阻塞时的资源准备好去执行被请求的操作的时候。如果任务想要从一个 TCP socket 读取数据，那么我们只希望当 TCP socket 已经接收到数据的时候才去 poll 任务（而不是 socket 里啥都没有的时候去疯狂 poll） 。在我们的场景下，任务被阻塞直到给出的 <code>Istant</code> 到达，理想情况下，mini-tokio 应该只在那一时刻刚过后去 poll 任务。</p>
 <p>为了实现这个目的，当一个资源被 poll，并且这个资源<strong>没有</strong>准备好时，这个资源将会在它转变成 ready state 的时候主动发送一个通知。</p>
@@ -389,8 +383,7 @@ impl MiniTokio {
 </span><span class="boring">fn main() {
 </span>fn poll(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context)
     -&gt; Poll&lt;Self::Output&gt;;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>可以发现想要 poll future 的时候需要携带一个 <a href="https://doc.rust-lang.org/std/task/struct.Context.html"><code>Context</code></a> ，而它有一个 <code>waker()</code> 方法，这个方法返回一个 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>Waker</code></a> 绑定到当前任务。这个 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>Waker</code></a> 有一个 <code>wake()</code> 方法，这个方法正是我们要的，调用这个方法会发送信号给 executor，表示相关联的任务应该被调度来执行了。当资源转变成 ready state 的时候调用 <code>wake()</code> 方法来通知 executor 可以 poll 任务来获取进展。</p>
 <h3 id="updating-delay"><a class="header" href="#updating-delay">Updating <code>Delay</code></a></h3>
 <p>我们可以更新 <code>Delay</code> 来使用 wakers ：</p>
@@ -435,8 +428,7 @@ impl Future for Delay {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>现在，一旦指定的时间到了，调用的任务会通知 executor 并且 executor 能够确保任务再次被调度。下一步就是更新 mini-tokio 来监听 wake notifications（通知）。</p>
 <p>这里我们的 <code>Delay</code> 实现仍然留有一些问题。我们将会在后面修复它们。</p>
 <blockquote>
@@ -462,8 +454,7 @@ impl Future for Delay {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当时被注释暂时先忽略的那一行：咱返回 <code>Poll::Pending</code> 前，我们调用了 <code>cx.waker().wake_by_ref()</code> 。这是为了满足 future 的约定。通过返回 <code>Poll::Pending</code> 我们负责向 waker 发送 wake 信号。。因为我们暂时还没有实现 timer thread，所以我们直接用 inline 的方式向 waker 发送了信号。这么做会导致这个 future 被立即再调度(re-scheduled)，再次执行，并且可能还是没有转变成 ready state 。</p>
 <p>请注意，你可以更频繁的向 waker 发送信号，而不必是必须必要的时候才发送信号。在这种特殊情况下，我们向 waker 发送信号，即使我们根本还没准备好继续操作。除了会浪费一些 CPU 资源外没有任何不对的。然而这种特殊的实现将会导致一个 busy loop 。</p>
 <h3 id="updating-mini-tokio"><a class="header" href="#updating-mini-tokio">Updating Mini Tokio</a></h3>
@@ -490,8 +481,7 @@ struct MiniTokio {
 struct Task {
     // This will be filled in soon.
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Wakers 是 <code>Sync</code> 并且可以被 clone。当 <code>wake</code> 被调用，任务必须被调度来执行。为了实现这个目的，我们整了个 channel 。当 <code>wake()</code> 在 waker 身上被调用时，任务会被推进 channel 的 send 的那一半（channel 被拆成两半，一半 send 一半 receive）。我们的 <code>Task</code> 结构体将会实现 wake 逻辑。为了做到这点，它需要同时包含生成的任务和 channel 的 send 。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -513,8 +503,7 @@ impl Task {
         self.executor.send(self.clone());
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>为了调度任务，<code>Arc</code> 会被 clone 然后通过 channel 发送出去。现在，我们需要将我们的 <code>schedule</code> 函数和 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>std::task::Waker</code></a> 挂钩。标注版酷提供了一个低层次 API ，通过 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html">manual vtable construction</a> （手动构造 vtable，vtable 能够产生晚绑定行为，只有在运行时才知道调用的是什么函数，例如调用 vtable 中的 A，然后会把 A 映射的函数指针 *B 拿出来执行）来做这件事。这个方案为实现者提供了最大程度的灵活性，但是要求一大堆 unsafe 样板代码。与直接使用 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html"><code>RawWakerVTable</code></a> 相反，我们将会使用  <a href="https://docs.rs/futures/"><code>futures</code></a> crate 提供的 <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>ArcWake</code></a> trait，它允许我们通过实现一个简单的 trait 来暴露我们的 <code>Task</code> 结构体作为一个 waker 。</p>
 <p>把下面的依赖加入到 <code>Cargo.toml</code>。</p>
 <pre><code class="language-toml">futures = &quot;0.3&quot;
@@ -529,8 +518,7 @@ impl ArcWake for Task {
         arc_self.schedule();
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>当之前的那个 timer thread 调用 <code>waker.wake()</code> ，任务会被推进 channel 。接着我们实现一下 <code>MiniTokio::run()</code> 函数中的接收并执行任务的部分。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -594,8 +582,7 @@ impl Task {
     }
 
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这里发生了很多事情。首先，<code>MiniTokio::run()</code> 被实现了，这个函数启动了一个 loop 从 channel 接收被调度的任务。因为任务在被唤醒的时候会被推进这个 channel，所以这些任务能够在要执行的时候顺利取得进展。</p>
 <p>此外，<code>MiniTokio::new()</code> 和 <code>MiniTokio::spawn()</code> 函数被调整为使用一个 channel 而不是一个 <code>VecDeque</code> 。当新的任务产生，它们会被给到这个 channel 的 send 的 clone，使得任务可以在运行时调度自己（通过把自己塞进 send 里送到 channel 中去）。</p>
 <p><code>Task::poll()</code> 函数会通过手动为  <code>Task</code> 实现的 <code>future</code> crate 中的  <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>ArcWake</code></a> trait 来创建 waker 。这个 waker 被用来创建一个 <code>task::Context</code> ，然后这个 <code>task::Context</code> 被传给 <code>poll</code> 。</p>
@@ -642,8 +629,7 @@ async fn main() {
 
         Poll::Ready(())
     }).await;
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>poll_fn</code> 函数使用闭包创建了一个 <code>Future</code> 实例，上面的片段中创建一个 <code>Delay</code> 实例，poll 了一下它，然后把 <code>Delay</code> 实例发送到了一个新的任务中去进行 <code>.await</code> 。在这个例子里， <code>Delay::poll</code> 被<strong>不同</strong>的 <code>Waker</code> 调用了超过一次。当发生这种情况，你必须确保在 传递给了<em>最近的</em> 那次 <code>poll</code> 的 <code>Waker</code> 上的 <code>wake</code> 被调用。</p>
 <p>当实现一个 future 的时候，假设每次对 <code>poll</code> 的调用<strong>可能</strong>被应用到一个不同的 <code>Waker</code>  实例是非常重要的。poll 函数必须更新任何先前记录的 waker 为最新传给它的 waker 。</p>
 <p>我们先前实现的 <code>Delay</code> 在每次被 poll 的时候都会生成一个新的线程。这当然也 ok，但是如果它被 poll 的太频繁的话就会变得非常低效。（e.g. 如果你对这个 future 和其它 future 使用了 <code>select!</code> ，那么不论他俩哪个发生了事件，两者都会被调用）。一种方法是记住你是否已经创建过一个线程，并且只在你没有创建过时去生成一个新线程。然而，如果你这么做了，你必须确保线程的 <code>Waker</code> 被更新为最近的一次 poll 的 <code>Waker</code> ，因为你不这么做的话就无法唤醒最近的那个 <code>Waker</code> 。</p>
@@ -717,8 +703,7 @@ impl Future for Delay {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>这有一点复杂，但是我们的想法是，对每个 <code>poll</code> 的调用，future 都会检查当前 <code>poll</code> 给的 waker 跟之前记录的 waker 是不是匹配的。如果两个 waker 匹配，那么就不会做其它的事情了。如果它们不匹配，那么就记录最新的 <code>poll</code> 里的 waker。</p>
 <h3 id="notify-utility"><a class="header" href="#notify-utility"><code>Notify</code> utility</a></h3>
 <p>我们演示了如果使用 waker 来手动实现 <code>Delay</code> future。Wakers 是异步 Rust 如何去工作的基础。通常，没有必要去降低到那样的 level（手动实现 future 是一种偏向底层的行为）。举个例子，在这个 <code>Delay</code> 的场景，我们可以通过使用 <a href="https://docs.rs/tokio/1/tokio/sync/struct.Notify.html"><code>tokio::sync::Notify</code></a> 实用工具纯使用 <code>async/await</code> 来实现它。这个实用工具提供了一个基本的任务通知机制，它会处理 waker 的细节，包括确保记录的 waker 匹配当前的 task 。</p>
@@ -748,8 +733,7 @@ async fn delay(dur: Duration) {
 
     notify.notified().await;
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 
                     <div id="giscus-container"></div>
                 </main>

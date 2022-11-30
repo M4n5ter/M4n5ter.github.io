@@ -325,7 +325,7 @@ scoop install mkcert
 </code></pre>
 <h3 id="改变-ca-文件的位置"><a class="header" href="#改变-ca-文件的位置">改变 CA 文件的位置</a></h3>
 <p>CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般来说你不会想去关注它的位置，因为它会被自动装载。但是你可以通过 <code>mkcert -CAROOT</code> 来打印这个目录位置。</p>
-<p>如果你想要管理单独的 CA 们，你可以使用 <code>\$CAROOT</code> 环境变量来设置 mkcert 放置和寻找 CA files 的路径。</p>
+<p>如果你想要管理单独的 CA 们，你可以使用 <code>$CAROOT</code> 环境变量来设置 mkcert 放置和寻找 CA files 的路径。</p>
 <h3 id="在其它系统上安装-ca"><a class="header" href="#在其它系统上安装-ca">在其它系统上安装 CA</a></h3>
 <p>安装 trust store 不需要 CA key（只要 CA），所以你可以导出 CA，并且使用 <code>mkcert</code> 来安装到其它机器上。</p>
 <ul>
@@ -336,7 +336,7 @@ scoop install mkcert
 <p>把它 copy 到别的机器上。</p>
 </li>
 <li>
-<p>设置 <code>\$CAROOT</code> 为 <code>rootCA.pem</code> 所在目录。</p>
+<p>设置 <code>$CAROOT</code> 为 <code>rootCA.pem</code> 所在目录。</p>
 </li>
 <li>
 <p>运行 <code>mkcert -install</code>(arch linux 可以 <code>sudo trust anchor --store rootCA.pem</code>，其它发行版可以用自带的命令手动添加来信任 CA)</p>

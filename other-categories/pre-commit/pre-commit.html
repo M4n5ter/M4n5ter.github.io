@@ -175,12 +175,12 @@
                     <h1 id="pre-commit"><a class="header" href="#pre-commit">pre-commit</a></h1>
 <p>一个用于 git commit 提交自动前处理自定义操作的工具</p>
 <h2 id="安装"><a class="header" href="#安装">安装</a></h2>
-<pre><code class="language-bash">\$ pip3 install pre-commit
+<pre><code class="language-bash">$ pip3 install pre-commit
 </code></pre>
 <h2 id="示例"><a class="header" href="#示例">示例</a></h2>
-<pre><code class="language-bash">\$ mkdir example-registry &amp;&amp; cd example-registry
-\$ git init
-\$ touch .pre-commit-config.yaml
+<pre><code class="language-bash">$ mkdir example-registry &amp;&amp; cd example-registry
+$ git init
+$ touch .pre-commit-config.yaml
 ......
 </code></pre>
 <p>.pre-commit-config.yaml:</p>
@@ -212,40 +212,40 @@ repos:
         description: Format files with rustfmt.
         entry: bash -c 'cargo fmt -- --check'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         args: []
       - id: cargo-deny
         name: cargo deny check
         description: Check cargo dependencies
         entry: bash -c 'cargo deny check'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         args: []
       - id: cargo-check
         name: cargo check
         description: Check the package for errors.
         entry: bash -c 'cargo check --all'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
       - id: cargo-clippy
         name: cargo clippy
         description: Lint rust sources
         entry: bash -c 'cargo clippy --all-targets --all-features --tests --benches -- -D warnings'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
       - id: cargo-test
         name: cargo test
         description: unit test for the project
         entry: bash -c 'cargo nextest run --all-features'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
 
 </code></pre>
 <pre><code class="language-bash"># 这将会在 .git 内创建 hooks，来保证在 git commit 之前顺序执行 .pre-commit-config.yaml 中定义的步骤
-\$ pre-commit install
+$ pre-commit install
 </code></pre>
 
                     <div id="giscus-container"></div>

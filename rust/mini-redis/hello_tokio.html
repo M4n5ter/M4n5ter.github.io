@@ -203,8 +203,7 @@ async fn main() -&gt; Result&lt;()&gt; {
     println!(&quot;从服务端得到了值; result={:?}&quot;, result);
 
     Ok(())
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>确保 <code>Mini-Redis server</code> 正在运行，找个单独的终端窗口执行:</p>
 <pre><code class="language-zsh">mini-redis-server
 </code></pre>
@@ -220,8 +219,7 @@ async fn main() -&gt; Result&lt;()&gt; {
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><code>client::connect</code> 函数是由 <code>mini_redis</code> 这个 crate 提供的。它通过<strong>异步</strong>的方式向指定的地址建立一个 TCP 连接。一旦连接成功建立了，将会返回一个 <code>Client</code> handle(中文叫句柄)（这里给它起了个名 &quot;client&quot;）。</p>
 <p>即使这个操作是<strong>异步</strong>执行的，但是我们写的这个代码看起来像是<strong>同步</strong>的。通过 <code>.await</code> 操作符来表明这是一个异步操作。</p>
 <h3 id="何为异步编程"><a class="header" href="#何为异步编程">何为异步编程？</a></h3>
@@ -251,8 +249,7 @@ use tokio::net::ToSocketAddrs;
 pub async fn connect&lt;T: ToSocketAddrs&gt;(addr: T) -&gt; Result&lt;Client&gt; {
     // ...
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p><strong><code>async fn</code></strong> 这样的定义方式看起来像是一个常规的同步函数，但是以异步的方式运行。</p>
 <p>Rust 在<strong>编译期将</strong> <strong><code>async fn</code></strong> 转化为一个异步运行的 <code>routine</code> （不是 <code>coroutine</code>，不要理解错误）。</p>
 <p>在 <code>async fn</code> 中对 <code>.await</code> 的任何调用都会将控制权返回给线程（即让出当前线程），此时这个操作会被放在后台，而线程可能会去做一些别的事情。</p>
@@ -279,8 +276,7 @@ async fn main() {
 
     // 对 `op` 调用 `.await`。
     op.await;
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>输出会是下面这样的：</p>
 <pre><code class="language-zsh">hello
 world
@@ -303,16 +299,14 @@ world
 <pre><pre class="playground"><code class="language-rust">#[tokio::main]
 async fn main() {
     println!(&quot;hello&quot;);
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>被转化成：</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
     let mut rt = tokio::runtime::Runtime::new().unwrap();
     rt.block_on(async {
         println!(&quot;hello&quot;);
     })
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p><code>tokio runtime</code> 的细节将在后面介绍。</p>
 <h3 id="cargo-features"><a class="header" href="#cargo-features">Cargo features</a></h3>
 <p>在本教程引入 <code>tokio</code> 依赖时，<code>full</code> feature flag 被启用了。</p>
