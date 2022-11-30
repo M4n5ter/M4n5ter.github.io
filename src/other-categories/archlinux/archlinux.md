@@ -274,7 +274,7 @@ Jun 23 17:18:33 tompc pacman[7079]: upgraded chromium (75.0.3770.90-3 -> 75.0.37
 ```shell
 #!/bin/sh
 set -e
-if [[ \$(id -u) -ne 0 ]] ; then echo "请使用 root 用户执行本脚本" ; exit 1 ; fi
+if [[ $(id -u) -ne 0 ]] ; then echo "请使用 root 用户执行本脚本" ; exit 1 ; fi
 echo "开始设置 Noto Emoji font..."
 # 1 - 安装  noto-fonts-emoji 包
 pacman -S noto-fonts-emoji --needed

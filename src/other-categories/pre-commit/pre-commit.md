@@ -5,15 +5,15 @@
 ## 安装
 
 ```bash
-\$ pip3 install pre-commit
+$ pip3 install pre-commit
 ```
 
 ## 示例
 
 ``` bash
-\$ mkdir example-registry && cd example-registry
-\$ git init
-\$ touch .pre-commit-config.yaml
+$ mkdir example-registry && cd example-registry
+$ git init
+$ touch .pre-commit-config.yaml
 ......
 ```
 
@@ -48,40 +48,40 @@ repos:
         description: Format files with rustfmt.
         entry: bash -c 'cargo fmt -- --check'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         args: []
       - id: cargo-deny
         name: cargo deny check
         description: Check cargo dependencies
         entry: bash -c 'cargo deny check'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         args: []
       - id: cargo-check
         name: cargo check
         description: Check the package for errors.
         entry: bash -c 'cargo check --all'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
       - id: cargo-clippy
         name: cargo clippy
         description: Lint rust sources
         entry: bash -c 'cargo clippy --all-targets --all-features --tests --benches -- -D warnings'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
       - id: cargo-test
         name: cargo test
         description: unit test for the project
         entry: bash -c 'cargo nextest run --all-features'
         language: rust
-        files: \.rs\$
+        files: \.rs$
         pass_filenames: false
 
 ```
 
 ```bash
 # 这将会在 .git 内创建 hooks，来保证在 git commit 之前顺序执行 .pre-commit-config.yaml 中定义的步骤
-\$ pre-commit install
+$ pre-commit install
 ```

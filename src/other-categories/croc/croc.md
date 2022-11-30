@@ -11,7 +11,7 @@ relay > uploading 是在上方那篇博客中提到的一个重要理念，`croc
 我在一开始使用 `croc send <file>` 时还曾思考（当时还没有看到 croc 使用 `relay`）为何这条命令并没有携带任何关于传输给**谁**的参数，例如：
 
 ```bash
-\$ croc send cv_debug.log
+$ croc send cv_debug.log
 Sending 'cv_debug.log' (282 B)   
 Code is: 2151-school-biscuit-snow
 On the other computer run

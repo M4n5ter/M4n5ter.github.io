@@ -197,7 +197,7 @@ export NODE_EXTRA_CA_CERTS="$(mkcert -CAROOT)/rootCA.pem"
 
 CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般来说你不会想去关注它的位置，因为它会被自动装载。但是你可以通过 `mkcert -CAROOT` 来打印这个目录位置。
 
-如果你想要管理单独的 CA 们，你可以使用 `\$CAROOT` 环境变量来设置 mkcert 放置和寻找 CA files 的路径。
+如果你想要管理单独的 CA 们，你可以使用 `$CAROOT` 环境变量来设置 mkcert 放置和寻找 CA files 的路径。
 
 ### 在其它系统上安装 CA
 
@@ -207,7 +207,7 @@ CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般
 
 * 把它 copy 到别的机器上。
 
-* 设置 `\$CAROOT` 为 `rootCA.pem` 所在目录。
+* 设置 `$CAROOT` 为 `rootCA.pem` 所在目录。
 
 * 运行 `mkcert -install`(arch linux 可以 `sudo trust anchor --store rootCA.pem`，其它发行版可以用自带的命令手动添加来信任 CA)
 

@@ -313,7 +313,7 @@ struct Task {
 }
 ```
 
-如果一个栈数组被用来当做 buffer type，它将会被内联在任务结构体中。这会导致任务结构体非常庞大。另外，缓冲区大小通常是 page size (*Modern hardware and software tend to load data into RAM (and transfer data from RAM to disk) in discrete chunk called pages*)。这反过来又会使任务的大小变得尴尬：`\$page-size + 几个字节`。
+如果一个栈数组被用来当做 buffer type，它将会被内联在任务结构体中。这会导致任务结构体非常庞大。另外，缓冲区大小通常是 page size (*Modern hardware and software tend to load data into RAM (and transfer data from RAM to disk) in discrete chunk called pages*)。这反过来又会使任务的大小变得尴尬：`$page-size + 几个字节`。
 
 Linus 有一篇吐槽贴说:
 

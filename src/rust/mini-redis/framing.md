@@ -280,7 +280,7 @@ fn parse_frame(&mut self)
 
 framing 的另外一半 API 是 `write_frame(frame)` 函数。这个函数会把一个完整的 frame 写入到 socket 。为了最小化 `write` 系统调用的次数，写入操作都会被缓冲(buffered)。一个 write buffer 会被维护并且在往 socket 写入之前， frame 都会被 encode 到这个 buffer。然而，不同于 `read_frame()` ，在写入 socket 之前，并不总是会缓冲一整个 frame 。
 
-思考一下有一个批量 frame 的流 (a bulk stream frame)，被写入的值是 `Frame::Bulk(Bytes)` 。bulk frame 的报文格式是 frame 头是一个 `\$` 字符，然后跟着等同于数据字节数的长度，最后是数据本身。大部分 frame 都是 `Bytes` 的内容。如果数据很庞大，把它 copy 到一个中间缓冲区的开销会很大（这就是上一段末尾提到的）。
+思考一下有一个批量 frame 的流 (a bulk stream frame)，被写入的值是 `Frame::Bulk(Bytes)` 。bulk frame 的报文格式是 frame 头是一个 `$` 字符，然后跟着等同于数据字节数的长度，最后是数据本身。大部分 frame 都是 `Bytes` 的内容。如果数据很庞大，把它 copy 到一个中间缓冲区的开销会很大（这就是上一段末尾提到的）。
 
 为了实现带缓冲的写入操作，我们将会使用 [`BufWriter` struct](https://docs.rs/tokio/1/tokio/io/struct.BufWriter.html) 。这个结构体使用 `T: AsyncWrite` 来初始化（`BufWriter::new(T)`，这个 T 得是 `AsyncWrite`），并且它本身也实现了 `AsyncWrite` 。当 `write` 在 `BufWriter` 上被调用，write 并不会直接作用到内部的 writer 上，而是作用到一个内部的 buffer 上。当这个 buffer 满了后，buffer 的内容会被刷到内部的 writer 上，同时清空这个 buffer 。我们还会有一些优化允许在某些情况下绕过缓冲区（上一段提到的情况）。
 
