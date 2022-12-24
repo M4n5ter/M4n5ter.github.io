@@ -1,0 +1,164 @@
+{
+  "main": {
+    "id": "b98f25052e973dfb",
+    "type": "split",
+    "children": [
+      {
+        "id": "7d6d027b0bea3d5e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f5d21e571f0a5fe8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "rust/mini-redis/async_in_depth.md",
+                "mode": "source",
+                "backlinks": false,
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "cf9cbfc536754fb3",
+    "type": "split",
+    "children": [
+      {
+        "id": "8687ffe402e4c040",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0f9a942666012e77",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "fef8ecb2099a95ae",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "99d1ed4b7008f7ad",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "85267b8a1131e114",
+    "type": "split",
+    "children": [
+      {
+        "id": "62c469573cc1a7f7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a898b2c638a11adc",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "rust/mini-redis/async_in_depth.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              }
+            }
+          },
+          {
+            "id": "dc50529d2c07db84",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "rust/mini-redis/async_in_depth.md",
+                "linksCollapsed": true,
+                "unlinkedCollapsed": false
+              }
+            }
+          },
+          {
+            "id": "4a6004114dba755b",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "91596e6e53bb1510",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "rust/mini-redis/async_in_depth.md"
+              }
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false
+    }
+  },
+  "active": "f5d21e571f0a5fe8",
+  "lastOpenFiles": [
+    "rust/mini-redis/framing.md",
+    "rust/mini-redis/io.md",
+    "rust/mini-redis/async_in_depth.md",
+    "rust/tower/rust_tower.md",
+    "go/go.md",
+    "rust/mini-redis/streams.md",
+    "rust/tokio/graceful_shutdown.md",
+    "rust/tokio/getting_started_with_tracing.md",
+    "rust/tokio/bridging_with_sync_code.md",
+    "2022-12-24.md"
+  ]
+}
