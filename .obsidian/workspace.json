@@ -11,9 +11,15 @@
             "id": "39a2367a0d432c12",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "canvas",
               "state": {
-                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md"
+                "file": "未命名.canvas",
+                "viewState": {
+                  "x": 0,
+                  "y": 0,
+                  "zoom": 0,
+                  "snapToGrid": false
+                }
               }
             }
           }
@@ -83,7 +89,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md",
+                "file": "未命名.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,7 +106,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md",
+                "file": "未命名.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -123,7 +129,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md"
+                "file": "未命名.canvas"
               }
             }
           }
@@ -149,6 +155,9 @@
   },
   "active": "39a2367a0d432c12",
   "lastOpenFiles": [
+    "src/rust/mini-redis/hello_tokio.md",
+    "src/rust/mini-redis/channels.md",
+    "src/other-categories/archlinux/archlinux.md",
     "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md",
     "src/go/go.md",
     "src/intro/intro.md"
