@@ -56,7 +56,8 @@ cp ~/.config/navicat/Premium/preferences.json ~/.config/navicat/Premium/preferen
 # Clear data in dconf
 dconf reset -f /com/premiumsoft/navicat-premium/
 # Remove data fields in config file
-sed -i -E 's/,?"([A-Z0-9]+)":\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json## Links
+sed -i -E 's/,?"([A-Z0-9]+)":\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json
 ```
 
+## Links
 * [Postgres Current Version Document](https://www.postgresql.org/docs/current)
