@@ -4,22 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "db212580b3eee61c",
+        "id": "9f51cf7b66332124",
         "type": "tabs",
         "children": [
           {
-            "id": "39a2367a0d432c12",
+            "id": "06cdec376876b5f8",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "excalidraw",
               "state": {
-                "file": "未命名.canvas",
-                "viewState": {
-                  "x": 0,
-                  "y": 0,
-                  "zoom": 0,
-                  "snapToGrid": false
-                }
+                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md"
               }
             }
           }
@@ -89,7 +83,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "未命名.canvas",
+                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -106,7 +100,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "未命名.canvas",
+                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -129,7 +123,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "未命名.canvas"
+                "file": "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md"
               }
             }
           }
@@ -153,12 +147,14 @@
       "obsidian-excalidraw-plugin:新建 Excalidraw 绘图": false
     }
   },
-  "active": "39a2367a0d432c12",
+  "active": "06cdec376876b5f8",
   "lastOpenFiles": [
+    "Excalidraw/Drawing 2023-01-03 15.29.04.excalidraw.md",
+    "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md",
+    "未命名.canvas",
     "src/rust/mini-redis/hello_tokio.md",
     "src/rust/mini-redis/channels.md",
     "src/other-categories/archlinux/archlinux.md",
-    "Excalidraw/Drawing 2022-12-24 13.38.57.excalidraw.md",
     "src/go/go.md",
     "src/intro/intro.md"
   ]
