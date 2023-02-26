@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "rust/mini-redis/async_in_depth.md",
+                "file": "other-categories/postgres/postgres.md",
                 "mode": "source",
                 "backlinks": false,
                 "source": false
@@ -49,8 +49,8 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
-                "matchingCase": false,
+                "query": "PostgreSQL",
+                "matchingCase": true,
                 "explainSearch": false,
                 "collapseAll": false,
                 "extraContext": false,
@@ -66,7 +66,8 @@
               "state": {}
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -86,7 +87,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "rust/mini-redis/async_in_depth.md",
+                "file": "other-categories/postgres/postgres.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +104,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "rust/mini-redis/async_in_depth.md",
+                "file": "other-categories/postgres/postgres.md",
                 "linksCollapsed": true,
                 "unlinkedCollapsed": false
               }
@@ -126,7 +127,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "rust/mini-redis/async_in_depth.md"
+                "file": "other-categories/postgres/postgres.md"
               }
             }
           }
@@ -139,20 +140,20 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "canvas:新建白板": false,
       "table-editor-obsidian:Advanced Tables Toolbar": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
-      "canvas:Create new canvas": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false
     }
   },
-  "active": "f5d21e571f0a5fe8",
+  "active": "fef8ecb2099a95ae",
   "lastOpenFiles": [
+    "rust/mini-redis/async_in_depth.md",
     "rust/mini-redis/framing.md",
     "rust/mini-redis/io.md",
-    "rust/mini-redis/async_in_depth.md",
     "rust/tower/rust_tower.md",
     "go/go.md",
     "rust/mini-redis/streams.md",
