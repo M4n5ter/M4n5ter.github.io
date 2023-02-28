@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "other-categories/postgres/postgres.md",
+                "file": "isuues/linux/linux_issues.md",
                 "mode": "source",
                 "backlinks": false,
                 "source": false
@@ -49,7 +49,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "PostgreSQL",
+                "query": "",
                 "matchingCase": true,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -66,8 +66,7 @@
               "state": {}
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -87,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "other-categories/postgres/postgres.md",
+                "file": "isuues/linux/linux_issues.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "other-categories/postgres/postgres.md",
+                "file": "isuues/linux/linux_issues.md",
                 "linksCollapsed": true,
                 "unlinkedCollapsed": false
               }
@@ -127,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "other-categories/postgres/postgres.md"
+                "file": "isuues/linux/linux_issues.md"
               }
             }
           }
@@ -149,8 +148,17 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "fef8ecb2099a95ae",
+  "active": "f5d21e571f0a5fe8",
   "lastOpenFiles": [
+    "SUMMARY.md",
+    "other-categories/postgres/postgres.md",
+    "isuues/linux/linux_issues.md",
+    "isuues/linux",
+    "isuues",
+    "issues/linux/linux_issues.md",
+    "issues/docker/docker.md",
+    "issues/docker/docker_issues.md",
+    "issues/linux",
     "rust/mini-redis/async_in_depth.md",
     "rust/mini-redis/framing.md",
     "rust/mini-redis/io.md",
