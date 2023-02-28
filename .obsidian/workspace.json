@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "isuues/linux/linux_issues.md",
+                "file": "issues/nginx/nginx_issues.md",
                 "mode": "source",
                 "backlinks": false,
                 "source": false
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "isuues/linux/linux_issues.md",
+                "file": "issues/nginx/nginx_issues.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "isuues/linux/linux_issues.md",
+                "file": "issues/nginx/nginx_issues.md",
                 "linksCollapsed": true,
                 "unlinkedCollapsed": false
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "isuues/linux/linux_issues.md"
+                "file": "issues/nginx/nginx_issues.md"
               }
             }
           }
@@ -151,13 +151,19 @@
   "active": "f5d21e571f0a5fe8",
   "lastOpenFiles": [
     "SUMMARY.md",
+    "issues/gitea/gitea_issues.md",
+    "issues/mysql/mysql_issues.md",
+    "issues/docker/docker_issues.md",
+    "issues/issues.md",
+    "issues/nginx/nginx.md",
+    "issues/mysql/mysql.md",
+    "issues/gitea/gitea.md",
+    "issues/docker/docker.md",
     "isuues/linux/linux_issues.md",
     "other-categories/postgres/postgres.md",
     "isuues/linux",
     "isuues",
     "issues/linux/linux_issues.md",
-    "issues/docker/docker.md",
-    "issues/docker/docker_issues.md",
     "issues/linux",
     "rust/mini-redis/async_in_depth.md",
     "rust/mini-redis/framing.md",
