@@ -21,6 +21,8 @@ $ echo "vm.overcommit_memory=2" >> /etc/sysctl.conf
 ```
 如果配置了 `vm.overcommit_memory=2`，那么通常希望也配置 `vm.overcommit_ratio` ，这个参数的单位是百分比。配置它的原因是，“Don't overcommit” 这个模式不允许 commit 超过 `swap` + **一个可配置的基于物理内存的百分比的量**（默认值是 50），而这个可配置的量就是 `vm.overcommit_ratio`，至于配置方法同上文的 bash 内容。
 
+[关于这两个参数的 kernal 文档](https://www.kernel.org/doc/Documentation/vm/overcommit-accounting)
+
 ### 较危险的方法
 
 当然，还有一种方法可以直接让内核的 `OOM killer` 不会把我们的进程当做目标，那就是配置 `/proc/<PID>/oom_score_adj`，`<PID>` 表示相应进程的 ID。`echo -1000 > /proc/<PID>/oom_score_adj`将我们的进程的 oom_score_adj 设置为 -1000，表示让 `OOM killer` 不要把这个进程当做目标。原理是每个进程都会根据实施情况被打上一个`oom_score` 分数，当系统的内存不够用时 `OOM killer` 会寻找 `/proc/<PID>/oom_score` 高的进程并将其杀死。 而打分时 `oom_score_adj` 的值会直接影响 `oom_score` 的值，`oom_score_adj` 的范围是 `-1000 ~ 1000` ，当 `oom_score_adj` 的值越低，`oom_score` 被打的分也就会越低。设置 `oom_score_ajd` 为 `-1000` 时 `OOM killer` 就永远不会光顾这个进程了。
