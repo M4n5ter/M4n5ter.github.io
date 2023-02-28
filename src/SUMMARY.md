@@ -33,6 +33,7 @@
 - [Blockchain](./blockchain/blockchain.md)
   - [substrate TODO](./blockchain/substrate/substrate.md)
 - [issues and solutions](./issues/issues.md)
+  - [linux](./isuues/linux/linux_issues.md)
   - [docker](./issues/docker/docker.md)
     - [问题及解决方案](./issues/docker/docker_issues.md)
   - [mysql](./issues/mysql/mysql.md)
