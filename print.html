@@ -5134,7 +5134,14 @@ $ echo &quot;vm.overcommit_memory=2&quot; &gt;&gt; /etc/sysctl.conf
 <h3 id="较危险的方法"><a class="header" href="#较危险的方法">较危险的方法</a></h3>
 <p>当然，还有一种方法可以直接让内核的 <code>OOM killer</code> 不会把我们的进程当做目标，那就是配置 <code>/proc/&lt;PID&gt;/oom_score_adj</code>，<code>&lt;PID&gt;</code> 表示相应进程的 ID。<code>echo -1000 &gt; /proc/&lt;PID&gt;/oom_score_adj</code>将我们的进程的 oom_score_adj 设置为 -1000，表示让 <code>OOM killer</code> 不要把这个进程当做目标。原理是每个进程都会根据实施情况被打上一个<code>oom_score</code> 分数，当系统的内存不够用时 <code>OOM killer</code> 会寻找 <code>/proc/&lt;PID&gt;/oom_score</code> 高的进程并将其杀死。 而打分时 <code>oom_score_adj</code> 的值会直接影响 <code>oom_score</code> 的值，<code>oom_score_adj</code> 的范围是 <code>-1000 ~ 1000</code> ，当 <code>oom_score_adj</code> 的值越低，<code>oom_score</code> 被打的分也就会越低。设置 <code>oom_score_ajd</code> 为 <code>-1000</code> 时 <code>OOM killer</code> 就永远不会光顾这个进程了。</p>
 <p>这个方法危险的原因则是，当 <code>OOM killer</code> 永远不会去杀死一个进程，而这个进程又需要大量内存资源时，当内存不够用，<code>OOM killer</code> 会去杀死其它分高的进程，这是十分危险的。 </p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="error-creating-overlay-mount-to"><a class="header" href="#error-creating-overlay-mount-to">error creating overlay mount to...</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="docker-proxy"><a class="header" href="#docker-proxy">Docker Proxy</a></h2>
+<p>安装 <code>linkerd2</code> 到 <code>k3d</code>时拉取谷歌 gcr 仓库的内容时发现使用 <code>proxychains</code> 或者 <code>export https_proxy=&quot;....&quot;</code> <code>export http_proxy=&quot;....&quot;</code> 均无法成功让 docker 用上代理，最终通过向 docker 的 service 文件 <code>[Service]</code> 块添加环境变量解决。</p>
+<pre><code class="language-text">Environment=&quot;HTTP_PROXY=http://127.0.0.1:10808&quot;
+Environment=&quot;HTTPS_PROXY=http://127.0.0.1:10808&quot;
+Environment=&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp&quot;
+</code></pre>
+<p><code>NO_PROXY</code> 表示后面这些地址不需要使用代理，这在希望从私有仓库拉取镜像的时候会有用，将仓库地址追加到后面就行。</p>
+<h2 id="error-creating-overlay-mount-to"><a class="header" href="#error-creating-overlay-mount-to">error creating overlay mount to...</a></h2>
 <blockquote>
 <p>&quot;强制关机后再次重启机器后发现一些 docker 容器出现了 <code>error creating overlay mount to......</code> 并且无法启动&quot;</p>
 </blockquote>
