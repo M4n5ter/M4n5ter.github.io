@@ -22,6 +22,7 @@
       - [Next steps with Tracing TODO](./rust/tokio/next_steps_with_tracing.md)
 - [Other categories](./other-categories/other-categories.md)
   - [archlinux](./other-categories/archlinux/archlinux.md)
+  - [algorithm](./other-categories/algorithm/algorithm.md)
   - [nmap-netcat(nc)](./other-categories/nc/nc.md)
   - [mkcert](./other-categories/mkcert/mkcert.md)
   - [aria2](./other-categories/aria2/aria2.md)
