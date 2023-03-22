@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="sidebar-visible no-js light">
+
+<head>
+    <!-- Book generated using mdBook -->
+    <meta charset="UTF-8">
+    <title>algorithm - M4n5ter Blog</title>
+
+
+    <!-- Custom HTML head -->
+    
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="shortcut icon" href="../../favicon.png">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/chrome.css">
+    <link rel="stylesheet" href="../../css/print.css" media="print">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+
+    <!-- Highlight.js Stylesheets -->
+    <link rel="stylesheet" href="../../highlight.css">
+    <link rel="stylesheet" href="../../tomorrow-night.css">
+    <link rel="stylesheet" href="../../ayu-highlight.css">
+
+    <!-- Custom theme stylesheets -->
+    <link rel="stylesheet" href="../../theme/style3.css">
+
+
+</head>
+
+<body>
+    <!-- Provide site root to javascript -->
+    <script type="text/javascript">
+        var path_to_root = "../../";
+        var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+    </script>
+
+    <!-- Work around some values being stored in localStorage wrapped in quotes -->
+    <script type="text/javascript">
+        try {
+            var theme = localStorage.getItem('mdbook-theme');
+            var sidebar = localStorage.getItem('mdbook-sidebar');
+            if (theme.startsWith('"') && theme.endsWith('"')) {
+                localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+            }
+            if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+            }
+        } catch (e) { }
+    </script>
+
+    <!-- Set the theme before any content is loaded, prevents flash -->
+    <script type="text/javascript">
+        var theme;
+        try { theme = localStorage.getItem('mdbook-theme'); } catch (e) { }
+        if (theme === null || theme === undefined) { theme = default_theme; }
+        var html = document.querySelector('html');
+        html.classList.remove('no-js')
+        html.classList.remove('light')
+        html.classList.add(theme);
+        html.classList.add('js');
+    </script>
+
+    <!-- Hide / unhide sidebar before it is displayed -->
+    <script type="text/javascript">
+        var html = document.querySelector('html');
+        var sidebar = 'hidden';
+        if (document.body.clientWidth >= 1080) {
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch (e) { }
+            sidebar = sidebar || 'visible';
+        }
+        html.classList.remove('sidebar-visible');
+        html.classList.add("sidebar-" + sidebar);
+    </script>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded "><a href="../../intro/intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="../../go/go.html"><strong aria-hidden="true">2.</strong> GO</a></li><li class="chapter-item expanded "><a href="../../rust/rust.html"><strong aria-hidden="true">3.</strong> RUST</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tower/rust_tower.html"><strong aria-hidden="true">3.1.</strong> Tower</a></li><li class="chapter-item "><a href="../../rust/mini-redis/mini-redis.html"><strong aria-hidden="true">3.2.</strong> mini-redis</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/mini-redis/hello_tokio.html"><strong aria-hidden="true">3.2.1.</strong> Hello Tokio</a></li><li class="chapter-item "><a href="../../rust/mini-redis/spawning.html"><strong aria-hidden="true">3.2.2.</strong> Spawning</a></li><li class="chapter-item "><a href="../../rust/mini-redis/shared_state.html"><strong aria-hidden="true">3.2.3.</strong> Shared state</a></li><li class="chapter-item "><a href="../../rust/mini-redis/channels.html"><strong aria-hidden="true">3.2.4.</strong> Channels</a></li><li class="chapter-item "><a href="../../rust/mini-redis/io.html"><strong aria-hidden="true">3.2.5.</strong> I/O</a></li><li class="chapter-item "><a href="../../rust/mini-redis/framing.html"><strong aria-hidden="true">3.2.6.</strong> Framing</a></li><li class="chapter-item "><a href="../../rust/mini-redis/async_in_depth.html"><strong aria-hidden="true">3.2.7.</strong> Async in depth</a></li><li class="chapter-item "><a href="../../rust/mini-redis/select.html"><strong aria-hidden="true">3.2.8.</strong> Select</a></li><li class="chapter-item "><a href="../../rust/mini-redis/streams.html"><strong aria-hidden="true">3.2.9.</strong> Streams</a></li></ol></li><li class="chapter-item "><a href="../../rust/tokio/tokio.html"><strong aria-hidden="true">3.3.</strong> Tokio</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/topics.html"><strong aria-hidden="true">3.3.1.</strong> Topics TODO</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../rust/tokio/bridging_with_sync_code.html"><strong aria-hidden="true">3.3.1.1.</strong> Bridging with sync code TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/graceful_shutdown.html"><strong aria-hidden="true">3.3.1.2.</strong> Graceful Shutdown TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/getting_started_with_tracing.html"><strong aria-hidden="true">3.3.1.3.</strong> Getting started with Tracing TODO</a></li><li class="chapter-item "><a href="../../rust/tokio/next_steps_with_tracing.html"><strong aria-hidden="true">3.3.1.4.</strong> Next steps with Tracing TODO</a></li></ol></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../other-categories/other-categories.html"><strong aria-hidden="true">4.</strong> Other categories</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../other-categories/archlinux/archlinux.html"><strong aria-hidden="true">4.1.</strong> archlinux</a></li><li class="chapter-item expanded "><a href="../../other-categories/algorithm/algorithm.html" class="active"><strong aria-hidden="true">4.2.</strong> algorithm</a></li><li class="chapter-item "><a href="../../other-categories/nc/nc.html"><strong aria-hidden="true">4.3.</strong> nmap-netcat(nc)</a></li><li class="chapter-item "><a href="../../other-categories/mkcert/mkcert.html"><strong aria-hidden="true">4.4.</strong> mkcert</a></li><li class="chapter-item "><a href="../../other-categories/aria2/aria2.html"><strong aria-hidden="true">4.5.</strong> aria2</a></li><li class="chapter-item "><a href="../../other-categories/postgres/postgres.html"><strong aria-hidden="true">4.6.</strong> postgres</a></li><li class="chapter-item "><a href="../../other-categories/pre-commit/pre-commit.html"><strong aria-hidden="true">4.7.</strong> pre-commit</a></li><li class="chapter-item "><a href="../../other-categories/minio/minio.html"><strong aria-hidden="true">4.8.</strong> minio</a></li><li class="chapter-item "><a href="../../other-categories/git/git.html"><strong aria-hidden="true">4.9.</strong> git</a></li><li class="chapter-item "><a href="../../other-categories/croc/croc.html"><strong aria-hidden="true">4.10.</strong> croc</a></li></ol></li><li class="chapter-item expanded "><a href="../../blockchain/blockchain.html"><strong aria-hidden="true">5.</strong> Blockchain</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../blockchain/substrate/substrate.html"><strong aria-hidden="true">5.1.</strong> substrate TODO</a></li></ol></li><li class="chapter-item expanded "><a href="../../issues/issues.html"><strong aria-hidden="true">6.</strong> issues and solutions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../isuues/linux/linux_issues.html"><strong aria-hidden="true">6.1.</strong> linux</a></li><li class="chapter-item "><a href="../../issues/docker/docker_issues.html"><strong aria-hidden="true">6.2.</strong> docker</a></li><li class="chapter-item "><a href="../../issues/mysql/mysql_issues.html"><strong aria-hidden="true">6.3.</strong> mysql</a></li><li class="chapter-item "><a href="../../issues/gitea/gitea_issues.html"><strong aria-hidden="true">6.4.</strong> gitea</a></li><li class="chapter-item "><a href="../../issues/nginx/nginx_issues.html"><strong aria-hidden="true">6.5.</strong> nginx</a></li></ol></li><li class="chapter-item expanded "><a href="../../links/links.html"><strong aria-hidden="true">7.</strong> Links</a></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <div id="page-wrapper" class="page-wrapper">
+
+        <div class="page">
+                        <div id="menu-bar-hover-placeholder"></div>
+            <div id="menu-bar" class="menu-bar sticky bordered">
+                <div class="left-buttons">
+                    <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents"
+                        aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <i class="fa fa-paint-brush"></i>
+                    </button>
+                    <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                        <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button>
+                        </li>
+                    </ul>
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)"
+                        aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S"
+                        aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <h1 class="menu-title">M4n5ter Blog</h1>
+
+                <div class="right-buttons">
+                    <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                    <a href="https://github.com/m4n5ter/m4n5ter.github.io/edit/main/src/other-categories/algorithm/algorithm.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <i id="git-edit-button" class="fa fa-edit"></i>
+                    </a>
+
+                </div>
+            </div>
+
+            <div id="search-wrapper" class="hidden">
+                <form id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..."
+                        aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </form>
+                <div id="searchresults-outer" class="searchresults-outer hidden">
+                    <div id="searchresults-header" class="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+            <script type="text/javascript">
+                document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+
+                // Get viewed page store
+                var viewed_key = 'mdbook-viewed';
+                var viewed_map = {};
+                try {
+                    var viewed_storage = localStorage.getItem(viewed_key);
+                    if (viewed_storage) {
+                        viewed_map = JSON.parse(viewed_storage)
+                    }
+                } catch (e) { }
+
+                Array.from(document.querySelectorAll('#sidebar a')).forEach(function (link) {
+                    link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+
+                    // Apply viewed style
+                    if (viewed_map[link.pathname]) {
+                        link.classList.add('md-viewed')
+                    }
+                });
+
+                // Mark viewed after 30s
+                setTimeout(function () {
+                    viewed_map[location.pathname] = 1;
+                    localStorage.setItem(viewed_key, JSON.stringify(viewed_map));
+                }, 30000)
+            </script>
+
+            <div id="content" class="content">
+                <!-- Page table of contents -->
+                <div class="sidetoc">
+                    <nav class="pagetoc"></nav>
+                </div>
+                <main>
+                    <h2 id="一致性哈希"><a class="header" href="#一致性哈希">一致性哈希</a></h2>
+<h3 id="常用场景"><a class="header" href="#常用场景">常用场景</a></h3>
+<p>常用于负载均衡，数据分片等场景。</p>
+<h3 id="原理"><a class="header" href="#原理">原理</a></h3>
+<p>与最简单的负载均衡算法类似，一致性哈希也是基于取模运算。</p>
+<p>主要结构是一个哈希环，上面有 <strong>2^32</strong> 个槽位，从 <strong>0 到 2^32-1</strong>，顺时针旋转，0 与 2^32-1处汇合。如果用服务器节点作为槽位，那么可以用 IP 地址作为标志，<strong>hash(NODE_IP) % 2^32</strong> 的结果可以作为节点所处的槽位。</p>
+<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_1.png?raw=true" alt="CS-1" /></p>
+<p>当有多个节点加入到哈希环中，看起来会像是这样。</p>
+<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_2.png?raw=true" alt="CH2" /></p>
+<p>节点会分布在哈希环的各处，这里我们可以将那些被一致性哈希算法分配（可以看作被负载均衡器分配的任务）的东西称作任务，将任务的特征对<strong>2^32</strong>取模，我们可以得到一个槽位，这个操作可以看成 <strong>hash(任务) % 2^32</strong> 。接下来任务当然需要被工作节点接收，寻找工作节点的方式就是<strong>从通过对任务进行hash后取模得到的槽位开始，顺时针遇到的第一个节点会得到这个任务</strong>。</p>
+<h4 id="与简单取模的区别"><a class="header" href="#与简单取模的区别">与简单取模的区别</a></h4>
+<p>简单取模无法应对工作节点会扩容或者缩容的场景，比如在一个分布式缓存系统中，有 5 个节点，每个缓存节点都存储了大量缓存，我们通过一个 key 找到对应的 value 的方式一般就是对 key 做一次 hash 后再对 5 取模，得到存储这个 key 的节点，并从该节点中得到相应的 value。</p>
+<p>如果我们需要增加或减少一个节点，比如节点增加到了6个，那么每个 key 的 hash 都需要对 6 取模，得到的结果（也就是存储着相应 K-V 的节点）会发生变化，也就是无法通过原来的 key 找到原来存储着这对 K-V 的节点了，那么就必须调整大量节点的缓存分布。也就意味着这时大量的缓存会失效，在分布式场景中极易造成雪崩。</p>
+<p>而在一致性哈希中，如果新增或减少一个节点，相应的操作就是在哈希环上的某个槽位插入或删除一个节点，就只需要调整对应槽位相邻节点的缓存分布。无非就是在删除一个节点时，将这个节点中存储的 K-V 转移到顺时针下一个节点中；在增加一个节点的时候，在新增节点顺时针第一个节点中，寻找落在新增节点的逆时针方向的 K-V 直到遇到逆时针方向的下一个节点，并将它们调整到新节点中。</p>
+<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_3.png?raw=true" alt="CH3" /></p>
+<p>就像图中所示，在新增节点时红色部分会被调整到新节点中，绿色部分保留在原本的节点中。</p>
+<p>在有大量节点的分布式环境中，这样调整的代价就会小很多。</p>
+<h3 id="虚拟节点"><a class="header" href="#虚拟节点">虚拟节点</a></h3>
+<p>在上面的内容中，很容易发现一个新的问题，那就是当节点的数量并不多的时候，很容易存在任务分配不均的情况，可能大量的任务落到的槽位会集中在某块区域，而其它区域的槽位则没有那么多的任务。这时候就需要引入虚拟节点了。</p>
+<h4 id="todo"><a class="header" href="#todo">TODO</a></h4>
+
+                    <div id="giscus-container"></div>
+                </main>
+
+                <nav class="nav-wrapper" aria-label="Page navigation">
+                    <!-- Mobile navigation buttons -->
+                    <a rel="prev" href="../../other-categories/archlinux/archlinux.html" class="mobile-nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../../other-categories/nc/nc.html" class="mobile-nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+
+                    <div style="clear: both"></div>
+                </nav>
+            </div>
+        </div>
+
+        <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <a rel="prev" href="../../other-categories/archlinux/archlinux.html" class="nav-chapters previous" title="Previous chapter"
+                aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <i class="fa fa-angle-left"></i>
+            </a>
+
+            <a rel="next" href="../../other-categories/nc/nc.html" class="nav-chapters next" title="Next chapter"
+                aria-label="Next chapter" aria-keyshortcuts="Right">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </nav>
+
+    </div>
+
+
+
+
+    <script type="text/javascript">
+        window.playground_copyable = true;
+    </script>
+
+
+    <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var pagePath = "other-categories/algorithm/algorithm.md"
+    </script>
+
+
+    <!-- Custom JS scripts -->
+    <script type="text/javascript" src="../../assets/custom.js"></script>
+    <script type="text/javascript" src="../../assets/bigPicture.js"></script>
+
+
+</body>
+
+</html>
