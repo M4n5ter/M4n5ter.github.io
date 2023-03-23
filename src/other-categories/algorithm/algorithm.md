@@ -38,4 +38,4 @@
 
 #### ![CH4](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_4.png?raw=true)
 
-比如对节点多次 hash 并取模，得到若干个槽位，这些槽位均代表该节点，那么就可以大大减轻任务分布不均的问题了。
+比如对节点多次 hash 并取模（或者其它方式，比如对第一次 hash +1 并取模得到第二个槽位），得到若干个槽位，这些槽位均代表该节点，那么就可以大大减轻任务分布不均的问题了。
