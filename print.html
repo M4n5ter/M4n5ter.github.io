@@ -4027,7 +4027,7 @@ echo &quot;Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Ch
 <h3 id="虚拟节点"><a class="header" href="#虚拟节点">虚拟节点</a></h3>
 <p>在上面的内容中，很容易发现一个新的问题，那就是当节点的数量并不多的时候，很容易存在任务分配不均的情况，可能大量的任务落到的槽位会集中在某块区域，而其它区域的槽位则没有那么多的任务，当一个节点不堪重负被压垮后，那么压力会顺延给顺时针的下一个节点，形成雪崩。这时候就需要引入虚拟节点了。</p>
 <h4 id=""><a class="header" href="#"><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_4.png?raw=true" alt="CH4" /></a></h4>
-<p>比如对节点多次 hash 并取模，得到若干个槽位，这些槽位均代表该节点，那么就可以大大减轻任务分布不均的问题了。</p>
+<p>比如对节点多次 hash 并取模（或者其它方式，比如对第一次 hash +1 并取模得到第二个槽位），得到若干个槽位，这些槽位均代表该节点，那么就可以大大减轻任务分布不均的问题了。</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="nmap-netcatnc"><a class="header" href="#nmap-netcatnc">nmap-netcat(nc)</a></h2>
 <p>nc 是由 C 编写的非常强悍的网络工具，<code>nc</code> 主要有 4 个版本，gnu nc （2004 年停止维护，也叫 nc traditional）， openbsd nc（重写了 gnu nc，在正常维护），nmap-netcat（也叫 ncat，由 nmap 重写 nc traditional，被称为 21 世纪的 netcat，也是功能最多的 nc）。</p>
 <p>下面我介绍的就是 nmap-netcat，出现的不论是 <code>nc</code> 还是 <code>ncat</code> 请一律当 <code>ncat</code> 处理，因为部分在 CentOS 上执行，CentOS上的 <code>nc</code> 就是 <code>ncat</code>。</p>
