@@ -209,9 +209,9 @@
 <pre><code class="language-go">package consistenthash
 
 import (
-	&quot;fmt&quot;
-	&quot;sort&quot;
-	&quot;sync&quot;
+    &quot;fmt&quot;
+    &quot;sort&quot;
+    &quot;sync&quot;
 )
 
 type PlaceHolder struct{}
@@ -220,17 +220,17 @@ type PlaceHolder struct{}
 type HashFunc func(data []byte) uint64
 
 type ConsistentHash struct {
-	lock sync.RWMutex
-	// 虚拟节点数
-	virtualNodeNum uint64
-	// 哈希环
-	ring map[uint64]string
-	// 节点和它对应的虚拟节点
-	nodes map[string][]uint64
-	// 记录当前 ring 上的所有虚拟节点(因为 map 不可排序，我们又需要让所有的 hash 值有序)
-	keys []uint64
-	// 需要使用的哈希函数
-	hashFn HashFunc
+    lock sync.RWMutex
+    // 虚拟节点数
+    virtualNodeNum uint64
+    // 哈希环
+    ring map[uint64]string
+    // 节点和它对应的虚拟节点
+    nodes map[string][]uint64
+    // 记录当前 ring 上的所有虚拟节点(因为 map 不可排序，我们又需要让所有的 hash 值有序)
+    keys []uint64
+    // 需要使用的哈希函数
+    hashFn HashFunc
 }
 
 // DefaultVirtualNodeNumber 默认虚拟节点数量,不能小于默认数量
@@ -238,217 +238,214 @@ var DefaultVirtualNodeNumber uint64 = 100
 
 // NewConsistentHash 创建一个一致性哈希
 func NewConsistentHash() *ConsistentHash {
-	// 目前只使用 xxhash
-	return NewCustomConsistentHash(DefaultVirtualNodeNumber, xxhashSum64)
+    // 目前只使用 xxhash
+    return NewCustomConsistentHash(DefaultVirtualNodeNumber, xxhashSum64)
 }
 
 func NewCustomConsistentHash(num uint64, hash HashFunc) *ConsistentHash {
-	if num &lt; DefaultVirtualNodeNumber {
-		num = DefaultVirtualNodeNumber
-	}
+    if num &lt; DefaultVirtualNodeNumber {
+        num = DefaultVirtualNodeNumber
+    }
 
-	if hash == nil {
-		hash = xxhashSum64
-	}
+    if hash == nil {
+        hash = xxhashSum64
+    }
 
-	return &amp;ConsistentHash{
-		virtualNodeNum: num,
-		ring:           make(map[uint64]string),
-		nodes:          make(map[string][]uint64),
-		hashFn:         hash,
-	}
+    return &amp;ConsistentHash{
+        virtualNodeNum: num,
+        ring:           make(map[uint64]string),
+        nodes:          make(map[string][]uint64),
+        hashFn:         hash,
+    }
 }
 
 // Add 添加节点
 func (ch *ConsistentHash) Add(node any) {
-	ch.AddWithVirtualNodes(node, ch.virtualNodeNum)
+    ch.AddWithVirtualNodes(node, ch.virtualNodeNum)
 }
 
 // AddWithVirtualNodes 添加节点的同时添加虚拟节点
 func (ch *ConsistentHash) AddWithVirtualNodes(node any, virtualNodeNum uint64) {
-	// 如果节点已经存在, 则先移除节点
-	ch.Remove(node)
+    // 如果节点已经存在, 则先移除节点
+    ch.Remove(node)
 
-	if virtualNodeNum &gt; ch.virtualNodeNum {
-		virtualNodeNum = ch.virtualNodeNum
-	}
+    if virtualNodeNum &gt; ch.virtualNodeNum {
+        virtualNodeNum = ch.virtualNodeNum
+    }
 
-	// 将 node 转换为字符串
-	nodeStr := Repr(node)
-	ch.lock.Lock()
-	defer ch.lock.Unlock()
-	for i := uint64(0); i &lt; virtualNodeNum; i++ {
-		// 生成虚拟节点的哈希值
-		hash := ch.hashFn([]byte(fmt.Sprintf(&quot;%s#%d&quot;, nodeStr, i)))
-		// 将虚拟节点添加到哈希环上
-		ch.ring[hash] = nodeStr
-		// 因为 map 不可排序, 所以需要记录所有的虚拟节点
-		ch.keys = append(ch.keys, hash)
-		// 在 nodes 中记录节点和它的虚拟节点, 用于移除节点
-		// (通过牺牲空间换取时间，这样就不用在移除节点的时候计算虚拟节点的哈希值)
-		ch.nodes[nodeStr] = append(ch.nodes[nodeStr], hash)
-	}
+    // 将 node 转换为字符串
+    nodeStr := Repr(node)
+    ch.lock.Lock()
+    defer ch.lock.Unlock()
+    for i := uint64(0); i &lt; virtualNodeNum; i++ {
+        // 生成虚拟节点的哈希值
+        hash := ch.hashFn([]byte(fmt.Sprintf(&quot;%s#%d&quot;, nodeStr, i)))
+        // 将虚拟节点添加到哈希环上
+        ch.ring[hash] = nodeStr
+        // 因为 map 不可排序, 所以需要记录所有的虚拟节点
+        ch.keys = append(ch.keys, hash)
+        // 在 nodes 中记录节点和它的虚拟节点, 用于移除节点
+        // (通过牺牲空间换取时间，这样就不用在移除节点的时候计算虚拟节点的哈希值)
+        ch.nodes[nodeStr] = append(ch.nodes[nodeStr], hash)
+    }
 
-	// 从小到大整理 keys
-	sort.Slice(ch.keys, func(i, j int) bool {
-		return ch.keys[i] &lt; ch.keys[j]
-	})
+    // 从小到大整理 keys
+    sort.Slice(ch.keys, func(i, j int) bool {
+        return ch.keys[i] &lt; ch.keys[j]
+    })
 }
 
 // Remove 移除节点
 func (ch *ConsistentHash) Remove(node any) {
-	ch.RemoveWithVirtualNodes(node)
+    ch.RemoveWithVirtualNodes(node)
 }
 
 // RemoveWithVirtualNodes 移除节点的同时移除虚拟节点
 func (ch *ConsistentHash) RemoveWithVirtualNodes(node any) {
-	// 将 node 转换为字符串
-	nodeStr := Repr(node)
-	// 如果节点不存在, 则直接返回
-	if _, ok := ch.nodes[nodeStr]; !ok {
-		return
-	}
+    // 将 node 转换为字符串
+    nodeStr := Repr(node)
+    // 如果节点不存在, 则直接返回
+    if _, ok := ch.nodes[nodeStr]; !ok {
+        return
+    }
 
-	ch.lock.Lock()
-	defer ch.lock.Unlock()
-	delete(ch.nodes, nodeStr)
-	for i := 0; i &lt; len(ch.nodes); i++ {
-		// 将虚拟节点从哈希环上移除
-		delete(ch.ring, ch.nodes[nodeStr][i])
-		// 从 keys 中移除虚拟节点
-		index := sort.Search(len(ch.keys), func(i int) bool {
-			return ch.keys[i] == ch.nodes[nodeStr][i]
-		})
-		if index &lt; len(ch.keys) &amp;&amp; ch.keys[index] == ch.nodes[nodeStr][i] {
-			ch.keys = append(ch.keys[:index], ch.keys[index+1:]...)
-		}
-	}
+    ch.lock.Lock()
+    defer ch.lock.Unlock()
+    delete(ch.nodes, nodeStr)
+    for i := 0; i &lt; len(ch.nodes); i++ {
+        // 将虚拟节点从哈希环上移除
+        delete(ch.ring, ch.nodes[nodeStr][i])
+        // 从 keys 中移除虚拟节点
+        index := sort.Search(len(ch.keys), func(i int) bool {
+            return ch.keys[i] == ch.nodes[nodeStr][i]
+        })
+        if index &lt; len(ch.keys) &amp;&amp; ch.keys[index] == ch.nodes[nodeStr][i] {
+            ch.keys = append(ch.keys[:index], ch.keys[index+1:]...)
+        }
+    }
 }
 
 // Get 获取 key 对应的节点
 //
 // 如果哈希环为空, 则返回 &quot;&quot; 和 false
 func (ch *ConsistentHash) Get(key any) (string, bool) {
-	ch.lock.RLock()
-	defer ch.lock.RUnlock()
-	// 将 key 转换为字符串
-	keyStr := Repr(key)
-	// 计算 key 的哈希值
-	hash := ch.hashFn([]byte(keyStr))
-	// 在哈希环上查找节点
-	return ch.search(hash)
+    ch.lock.RLock()
+    defer ch.lock.RUnlock()
+    // 将 key 转换为字符串
+    keyStr := Repr(key)
+    // 计算 key 的哈希值
+    hash := ch.hashFn([]byte(keyStr))
+    // 在哈希环上查找节点
+    return ch.search(hash)
 }
 
 // search 在哈希环上查找节点
 func (ch *ConsistentHash) search(hash uint64) (string, bool) {
-	// 如果哈希环为空, 则返回空字符串
-	if len(ch.ring) == 0 {
-		return &quot;&quot;, false
-	}
+    // 如果哈希环为空, 则返回空字符串
+    if len(ch.ring) == 0 {
+        return &quot;&quot;, false
+    }
 
-	// 如果 hash 在 ring 上直接命中，则直接返回对应 node
-	if node, ok := ch.ring[hash]; ok {
-		return node, true
-	}
+    // 如果 hash 在 ring 上直接命中，则直接返回对应 node
+    if node, ok := ch.ring[hash]; ok {
+        return node, true
+    }
 
-	// 如果未命中, 则找到第一个比它大的哈希值(因为 hash 可能会比 ring 上的所有哈希值都大，这时我们希望从头开始算，所以需要取模)
-	index := sort.Search(len(ch.keys), func(i int) bool {
-		return ch.keys[i] &gt; hash
-	}) % len(ch.keys)
-	node := ch.ring[ch.keys[index]]
-	return node, true
+    // 如果未命中, 则找到第一个比它大的哈希值(因为 hash 可能会比 ring 上的所有哈希值都大，这时我们希望从头开始算，所以需要取模)
+    index := sort.Search(len(ch.keys), func(i int) bool {
+        return ch.keys[i] &gt; hash
+    }) % len(ch.keys)
+    node := ch.ring[ch.keys[index]]
+    return node, true
 }
-
 </code></pre>
 <h5 id="hashgo"><a class="header" href="#hashgo">hash.go</a></h5>
 <pre><code class="language-go">//nolint:unused
 package consistenthash
 
 import (
-	&quot;github.com/cespare/xxhash&quot;
-	&quot;github.com/spaolacci/murmur3&quot;
+    &quot;github.com/cespare/xxhash&quot;
+    &quot;github.com/spaolacci/murmur3&quot;
 )
 
 func murmur3Sum64(data []byte) uint64 {
-	return murmur3.Sum64(data)
+    return murmur3.Sum64(data)
 }
 
 func xxhashSum64(data []byte) uint64 {
-	return xxhash.Sum64(data)
+    return xxhash.Sum64(data)
 }
-
 </code></pre>
 <h5 id="reprgo"><a class="header" href="#reprgo">repr.go</a></h5>
 <pre><code class="language-go">package consistenthash
 
 import (
-	&quot;fmt&quot;
-	&quot;reflect&quot;
-	&quot;strconv&quot;
+    &quot;fmt&quot;
+    &quot;reflect&quot;
+    &quot;strconv&quot;
 )
 
 // Repr 将节点转换为字符串
 func Repr(v any) string {
-	if v == nil {
-		return &quot;&quot;
-	}
+    if v == nil {
+        return &quot;&quot;
+    }
 
-	// 如果是 func (v *Type) String() string，我们不能使用 Elem()
-	switch vt := v.(type) {
-	case fmt.Stringer:
-		return vt.String()
-	}
+    // 如果是 func (v *Type) String() string，我们不能使用 Elem()
+    switch vt := v.(type) {
+    case fmt.Stringer:
+        return vt.String()
+    }
 
-	val := reflect.ValueOf(v)
-	// 如果是指针类型，且不是nil，则取指针指向的值，如果指针指向的值是还是指针，则继续取指针指向的值
-	for val.Kind() == reflect.Ptr &amp;&amp; !val.IsNil() {
-		val = val.Elem()
-	}
+    val := reflect.ValueOf(v)
+    // 如果是指针类型，且不是nil，则取指针指向的值，如果指针指向的值是还是指针，则继续取指针指向的值
+    for val.Kind() == reflect.Ptr &amp;&amp; !val.IsNil() {
+        val = val.Elem()
+    }
 
-	return reprOfValue(val)
+    return reprOfValue(val)
 }
 
 func reprOfValue(val reflect.Value) string {
-	switch vt := val.Interface().(type) {
-	case bool:
-		return strconv.FormatBool(vt)
-	case error:
-		return vt.Error()
-	case float32:
-		return strconv.FormatFloat(float64(vt), 'f', -1, 32)
-	case float64:
-		return strconv.FormatFloat(vt, 'f', -1, 64)
-	case fmt.Stringer:
-		return vt.String()
-	case int:
-		return strconv.Itoa(vt)
-	case int8:
-		return strconv.Itoa(int(vt))
-	case int16:
-		return strconv.Itoa(int(vt))
-	case int32:
-		return strconv.Itoa(int(vt))
-	case int64:
-		return strconv.FormatInt(vt, 10)
-	case string:
-		return vt
-	case uint:
-		return strconv.FormatUint(uint64(vt), 10)
-	case uint8:
-		return strconv.FormatUint(uint64(vt), 10)
-	case uint16:
-		return strconv.FormatUint(uint64(vt), 10)
-	case uint32:
-		return strconv.FormatUint(uint64(vt), 10)
-	case uint64:
-		return strconv.FormatUint(vt, 10)
-	case []byte:
-		return string(vt)
-	default:
-		return fmt.Sprint(val.Interface())
-	}
+    switch vt := val.Interface().(type) {
+    case bool:
+        return strconv.FormatBool(vt)
+    case error:
+        return vt.Error()
+    case float32:
+        return strconv.FormatFloat(float64(vt), 'f', -1, 32)
+    case float64:
+        return strconv.FormatFloat(vt, 'f', -1, 64)
+    case fmt.Stringer:
+        return vt.String()
+    case int:
+        return strconv.Itoa(vt)
+    case int8:
+        return strconv.Itoa(int(vt))
+    case int16:
+        return strconv.Itoa(int(vt))
+    case int32:
+        return strconv.Itoa(int(vt))
+    case int64:
+        return strconv.FormatInt(vt, 10)
+    case string:
+        return vt
+    case uint:
+        return strconv.FormatUint(uint64(vt), 10)
+    case uint8:
+        return strconv.FormatUint(uint64(vt), 10)
+    case uint16:
+        return strconv.FormatUint(uint64(vt), 10)
+    case uint32:
+        return strconv.FormatUint(uint64(vt), 10)
+    case uint64:
+        return strconv.FormatUint(vt, 10)
+    case []byte:
+        return string(vt)
+    default:
+        return fmt.Sprint(val.Interface())
+    }
 }
-
 </code></pre>
 
                     <div id="giscus-container"></div>
