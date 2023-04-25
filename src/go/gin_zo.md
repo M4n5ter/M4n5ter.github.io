@@ -65,7 +65,7 @@ config:
   HTTP_Passwd uoZ9nMUEywjSLAiP
 ```
 
-这里的 [OUTPUT] 直接访问 http://<IP>:<Port> 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。`URL /api/{组织}/{数据流}/_json` ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。
+这里的 [OUTPUT] 直接访问 http://`<IP>`:`<Port>` 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。`URL /api/{组织}/{数据流}/_json` ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。
 
 ```bash
 $ docker run -it --network host -v .:/data --rm --name fluent-bit cr.fluentbit.io/fluent/fluent-bit:2.1.1 \
