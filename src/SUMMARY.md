@@ -2,6 +2,7 @@
 
 - [Intro](./intro/intro.md)
 - [GO](./go/go.md)
+  - [Gin + ZincObserve](./go/gin_zo.md)
 - [RUST](./rust/rust.md)
   - [Tower](./rust/tower/rust_tower.md)
   - [mini-redis](./rust/mini-redis/mini-redis.md)
