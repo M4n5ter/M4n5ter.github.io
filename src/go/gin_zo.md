@@ -8,7 +8,7 @@ ZO 使用 Rust 开发（他们家的 zincsearch 是用的 go），性能极高�
 
 ### zincbserve
 
-ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 [github release]([Releases · zinclabs/zincobserve · GitHub](https://github.com/zinclabs/zincobserve/releases)) 下载
+ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 [Releases · zinclabs/zincobserve · GitHub](https://github.com/zinclabs/zincobserve/releases) 下载
 
 ```bash
 $ wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
