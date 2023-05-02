@@ -3,8 +3,7 @@
 - [Intro](./intro/intro.md)
 - [GO](./go/go.md)
   - [Gin + ZincObserve](./go/gin_zo.md)
-  - [pstash(My Project)](./go/pstash.md
-  - )
+  - [pstash(My Project)](./go/pstash.md)
 - [RUST](./rust/rust.md)
   - [Tower](./rust/tower/rust_tower.md)
   - [mini-redis](./rust/mini-redis/mini-redis.md)
