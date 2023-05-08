@@ -462,7 +462,8 @@ let t2 = tokio::spawn(async move {
 <p>当需要这么做的时候，请确保并发的总量是有界的（不要无限制的创建 task）。举个例子，当写一个 TCP accept loop 的时候，确保打开的 socket 总数是有界的。当使用 <code>mpsc::channel</code>时，选择一个能够被管理的容量限度（容量不要超出实际承受能力）。指定有界值是特定于应用的。</p>
 <p>小心和选择好的界限是编写可靠的Tokio应用程序的重要组成部分。</p>
 
-                    <div id="giscus-container"></div>
+                    <!-- 暂时关闭评论 -->
+                    <!--<div id="giscus-container"></div>-->
                 </main>
 
                 <nav class="nav-wrapper" aria-label="Page navigation">

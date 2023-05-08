@@ -675,7 +675,8 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 <p><code>tokio::spawn</code> 和 <code>select!</code> 都能够运行并发的异步操作。然而，运行并发操作的策略有所不同。<code>tokio::spawn</code> 函数携带一个异步操作，并且生成一个新的任务去运行它。一个任务是 Tokio runtime 调度的对象。两个不同的任务会被 Tokio 独立调度，它们可能会同时运行在不同的操作系统线程上。正因如此，一个被生成的任务和被生成的线程具有相同的限制：不能有借用！</p>
 <p><code>select!</code> 宏会在<strong>同一个任务</strong>中并发运行所有的分支。因为所有的 <code>select!</code> 分支都在同一个任务中被执行，它们永远不可能<strong>同时</strong>被运行。<code>select!</code> 宏会在单个任务上多路复用异步操作。</p>
 
-                    <div id="giscus-container"></div>
+                    <!-- 暂时关闭评论 -->
+                    <!--<div id="giscus-container"></div>-->
                 </main>
 
                 <nav class="nav-wrapper" aria-label="Page navigation">

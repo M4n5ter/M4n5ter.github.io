@@ -517,7 +517,8 @@ async fn write_frame(&amp;mut self, frame: &amp;Frame)
 <p>函数以一个 <code>self.stream.flush().await</code> 调用结尾。因为 <code>BufWriter</code> 会把要写入的东西先存到一个中间缓冲区，调用 <code>write</code> 不能保证数据被写入 socket，而在返回之前我们想要 frame 被写入 socket。调用 <code>flush()</code> 会将挂在缓冲区上的所有数据写入 socket 。</p>
 <p>另一种选择是不在 <code>write_frame()</code> 中调用 <code>flush()</code> 。相反，在 <code>Connection</code> 上提供一个 <code>flush()</code> 函数。这将允许调用者将多个小 frame 写入到缓冲区中的队列，然后使用一个 <code>write</code> syscall 将它们全部写入 socket。但是这会增加 <code>Connection</code> API 的复杂度，而简单是 Mini-Redis 的其中一个目标，所以我们决定让 <code>flush().await</code> 调用包含在 <code>fn write_frame()</code> 中。</p>
 
-                    <div id="giscus-container"></div>
+                    <!-- 暂时关闭评论 -->
+                    <!--<div id="giscus-container"></div>-->
                 </main>
 
                 <nav class="nav-wrapper" aria-label="Page navigation">

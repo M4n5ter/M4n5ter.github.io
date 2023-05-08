@@ -203,7 +203,8 @@ $ echo &quot;vm.overcommit_memory=2&quot; &gt;&gt; /etc/sysctl.conf
 <p>当然，还有一种方法可以直接让内核的 <code>OOM killer</code> 不会把我们的进程当做目标，那就是配置 <code>/proc/&lt;PID&gt;/oom_score_adj</code>，<code>&lt;PID&gt;</code> 表示相应进程的 ID。<code>echo -1000 &gt; /proc/&lt;PID&gt;/oom_score_adj</code>将我们的进程的 oom_score_adj 设置为 -1000，表示让 <code>OOM killer</code> 不要把这个进程当做目标。原理是每个进程都会根据实施情况被打上一个<code>oom_score</code> 分数，当系统的内存不够用时 <code>OOM killer</code> 会寻找 <code>/proc/&lt;PID&gt;/oom_score</code> 高的进程并将其杀死。 而打分时 <code>oom_score_adj</code> 的值会直接影响 <code>oom_score</code> 的值，<code>oom_score_adj</code> 的范围是 <code>-1000 ~ 1000</code> ，当 <code>oom_score_adj</code> 的值越低，<code>oom_score</code> 被打的分也就会越低。设置 <code>oom_score_ajd</code> 为 <code>-1000</code> 时 <code>OOM killer</code> 就永远不会光顾这个进程了。</p>
 <p>这个方法危险的原因则是，当 <code>OOM killer</code> 永远不会去杀死一个进程，而这个进程又需要大量内存资源时，当内存不够用，<code>OOM killer</code> 会去杀死其它分高的进程，这是十分危险的。 </p>
 
-                    <div id="giscus-container"></div>
+                    <!-- 暂时关闭评论 -->
+                    <!--<div id="giscus-container"></div>-->
                 </main>
 
                 <nav class="nav-wrapper" aria-label="Page navigation">

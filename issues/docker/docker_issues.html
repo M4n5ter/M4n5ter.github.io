@@ -198,7 +198,8 @@ Environment=&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp
 <h2 id="error-response-from-daemon-cannot-restart-container-drone-driver-failed-programming-external-connectivity-on-endpoint-drone-7df4fc8df955812c87a501d92249f4e9eb41ee820908569ca3cb98544b2bad9c--iptables-failed-iptables---wait--t-nat--a-docker--p-tcp--d-00---dport-3001--j-dnat---to-destination-172170780---i-docker0-iptables-no-chaintargetmatch-by-that-name"><a class="header" href="#error-response-from-daemon-cannot-restart-container-drone-driver-failed-programming-external-connectivity-on-endpoint-drone-7df4fc8df955812c87a501d92249f4e9eb41ee820908569ca3cb98544b2bad9c--iptables-failed-iptables---wait--t-nat--a-docker--p-tcp--d-00---dport-3001--j-dnat---to-destination-172170780---i-docker0-iptables-no-chaintargetmatch-by-that-name">Error response from daemon: Cannot restart container drone: driver failed programming external connectivity on endpoint drone (7df4fc8df955812c87a501d92249f4e9eb41ee820908569ca3cb98544b2bad9c):  (iptables failed: iptables --wait -t nat -A DOCKER -p tcp -d 0/0 --dport 3001 -j DNAT --to-destination 172.17.0.7:80 ! -i docker0: iptables: No chain/target/match by that name.</a></h2>
 <p>这种错误一般是由于 dockerd 定义的 iptables 自定义链因为一些原因（最常见的就是发生在操作防火墙后）被清除了。此时把 docker 重启一下，让它重新生产自定义链即可。</p>
 
-                    <div id="giscus-container"></div>
+                    <!-- 暂时关闭评论 -->
+                    <!--<div id="giscus-container"></div>-->
                 </main>
 
                 <nav class="nav-wrapper" aria-label="Page navigation">
