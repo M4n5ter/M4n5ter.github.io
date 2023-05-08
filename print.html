@@ -184,7 +184,7 @@
 <p>我是 <a href="https://github.com/m4n5ter">M4n5ter</a> ，将在这里记录我的学习过程 ：)</p>
 <p><em>参照 rust course 而建</em></p>
 </blockquote>
-<img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/smile2.png?raw=true">
+<img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/smile2.png">
 <div style="break-before: page; page-break-before: always;"></div><h2 id="我的-go-从这开始"><a class="header" href="#我的-go-从这开始">我的 GO 从这开始</a></h2>
 <h3 id="the-way-to-go"><a class="header" href="#the-way-to-go">the way to go</a></h3>
 <p><a href="https://github.com/unknwon/the-way-to-go_ZH_CN">GitHub - unknwon/the-way-to-go_ZH_CN: 《The Way to Go》中文译本，中文正式名《Go 入门指南》</a></p>
@@ -194,8 +194,8 @@
 <h2 id="将-gin-的日志输出到-zincobserve"><a class="header" href="#将-gin-的日志输出到-zincobserve">将 Gin 的日志输出到 ZincObserve</a></h2>
 <h3 id="zincbserve"><a class="header" href="#zincbserve">zincbserve</a></h3>
 <p>ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 <a href="https://github.com/zinclabs/zincobserve/releases">Releases · zinclabs/zincobserve · GitHub</a> 下载</p>
-<pre><code class="language-bash">$ wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
-$ tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
+<pre><code class="language-bash">wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
+tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
 </code></pre>
 <p>ZO 是通过环境变量的方式来配置的，会从 <code>.env</code> 读取，这里就指定一下最小配置量的环境变量。</p>
 <pre><code class="language-bash">$ cat .env
@@ -207,7 +207,7 @@ $ ./zincobserve
 <p>首先，我们需要有东西来采集日志，这里我使用 <a href="https://docs.fluentbit.io/">fluent-bit</a> ，fluent-bit 支持大量的 input 和 output 插件，其中 output 插件有 elasticsearch 支持，这里提到这个插件是因为 <strong>ZO 兼容 ES API，可以直接使用 ES output plugin</strong>，但是我这里不使用这个插件，而是直接使用 http output plugin。</p>
 <p>而 input 插件我这里就使用 tcp input ，   其实 tail 插件也可以，tail 支持从文件系统中读取日志，只需要将 gin 的日志输出一份到磁盘就行。但是使用 tcp input 的话，我们可以将fluent-bit 放在其它地方，只要网络可达就能采集日志，更加灵活。</p>
 <p>首先下载一个 fluent-bit，这里使用 docker 的方式，方便一些：</p>
-<pre><code class="language-bash">$ docker pull cr.fluentbit.io/fluent/fluent-bit:2.1.1
+<pre><code class="language-bash">docker pull cr.fluentbit.io/fluent/fluent-bit:2.1.1
 </code></pre>
 <p>具体 tags 可以去 fluent-bit 官网那看看需要哪个版本即可。</p>
 <p>准备一份配置文件:</p>
@@ -233,7 +233,7 @@ $ ./zincobserve
   HTTP_User admin@m4n5ter.email
   HTTP_Passwd uoZ9nMUEywjSLAiP
 </code></pre>
-<p>这里的 [OUTPUT] 直接访问 http://<code>&lt;IP&gt;</code>:<code>&lt;Port&gt;</code> 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。<code>URL /api/{组织}/{数据流}/_json</code> ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。</p>
+<p>这里的 [OUTPUT] 直接访问 <a href="http://">http://</a><code>&lt;IP&gt;</code>:<code>&lt;Port&gt;</code> 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。<code>URL /api/{组织}/{数据流}/_json</code> ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。</p>
 <pre><code class="language-bash">$ docker run -it --network host -v .:/data --rm --name fluent-bit cr.fluentbit.io/fluent/fluent-bit:2.1.1 \
 -c /data/config
 </code></pre>
@@ -366,7 +366,7 @@ pong
 </code></pre>
 <p>说明成功了。</p>
 <p>去 ZO WEB 页面看看:</p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/gin_zo1.png?raw=true" alt="gin_zo1" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/gin_zo1.png" alt="gin_zo1" /></p>
 <p>可以看到成功了，到这里我们的目的就达成了。</p>
 <h2 id="如何替换-logstash"><a class="header" href="#如何替换-logstash">如何替换 Logstash</a></h2>
 <p>上面我们是直接将日志发送到 fluent-bit，再由 fluent-bit 直接发送给 ZO，但是如果有大量不同应用程序的日志需要搜集，那么日志会非常混乱不好管理，这时就需要在发送给 ZO 之前清洗日志了，而 Logstash 就能干这个（fluent-bit 本身也有一定这方面能力），但是 Logstash 也是蛮重量级的，我们不想要消耗这么多资源怎么办？</p>
@@ -398,16 +398,16 @@ pong
 <h3 id="我的-rustlings-521-版本解决方案"><a class="header" href="#我的-rustlings-521-版本解决方案">我的 rustlings 5.2.1 版本解决方案</a></h3>
 <p><a href="https://github.com/M4n5ter/rustlings-solutions">rustlings 5.2.1 解决方案</a></p>
 <h2 id="我的-rust-相关-vscode-拓展以及配置"><a class="header" href="#我的-rust-相关-vscode-拓展以及配置">我的 rust 相关 vscode 拓展以及配置</a></h2>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention1.png?raw=true" alt="" /></p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention2.png?raw=true" alt="" /></p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention3.png?raw=true" alt="" /></p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/rust_extention4.png?raw=true" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/rust_extention1.png" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/rust_extention2.png" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/rust_extention3.png" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/rust_extention4.png" alt="" /></p>
 <p>以及一些设置:</p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_1.png?raw=true" alt="" /></p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_2.png?raw=true" alt="" /></p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_3.png?raw=true" alt="" /></p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_4.png?raw=true" alt="" /></p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/settings_5.png?raw=true" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/settings_1.png" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/settings_2.png" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/settings_3.png" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/settings_4.png" alt="" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/settings_5.png" alt="" /></p>
 <div style="break-before: page; page-break-before: always;"></div><h3 id="简介"><a class="header" href="#简介">简介</a></h3>
 <p>Tower 是一个专注于对网络编程进行抽象的框架，将网络编程中的各行为进行抽象从而提高代码复用率。</p>
 <p>Tower 最核心的抽象为 Service trait，其接受一个 request 进行处理，成功则返回 response，否则返回 error。</p>
@@ -4215,20 +4215,20 @@ echo &quot;Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Ch
 <h3 id="原理"><a class="header" href="#原理">原理</a></h3>
 <p>与最简单的负载均衡算法类似，一致性哈希也是基于取模运算。</p>
 <p>主要结构是一个哈希环，上面有 <strong>2^32</strong> 个槽位，从 <strong>0 到 2^32-1</strong>，顺时针旋转，0 与 2^32-1处汇合。如果用服务器节点作为槽位，那么可以用 IP 地址作为标志，<strong>hash(NODE_IP) % 2^32</strong> 的结果可以作为节点所处的槽位。</p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_1.png?raw=true" alt="CS-1" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/consistent_hashing_1.png" alt="CS-1" /></p>
 <p>当有多个节点加入到哈希环中，看起来会像是这样。</p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_2.png?raw=true" alt="CH2" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/consistent_hashing_2.png" alt="CH2" /></p>
 <p>节点会分布在哈希环的各处，这里我们可以将那些被一致性哈希算法分配（可以看作被负载均衡器分配的任务）的东西称作任务，将任务的特征对<strong>2^32</strong>取模，我们可以得到一个槽位，这个操作可以看成 <strong>hash(任务) % 2^32</strong> 。接下来任务当然需要被工作节点接收，寻找工作节点的方式就是<strong>从通过对任务进行hash后取模得到的槽位开始，顺时针遇到的第一个节点会得到这个任务</strong>。</p>
 <h4 id="与简单取模的区别"><a class="header" href="#与简单取模的区别">与简单取模的区别</a></h4>
 <p>简单取模无法应对工作节点会扩容或者缩容的场景，比如在一个分布式缓存系统中，有 5 个节点，每个缓存节点都存储了大量缓存，我们通过一个 key 找到对应的 value 的方式一般就是对 key 做一次 hash 后再对 5 取模，得到存储这个 key 的节点，并从该节点中得到相应的 value。</p>
 <p>如果我们需要增加或减少一个节点，比如节点增加到了6个，那么每个 key 的 hash 都需要对 6 取模，得到的结果（也就是存储着相应 K-V 的节点）会发生变化，也就是无法通过原来的 key 找到原来存储着这对 K-V 的节点了，那么就必须调整大量节点的缓存分布。也就意味着这时大量的缓存会失效，在分布式场景中极易造成雪崩。</p>
 <p>而在一致性哈希中，如果新增或减少一个节点，相应的操作就是在哈希环上的某个槽位插入或删除一个节点，就只需要调整对应槽位相邻节点的缓存分布。无非就是在删除一个节点时，将这个节点中存储的 K-V 转移到顺时针下一个节点中；在增加一个节点的时候，在新增节点顺时针第一个节点中，寻找落在新增节点的逆时针方向的 K-V 直到遇到逆时针方向的下一个节点，并将它们调整到新节点中。</p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_3.png?raw=true" alt="CH3" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/consistent_hashing_3.png" alt="CH3" /></p>
 <p>就像图中所示，在新增节点时红色部分会被调整到新节点中，绿色部分保留在原本的节点中。</p>
 <p>在有大量节点的分布式环境中，这样调整的代价就会小很多。</p>
 <h3 id="虚拟节点"><a class="header" href="#虚拟节点">虚拟节点</a></h3>
 <p>在上面的内容中，很容易发现一个新的问题，那就是当节点的数量并不多的时候，很容易存在任务分配不均的情况，可能大量的任务落到的槽位会集中在某块区域，而其它区域的槽位则没有那么多的任务，当一个节点不堪重负被压垮后，那么压力会顺延给顺时针的下一个节点，形成雪崩。这时候就需要引入虚拟节点了。</p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/consistent_hashing_4.png?raw=true" alt="CH4" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/consistent_hashing_4.png" alt="CH4" /></p>
 <p>比如对节点多次 hash 并取模（或者其它方式，比如对第一次 hash +1 并取模得到第二个槽位），得到若干个槽位，这些槽位均代表该节点，那么就可以大大减轻任务分布不均的问题了。</p>
 <h3 id="实现"><a class="header" href="#实现">实现</a></h3>
 <h4 id="go-语言"><a class="header" href="#go-语言">GO 语言</a></h4>
@@ -4237,9 +4237,9 @@ echo &quot;Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Ch
 <pre><code class="language-go">package consistenthash
 
 import (
-	&quot;fmt&quot;
-	&quot;sort&quot;
-	&quot;sync&quot;
+ &quot;fmt&quot;
+ &quot;sort&quot;
+ &quot;sync&quot;
 )
 
 type PlaceHolder struct{}
@@ -4248,18 +4248,18 @@ type PlaceHolder struct{}
 type HashFunc func(data []byte) uint64
 
 type ConsistentHash struct {
-	lock sync.RWMutex
-	// 虚拟节点数
-	virtualNodeNum uint64
-	// 哈希环
-	ring map[uint64]string
-	// 节点和它对应的虚拟节点
-	nodes map[string][]uint64
-	// 记录当前 ring 上的所有虚拟节点.
-	// 因为 map 不可排序，我们又需要让所有的 hash 值有序
-	keys []uint64
-	// 需要使用的哈希函数
-	hashFn HashFunc
+ lock sync.RWMutex
+ // 虚拟节点数
+ virtualNodeNum uint64
+ // 哈希环
+ ring map[uint64]string
+ // 节点和它对应的虚拟节点
+ nodes map[string][]uint64
+ // 记录当前 ring 上的所有虚拟节点.
+ // 因为 map 不可排序，我们又需要让所有的 hash 值有序
+ keys []uint64
+ // 需要使用的哈希函数
+ hashFn HashFunc
 }
 
 // DefaultVirtualNodeNumber 默认虚拟节点数量,不能小于默认数量
@@ -4267,126 +4267,126 @@ var DefaultVirtualNodeNumber uint64 = 100
 
 // NewConsistentHash 创建一个一致性哈希
 func NewConsistentHash() *ConsistentHash {
-	// 目前只使用 xxhash
-	return NewCustomConsistentHash(DefaultVirtualNodeNumber, xxhashSum64)
+ // 目前只使用 xxhash
+ return NewCustomConsistentHash(DefaultVirtualNodeNumber, xxhashSum64)
 }
 
 func NewCustomConsistentHash(num uint64, hash HashFunc) *ConsistentHash {
-	if num &lt; DefaultVirtualNodeNumber {
-		num = DefaultVirtualNodeNumber
-	}
+ if num &lt; DefaultVirtualNodeNumber {
+  num = DefaultVirtualNodeNumber
+ }
 
-	if hash == nil {
-		hash = xxhashSum64
-	}
+ if hash == nil {
+  hash = xxhashSum64
+ }
 
-	return &amp;ConsistentHash{
-		virtualNodeNum: num,
-		ring:           make(map[uint64]string),
-		nodes:          make(map[string][]uint64),
-		hashFn:         hash,
-	}
+ return &amp;ConsistentHash{
+  virtualNodeNum: num,
+  ring:           make(map[uint64]string),
+  nodes:          make(map[string][]uint64),
+  hashFn:         hash,
+ }
 }
 
 // Add 添加节点
 func (ch *ConsistentHash) Add(node any) {
-	ch.AddWithVirtualNodes(node, ch.virtualNodeNum)
+ ch.AddWithVirtualNodes(node, ch.virtualNodeNum)
 }
 
 // AddWithVirtualNodes 添加节点的同时添加虚拟节点
 func (ch *ConsistentHash) AddWithVirtualNodes(node any, virtualNodeNum uint64) {
-	// 如果节点已经存在, 则先移除节点
-	ch.Remove(node)
+ // 如果节点已经存在, 则先移除节点
+ ch.Remove(node)
 
-	if virtualNodeNum &gt; ch.virtualNodeNum {
-		virtualNodeNum = ch.virtualNodeNum
-	}
+ if virtualNodeNum &gt; ch.virtualNodeNum {
+  virtualNodeNum = ch.virtualNodeNum
+ }
 
-	// 将 node 转换为字符串
-	nodeStr := Repr(node)
-	ch.lock.Lock()
-	defer ch.lock.Unlock()
-	for i := uint64(0); i &lt; virtualNodeNum; i++ {
-		// 生成虚拟节点的哈希值
-		hash := ch.hashFn([]byte(fmt.Sprintf(&quot;%s#%d&quot;, nodeStr, i)))
-		// 将虚拟节点添加到哈希环上
-		ch.ring[hash] = nodeStr
-		// 因为 map 不可排序, 所以需要记录所有的虚拟节点
-		ch.keys = append(ch.keys, hash)
-		// 在 nodes 中记录节点和它的虚拟节点, 用于移除节点
-		// (通过牺牲空间换取时间，这样就不用在移除节点的时候计算虚拟节点的哈希值)
-		ch.nodes[nodeStr] = append(ch.nodes[nodeStr], hash)
-	}
+ // 将 node 转换为字符串
+ nodeStr := Repr(node)
+ ch.lock.Lock()
+ defer ch.lock.Unlock()
+ for i := uint64(0); i &lt; virtualNodeNum; i++ {
+  // 生成虚拟节点的哈希值
+  hash := ch.hashFn([]byte(fmt.Sprintf(&quot;%s#%d&quot;, nodeStr, i)))
+  // 将虚拟节点添加到哈希环上
+  ch.ring[hash] = nodeStr
+  // 因为 map 不可排序, 所以需要记录所有的虚拟节点
+  ch.keys = append(ch.keys, hash)
+  // 在 nodes 中记录节点和它的虚拟节点, 用于移除节点
+  // (通过牺牲空间换取时间，这样就不用在移除节点的时候计算虚拟节点的哈希值)
+  ch.nodes[nodeStr] = append(ch.nodes[nodeStr], hash)
+ }
 
-	// 从小到大整理 keys
-	sort.Slice(ch.keys, func(i, j int) bool {
-		return ch.keys[i] &lt; ch.keys[j]
-	})
+ // 从小到大整理 keys
+ sort.Slice(ch.keys, func(i, j int) bool {
+  return ch.keys[i] &lt; ch.keys[j]
+ })
 }
 
 // Remove 移除节点
 func (ch *ConsistentHash) Remove(node any) {
-	ch.RemoveWithVirtualNodes(node)
+ ch.RemoveWithVirtualNodes(node)
 }
 
 // RemoveWithVirtualNodes 移除节点的同时移除虚拟节点
 func (ch *ConsistentHash) RemoveWithVirtualNodes(node any) {
-	// 将 node 转换为字符串
-	nodeStr := Repr(node)
-	// 如果节点不存在, 则直接返回
-	if _, ok := ch.nodes[nodeStr]; !ok {
-		return
-	}
+ // 将 node 转换为字符串
+ nodeStr := Repr(node)
+ // 如果节点不存在, 则直接返回
+ if _, ok := ch.nodes[nodeStr]; !ok {
+  return
+ }
 
-	ch.lock.Lock()
-	defer ch.lock.Unlock()
-	delete(ch.nodes, nodeStr)
-	for i := 0; i &lt; len(ch.nodes); i++ {
-		// 将虚拟节点从哈希环上移除
-		delete(ch.ring, ch.nodes[nodeStr][i])
-		// 从 keys 中移除虚拟节点
-		index := sort.Search(len(ch.keys), func(i int) bool {
-			return ch.keys[i] == ch.nodes[nodeStr][i]
-		})
-		if index &lt; len(ch.keys) &amp;&amp; ch.keys[index] == ch.nodes[nodeStr][i] {
-			ch.keys = append(ch.keys[:index], ch.keys[index+1:]...)
-		}
-	}
+ ch.lock.Lock()
+ defer ch.lock.Unlock()
+ delete(ch.nodes, nodeStr)
+ for i := 0; i &lt; len(ch.nodes); i++ {
+  // 将虚拟节点从哈希环上移除
+  delete(ch.ring, ch.nodes[nodeStr][i])
+  // 从 keys 中移除虚拟节点
+  index := sort.Search(len(ch.keys), func(i int) bool {
+   return ch.keys[i] == ch.nodes[nodeStr][i]
+  })
+  if index &lt; len(ch.keys) &amp;&amp; ch.keys[index] == ch.nodes[nodeStr][i] {
+   ch.keys = append(ch.keys[:index], ch.keys[index+1:]...)
+  }
+ }
 }
 
 // Get 获取 key 对应的节点
 //
 // 如果哈希环为空, 则返回 &quot;&quot; 和 false
 func (ch *ConsistentHash) Get(key any) (string, bool) {
-	ch.lock.RLock()
-	defer ch.lock.RUnlock()
-	// 将 key 转换为字符串
-	keyStr := Repr(key)
-	// 计算 key 的哈希值
-	hash := ch.hashFn([]byte(keyStr))
-	// 在哈希环上查找节点
-	return ch.search(hash)
+ ch.lock.RLock()
+ defer ch.lock.RUnlock()
+ // 将 key 转换为字符串
+ keyStr := Repr(key)
+ // 计算 key 的哈希值
+ hash := ch.hashFn([]byte(keyStr))
+ // 在哈希环上查找节点
+ return ch.search(hash)
 }
 
 // search 在哈希环上查找节点
 func (ch *ConsistentHash) search(hash uint64) (string, bool) {
-	// 如果哈希环为空, 则返回空字符串
-	if len(ch.ring) == 0 {
-		return &quot;&quot;, false
-	}
+ // 如果哈希环为空, 则返回空字符串
+ if len(ch.ring) == 0 {
+  return &quot;&quot;, false
+ }
 
-	// 如果 hash 在 ring 上直接命中，则直接返回对应 node
-	if node, ok := ch.ring[hash]; ok {
-		return node, true
-	}
+ // 如果 hash 在 ring 上直接命中，则直接返回对应 node
+ if node, ok := ch.ring[hash]; ok {
+  return node, true
+ }
 
-	// 如果未命中, 则找到第一个比它大的哈希值
-	// 因为 hash 可能会比 ring 上的所有哈希值都大，这时我们希望从头开始算，所以需要取模
-	index := sort.Search(len(ch.keys), func(i int) bool {
-		return ch.keys[i] &gt; hash
-	}) % len(ch.keys)
-	node := ch.ring[ch.keys[index]]
-	return node, true
+ // 如果未命中, 则找到第一个比它大的哈希值
+ // 因为 hash 可能会比 ring 上的所有哈希值都大，这时我们希望从头开始算，所以需要取模
+ index := sort.Search(len(ch.keys), func(i int) bool {
+  return ch.keys[i] &gt; hash
+ }) % len(ch.keys)
+ node := ch.ring[ch.keys[index]]
+ return node, true
 }
 
 </code></pre>

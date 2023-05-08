@@ -187,8 +187,8 @@
 <h2 id="将-gin-的日志输出到-zincobserve"><a class="header" href="#将-gin-的日志输出到-zincobserve">将 Gin 的日志输出到 ZincObserve</a></h2>
 <h3 id="zincbserve"><a class="header" href="#zincbserve">zincbserve</a></h3>
 <p>ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 <a href="https://github.com/zinclabs/zincobserve/releases">Releases · zinclabs/zincobserve · GitHub</a> 下载</p>
-<pre><code class="language-bash">$ wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
-$ tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
+<pre><code class="language-bash">wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
+tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
 </code></pre>
 <p>ZO 是通过环境变量的方式来配置的，会从 <code>.env</code> 读取，这里就指定一下最小配置量的环境变量。</p>
 <pre><code class="language-bash">$ cat .env
@@ -200,7 +200,7 @@ $ ./zincobserve
 <p>首先，我们需要有东西来采集日志，这里我使用 <a href="https://docs.fluentbit.io/">fluent-bit</a> ，fluent-bit 支持大量的 input 和 output 插件，其中 output 插件有 elasticsearch 支持，这里提到这个插件是因为 <strong>ZO 兼容 ES API，可以直接使用 ES output plugin</strong>，但是我这里不使用这个插件，而是直接使用 http output plugin。</p>
 <p>而 input 插件我这里就使用 tcp input ，   其实 tail 插件也可以，tail 支持从文件系统中读取日志，只需要将 gin 的日志输出一份到磁盘就行。但是使用 tcp input 的话，我们可以将fluent-bit 放在其它地方，只要网络可达就能采集日志，更加灵活。</p>
 <p>首先下载一个 fluent-bit，这里使用 docker 的方式，方便一些：</p>
-<pre><code class="language-bash">$ docker pull cr.fluentbit.io/fluent/fluent-bit:2.1.1
+<pre><code class="language-bash">docker pull cr.fluentbit.io/fluent/fluent-bit:2.1.1
 </code></pre>
 <p>具体 tags 可以去 fluent-bit 官网那看看需要哪个版本即可。</p>
 <p>准备一份配置文件:</p>
@@ -226,7 +226,7 @@ $ ./zincobserve
   HTTP_User admin@m4n5ter.email
   HTTP_Passwd uoZ9nMUEywjSLAiP
 </code></pre>
-<p>这里的 [OUTPUT] 直接访问 http://<code>&lt;IP&gt;</code>:<code>&lt;Port&gt;</code> 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。<code>URL /api/{组织}/{数据流}/_json</code> ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。</p>
+<p>这里的 [OUTPUT] 直接访问 <a href="http://">http://</a><code>&lt;IP&gt;</code>:<code>&lt;Port&gt;</code> 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。<code>URL /api/{组织}/{数据流}/_json</code> ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。</p>
 <pre><code class="language-bash">$ docker run -it --network host -v .:/data --rm --name fluent-bit cr.fluentbit.io/fluent/fluent-bit:2.1.1 \
 -c /data/config
 </code></pre>
@@ -359,7 +359,7 @@ pong
 </code></pre>
 <p>说明成功了。</p>
 <p>去 ZO WEB 页面看看:</p>
-<p><img src="https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/gin_zo1.png?raw=true" alt="gin_zo1" /></p>
+<p><img src="https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/gin_zo1.png" alt="gin_zo1" /></p>
 <p>可以看到成功了，到这里我们的目的就达成了。</p>
 <h2 id="如何替换-logstash"><a class="header" href="#如何替换-logstash">如何替换 Logstash</a></h2>
 <p>上面我们是直接将日志发送到 fluent-bit，再由 fluent-bit 直接发送给 ZO，但是如果有大量不同应用程序的日志需要搜集，那么日志会非常混乱不好管理，这时就需要在发送给 ZO 之前清洗日志了，而 Logstash 就能干这个（fluent-bit 本身也有一定这方面能力），但是 Logstash 也是蛮重量级的，我们不想要消耗这么多资源怎么办？</p>
