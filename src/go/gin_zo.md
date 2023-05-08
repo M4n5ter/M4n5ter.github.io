@@ -11,8 +11,8 @@ ZO 使用 Rust 开发（他们家的 zincsearch 是用的 go），性能极高�
 ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 [Releases · zinclabs/zincobserve · GitHub](https://github.com/zinclabs/zincobserve/releases) 下载
 
 ```bash
-$ wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
-$ tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
+wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
+tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
 ```
 
 ZO 是通过环境变量的方式来配置的，会从 `.env` 读取，这里就指定一下最小配置量的环境变量。
@@ -33,7 +33,7 @@ $ ./zincobserve
 首先下载一个 fluent-bit，这里使用 docker 的方式，方便一些：
 
 ```bash
-$ docker pull cr.fluentbit.io/fluent/fluent-bit:2.1.1
+docker pull cr.fluentbit.io/fluent/fluent-bit:2.1.1
 ```
 
 具体 tags 可以去 fluent-bit 官网那看看需要哪个版本即可。
@@ -65,7 +65,7 @@ config:
   HTTP_Passwd uoZ9nMUEywjSLAiP
 ```
 
-这里的 [OUTPUT] 直接访问 http://`<IP>`:`<Port>` 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。`URL /api/{组织}/{数据流}/_json` ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。
+这里的 [OUTPUT] 直接访问 <http://>`<IP>`:`<Port>` 在 ZO 的 WEB 界面选择采集（ingestion）后选择 fluent-bit 就能得到。`URL /api/{组织}/{数据流}/_json` ，这里的组织和数据流随便都行， 没有的话 ZO 会自动创建。
 
 ```bash
 $ docker run -it --network host -v .:/data --rm --name fluent-bit cr.fluentbit.io/fluent/fluent-bit:2.1.1 \
@@ -229,7 +229,7 @@ pong
 
 去 ZO WEB 页面看看:
 
-![gin_zo1](https://github.com/m4n5ter/m4n5ter.github.io/blob/main/assets/gin_zo1.png?raw=true)
+![gin_zo1](https://raw.githubusercontent.com/m4n5ter/m4n5ter.github.io/main/assets/gin_zo1.png)
 
 可以看到成功了，到这里我们的目的就达成了。
 
