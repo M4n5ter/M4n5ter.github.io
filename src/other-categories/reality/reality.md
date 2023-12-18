@@ -69,13 +69,13 @@ Auth | {CertificateVerify*}
 
 而 TLS 1.3 的握手过程中，密钥交换阶段是最重要的。在密钥交换阶段，客户端发送 ClientHello 消息，该消息包含一个随机数（ClientHello.random）；它提供的协议版本；一系列对称密码/HKDF哈希对；**"key_share"** 扩展中的一组 Diffie-Hellman 密钥共享，或者 "pre_shared_key" 扩展中的一组预共享密钥标签，或者两者都有；可能还有其他扩展。为了与中间件兼容，可能还存在其他字段和/或消息。
 
-服务器处理 ClientHello 并确定连接的适当加密参数。然后，它用自己的 ServerHello 进行响应，该响应指示协商的连接参数。 **ClientHello 和 ServerHello 的组合决定了共享密钥。如果正在使用 (EC)DHE 密钥建立，那么 ServerHello 将包含一个 "key_share" 扩展，其中包含服务器的临时 Diffie-Hellman 共享**；服务器的共享必须与客户端的某个共享在同一组。如果正在使用 PSK 密钥建立，那么 ServerHello 将包含一个 "pre_shared_key" 扩展，指示选择了客户端提供的哪个 PSK。请注意，实现可以同时使用 (EC)DHE 和 PSK，在这种情况下，两个扩展都将被提供。
+服务器处理 ClientHello 并确定连接的适当加密参数。然后，它用自己的 ServerHello 进行响应，该响应指示协商的连接参数。 **ClientHello 和 ServerHello 的组合决定了共享密钥。如果正在使用 (EC)DHE 密钥建立，那么 ServerHello 将包含一个 "key_share" 扩展，其中包含服务器的临时 [Diffie-Hellman](https://zhuanlan.zhihu.com/p/599518034)(阅读本文需要了解DH密钥交换) 共享**；服务器的共享必须与客户端的某个共享在同一组。如果正在使用 PSK 密钥建立，那么 ServerHello 将包含一个 "pre_shared_key" 扩展，指示选择了客户端提供的哪个 PSK。请注意，实现可以同时使用 (EC)DHE 和 PSK，在这种情况下，两个扩展都将被提供。
 
 ## REALITY 是如何工作的
 
 ### REALITY 中的密钥
 
-- Auth Key 是由客户端临时生成的 ECDHE（一种基于椭圆曲线的 DH 密钥交换算法，也是 DHKE） 密钥对和服务端配置中的 REALITY 密钥对进行 X25519 算法计算得到的，而不是使用 TLS 1.3 握手中的密钥交换得到的。而 Auth Key 用来加密和解密藏在 ClientHello sessionId 中的 shortId，同时还被用来"签名" REALITY 生成的自签证书。
+- Auth Key 是由客户端临时生成的 ECDHE（一种基于椭圆曲线的 DH 密钥交换协议，也是 DHKE） 密钥对和服务端配置中的 REALITY 密钥对进行 X25519 算法计算得到的，而不是使用 TLS 1.3 握手中的密钥交换得到的。而 Auth Key 用来加密和解密藏在 ClientHello sessionId 中的 shortId，同时还被用来"签名" REALITY 生成的自签证书。
 
 - 客户端临时生成的 ECDHE 密钥对既用来生成 Auth Key，又用来与服务端临时生成的 ECDHE 密钥对进行 TLS 1.3 中的 key share。
 
