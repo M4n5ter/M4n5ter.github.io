@@ -62,13 +62,18 @@
 .chapter li.chapter-item {
     /* 没有文件时的文字颜色 */
     color: #939da3;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 }
 
 /* 修改滚动条宽度 */
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #99ccff;
+    border-radius: 3px;
 }
 
 /* 表格靠左对齐 */
@@ -84,6 +89,10 @@ table {
 
     .nav-wrapper {
         display: block;
+        position: fixed;
+        bottom: 50px;
+        left: var(--page-padding);
+        right: var(--page-padding);
     }
 }
 
@@ -94,9 +103,14 @@ table {
 
     .sidebar-visible .nav-wrapper {
         display: block;
+        left: calc(var(--sidebar-width) + var(--page-padding));
     }
 }
 
+.mobile-nav-chapters {
+    width: 40px;
+    font-size: 2.5rem
+}
 
 /* 修改顶部图标大小 */
 /* #menu-bar {
