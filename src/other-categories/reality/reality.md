@@ -73,11 +73,19 @@ Auth | {CertificateVerify*}
 
 ## REALITY 是如何工作的
 
-### CLIENT
+### REALITY 中的密钥
+
+- Auth Key 是由客户端临时生成的 ECDHE（一种基于椭圆曲线的 DH 密钥交换算法，也是 DHKE） 密钥对和服务端配置中的 REALITY 密钥对进行 X25519 算法计算得到的，而不是使用 TLS 1.3 握手中的密钥交换得到的。而 Auth Key 用来加密和解密藏在 ClientHello sessionId 中的 shortId，同时还被用来"签名" REALITY 生成的自签证书。
+
+- 客户端临时生成的 ECDHE 密钥对即用来生成 Auth Key，又用来与服务端临时生成的 ECDHE 密钥对进行 TLS 1.3 中的 key share。
+
+- 服务端临时生成的 ECDHE 密钥对仅用来与客户端临时生成的 ECDHE 密钥对进行 TLS 1.3 中的 key share。
+
+### Client
 
 REALITY 客户端需要预先在配置中存储 REALITY 服务端的公钥，并指定与服务端约定好伪装的域名，以及自己的 **shortId**，该 shortId 应该在服务端的配置中存在。
 
-与正常客户端的区别是，REALITY 客户端会在 ClientHello 中携带 sessionId，虽然 sessionId 在 TLS 1.3 中已经不再需要，并可以为空，但为了向后兼容，sessionId 是可以存在的，REALITY 客户端会将 shortId 藏在 sessionId 中，并通过预先在配置文件中设定的 REALITY 服务器的 PUBLIC KEY 与 REALITY 客户端自己的私钥进行 DHKE 得到共享密钥，并使用 AEAD 加密算法对 sessionId 进行加密。
+与正常客户端的区别是，REALITY 客户端会在 ClientHello 中携带 sessionId，虽然 sessionId 在 TLS 1.3 中已经不再需要，并可以为空，但为了向后兼容，sessionId 是可以存在的，REALITY 客户端会将 shortId 藏在 sessionId 中，并通过预先在配置文件中设定的 REALITY 服务器的 PUBLIC KEY 与 REALITY 客户端自己临时生成的 ECDHE 私钥进行 DHKE 得到 Auth Key，并使用 Auth Key 结合 AEAD 加密算法对 sessionId 进行加密。
 
 ### Server
 
@@ -87,8 +95,26 @@ REALITY 客户端需要预先在配置中存储 REALITY 服务端的公钥，并
 2. 它会使用与客户端加密 sessionId 同样的方式来解密 ClientHello 中携带的 sessionId，如果解密失败，那么说明客户端不是 REALITY 客户端，REALITY 服务端本身将会将流量导入指定的他人的域名。
 3. 它会检查客户端发送的 **shortId** 是否在服务端的配置文件中给出，只有客户端的 **shortId** 在服务端配置中被包含，客户端才能够继续与 REALITY 服务端本身进行握手。
 
-重要的时，通过 DH 密钥交换算法，REALITY 服务端能够精准识别当前进行握手的是否是受信任的 REALITY 客户端，而不是中间人，因为中间人无法得到 REALITY 客户端的私钥（客户端的密钥对是临时生成的），也无法得到 REALITY 服务端的私钥，因此中间人无法得到 DH 密钥交换算法的共享密钥，也就无法解密 sessionId，这里的安全性是由 TLS 1.3 本身的设计保证的，而 REALITY 服务端只是利用了这个特性，并与客户端提前约定好相关配置（域名，服务端公钥，shortId 等）来甄别受信任的客户端与其他人。
+重要的是，利用 DH 密钥交换算法（计算 Auth Key 并尝试解密 sessionId），REALITY 服务端能够精准识别当前进行握手的是否是受信任的 REALITY 客户端，而不是中间人，因为中间人无法得到 REALITY 客户端的私钥（客户端的密钥对是临时生成的），也无法得到 REALITY 服务端的私钥，因此中间人无法得到 DH 密钥交换算法的共享密钥，也就无法解密 sessionId，这里的安全性是由 TLS 1.3 本身的设计保证的，而 REALITY 服务端只是利用了这个特性，并与客户端提前约定好相关配置（域名，服务端公钥，shortId 等）来甄别受信任的客户端与其他人。
 
 #### Server 的证书
 
 REALITY 服务端本身的证书是可以自签的（在实现中是通过生成一份临时自签证书，并将域名指定为与客户端约定好的他人的域名），因为 REALITY 服务端本身的证书并不会被中间人使用，中间人只会得到他人网站的证书，而不是 REALITY 服务端本身的证书。
+
+Server 会在自签的证书中添加一个 HMAC 值，而这个 HMAC 值是由 Auth Key 和 服务端临时生成的 ECDH 公钥计算得到的。
+
+#### 客户端如何识别证书
+
+因为服务端在它自签证书中添加的签名是由 Auth Key 和 服务端临时生成的 ECDH 公钥计算得到的，而这两个客户端也都持有，如果两个 HMAC 值相同，那么客户端就能够确认当前握手的服务端是受信任的 REALITY 服务端，而不是中间人。这就是 REALITY 文档中所说的 REALITY 客户端能够精准识别临时可信的证书。
+
+> REALITY 客户端应当收到由“临时认证密钥”签发的“临时可信证书”，但以下三种情况会收到目标网站的真证书：
+>
+> 1. REALITY 服务端拒绝了客户端的 Client Hello，流量被导入目标网站
+> 2. 客户端的 Client Hello 被中间人重定向至目标网站
+> 3. 中间人攻击，可能是目标网站帮忙，也可能是证书链攻击
+>
+> REALITY 客户端可以完美区分临时可信证书、真证书、无效证书，并决定下一步动作：
+>
+> 收到临时可信证书时，连接可用，一切如常
+> 收到真证书时，进入爬虫模式
+> 收到无效证书时，TLS alert，断开连接
