@@ -77,7 +77,7 @@ Auth | {CertificateVerify*}
 
 - Auth Key 是由客户端临时生成的 ECDHE（一种基于椭圆曲线的 DH 密钥交换算法，也是 DHKE） 密钥对和服务端配置中的 REALITY 密钥对进行 X25519 算法计算得到的，而不是使用 TLS 1.3 握手中的密钥交换得到的。而 Auth Key 用来加密和解密藏在 ClientHello sessionId 中的 shortId，同时还被用来"签名" REALITY 生成的自签证书。
 
-- 客户端临时生成的 ECDHE 密钥对即用来生成 Auth Key，又用来与服务端临时生成的 ECDHE 密钥对进行 TLS 1.3 中的 key share。
+- 客户端临时生成的 ECDHE 密钥对既用来生成 Auth Key，又用来与服务端临时生成的 ECDHE 密钥对进行 TLS 1.3 中的 key share。
 
 - 服务端临时生成的 ECDHE 密钥对仅用来与客户端临时生成的 ECDHE 密钥对进行 TLS 1.3 中的 key share。
 
