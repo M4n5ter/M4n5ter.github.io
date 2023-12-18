@@ -267,10 +267,10 @@ Auth | {CertificateVerify*}
 <p>在服务端，REALITY 与正常 GO TLS 库的区别在于，REALITY 会检查 ClientHello，并且在满足指定条件时才能与 REALITY 服务端本身握手，否则流量将会被导入指定的他人的域名。</p>
 <ol>
 <li>它会查看客户端指定的 <strong>SNI</strong> 是否在自己预先配置的列表中，如果在列表中，那么客户端才能够继续与 REALITY 服务端本身进行握手。</li>
-<li>它会使用与客户端加密 sessionId 同样的方式来解密 ClientHello 中携带的 sessionId，如果解密失败，那么说明客户端不是 REALITY 客户端，REALITY 服务端本身将会将流量导入指定的他人的域名。</li>
+<li>它会使用与客户端加密 sessionId 同样的方式来解密 ClientHello 中携带的 sessionId，如果解密失败，那么说明客户端不是受信任的 REALITY 客户端，REALITY 服务端此时会将流量导入指定的他人的域名。</li>
 <li>它会检查客户端发送的 <strong>shortId</strong> 是否在服务端的配置文件中给出，只有客户端的 <strong>shortId</strong> 在服务端配置中被包含，客户端才能够继续与 REALITY 服务端本身进行握手。</li>
 </ol>
-<p>重要的是，利用 DH 密钥交换算法（计算 Auth Key 并尝试解密 sessionId），REALITY 服务端能够精准识别当前进行握手的是否是受信任的 REALITY 客户端，而不是中间人，因为中间人无法得到 REALITY 客户端的私钥（客户端的密钥对是临时生成的），也无法得到 REALITY 服务端的私钥，因此中间人无法得到 DH 密钥交换算法的共享密钥，也就无法解密 sessionId，这里的安全性是由 TLS 1.3 本身的设计保证的，而 REALITY 服务端只是利用了这个特性，并与客户端提前约定好相关配置（域名，服务端公钥，shortId 等）来甄别受信任的客户端与其他人。</p>
+<p>因此，REALITY 服务端能够精准识别出客户端是否是受信任的 REALITY 客户端，而中间人对 REALITY 服务端进行主动探测时，REALITY 服务端会将流量导入指定的他人的域名，使得展现给中间人的是真实的他人网站的证书，而不是 REALITY 服务端本身的证书。</p>
 <h4 id="server-的证书"><a class="header" href="#server-的证书">Server 的证书</a></h4>
 <p>REALITY 服务端本身的证书是可以自签的（在实现中是通过生成一份临时自签证书，并将域名指定为与客户端约定好的他人的域名），因为 REALITY 服务端本身的证书并不会被中间人使用，中间人只会得到他人网站的证书，而不是 REALITY 服务端本身的证书。</p>
 <p>Server 会在自签的证书中添加一个 HMAC 值，而这个 HMAC 值是由 Auth Key 和 服务端临时生成的 ECDH 公钥计算得到的。</p>
