@@ -39,6 +39,7 @@
   - [minio](./other-categories/minio/minio.md)
   - [git](./other-categories/git/git.md)
   - [croc](./other-categories/croc/croc.md)
+  - [REALITY](./other-categories/reality/reality.md)
 
 - [Blockchain](./blockchain/blockchain.md)
   
