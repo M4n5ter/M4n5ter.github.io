@@ -6,7 +6,7 @@ ZO 使用 Rust 开发（他们家的 zincsearch 是用的 go），性能极高�
 
 ## 将 Gin 的日志输出到 ZincObserve
 
-### zincbserve
+### zincobserve
 
 ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 [Releases · zinclabs/zincobserve · GitHub](https://github.com/zinclabs/zincobserve/releases) 下载
 
