@@ -301,7 +301,7 @@ pub async fn read_frame(&amp;mut self)
         // Attempt to read more data from the socket.
         //
         // On success, the number of bytes is returned. `0`
-        // indicates &quot;end of stream&quot;.
+        // indicates "end of stream".
         if 0 == self.stream.read_buf(&amp;mut self.buffer).await? {
             // The remote closed the connection. For this to be
             // a clean shutdown, there should be no data in the
@@ -310,13 +310,13 @@ pub async fn read_frame(&amp;mut self)
             if self.buffer.is_empty() {
                 return Ok(None);
             } else {
-                return Err(&quot;connection reset by peer&quot;.into());
+                return Err("connection reset by peer".into());
             }
         }
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<p>让我们来分析一下它。 <code>read_frame</code> 方法操作了一个 loop。首先，<code>self.parse_frame()</code> 被调用。它会尝试从 <code>self.buffer</code> 解析 redis frame。如果 <code>self.buffer</code> 里的数据足够解析出一个 frame，那么这个解析出来的 frame 会从 <code>read_frame()</code> 返回。如果数据不够解析成一个 frame，我们就尝试从 socket 读取更多数据到 buffer。在读取更多数据后循环会重新开始， <code>parse_frame()</code> 会被再次调用，如此往复。这次，如果接收到了足够的数据，解析可能就会成功了。 </p>
+<p>让我们来分析一下它。 <code>read_frame</code> 方法操作了一个 loop。首先，<code>self.parse_frame()</code> 被调用。它会尝试从 <code>self.buffer</code> 解析 redis frame。如果 <code>self.buffer</code> 里的数据足够解析出一个 frame，那么这个解析出来的 frame 会从 <code>read_frame()</code> 返回。如果数据不够解析成一个 frame，我们就尝试从 socket 读取更多数据到 buffer。在读取更多数据后循环会重新开始， <code>parse_frame()</code> 会被再次调用，如此往复。这次，如果接收到了足够的数据，解析可能就会成功了。</p>
 <p>当从 stream 读取的时候，返回了一个 <code>0</code> 表示没有更多数据可以从对端接收了。如果这时候 read buffer 中还留有数据，这表示接收到的是个不完整的 frame 并且对端被意外中断了。这是一个错误条件，我们返回一个 <code>Err</code> 。</p>
 <h3 id="the-buf-trait"><a class="header" href="#the-buf-trait">The <code>Buf</code> trait</a></h3>
 <p>当从 stream 读取的时候， <code>read_buf</code> 被调用了。我们这个版本的 read function 带了一个参数，要求实现 <a href="https://docs.rs/bytes/"><code>bytes</code></a> crate 中的 <a href="https://docs.rs/bytes/1/bytes/trait.BufMut.html"><code>BufMut</code></a>。</p>
@@ -370,7 +370,7 @@ pub async fn read_frame(&amp;mut self)
             if self.cursor == 0 {
                 return Ok(None);
             } else {
-                return Err(&quot;connection reset by peer&quot;.into());
+                return Err("connection reset by peer".into());
             }
         } else {
             // Update our cursor
@@ -486,19 +486,19 @@ async fn write_frame(&amp;mut self, frame: &amp;Frame)
         Frame::Simple(val) =&gt; {
             self.stream.write_u8(b'+').await?;
             self.stream.write_all(val.as_bytes()).await?;
-            self.stream.write_all(b&quot;\r\n&quot;).await?;
+            self.stream.write_all(b"\r\n").await?;
         }
         Frame::Error(val) =&gt; {
             self.stream.write_u8(b'-').await?;
             self.stream.write_all(val.as_bytes()).await?;
-            self.stream.write_all(b&quot;\r\n&quot;).await?;
+            self.stream.write_all(b"\r\n").await?;
         }
         Frame::Integer(val) =&gt; {
             self.stream.write_u8(b':').await?;
             self.write_decimal(*val).await?;
         }
         Frame::Null =&gt; {
-            self.stream.write_all(b&quot;$-1\r\n&quot;).await?;
+            self.stream.write_all(b"$-1\r\n").await?;
         }
         Frame::Bulk(val) =&gt; {
             let len = val.len();
@@ -506,7 +506,7 @@ async fn write_frame(&amp;mut self, frame: &amp;Frame)
             self.stream.write_u8(b'$').await?;
             self.write_decimal(len as u64).await?;
             self.stream.write_all(val).await?;
-            self.stream.write_all(b&quot;\r\n&quot;).await?;
+            self.stream.write_all(b"\r\n").await?;
         }
         Frame::Array(_val) =&gt; unimplemented!(),
     }

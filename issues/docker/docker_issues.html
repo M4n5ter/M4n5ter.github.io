@@ -190,15 +190,15 @@
                 </div>
                 <main>
                     <h2 id="docker-proxy"><a class="header" href="#docker-proxy">Docker Proxy</a></h2>
-<p>安装 <code>linkerd2</code> 到 <code>k3d</code>时拉取谷歌 gcr 仓库的内容时发现使用 <code>proxychains</code> 或者 <code>export https_proxy=&quot;....&quot;</code> <code>export http_proxy=&quot;....&quot;</code> 均无法成功让 docker 用上代理，最终通过向 docker 的 service 文件 <code>[Service]</code> 块添加环境变量解决。</p>
-<pre><code class="language-text">Environment=&quot;HTTP_PROXY=http://127.0.0.1:10808&quot;
-Environment=&quot;HTTPS_PROXY=http://127.0.0.1:10808&quot;
-Environment=&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp&quot;
+<p>安装 <code>linkerd2</code> 到 <code>k3d</code>时拉取谷歌 gcr 仓库的内容时发现使用 <code>proxychains</code> 或者 <code>export https_proxy="...."</code> <code>export http_proxy="...."</code> 均无法成功让 docker 用上代理，最终通过向 docker 的 service 文件 <code>[Service]</code> 块添加环境变量解决。</p>
+<pre><code class="language-text">Environment="HTTP_PROXY=http://127.0.0.1:10808"
+Environment="HTTPS_PROXY=http://127.0.0.1:10808"
+Environment="NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
 </code></pre>
 <p><code>NO_PROXY</code> 表示后面这些地址不需要使用代理，这在希望从私有仓库拉取镜像的时候会有用，将仓库地址追加到后面就行。</p>
 <h2 id="error-creating-overlay-mount-to"><a class="header" href="#error-creating-overlay-mount-to">error creating overlay mount to...</a></h2>
 <blockquote>
-<p>&quot;强制关机后再次重启机器后发现一些 docker 容器出现了 <code>error creating overlay mount to......</code> 并且无法启动&quot;</p>
+<p>"强制关机后再次重启机器后发现一些 docker 容器出现了 <code>error creating overlay mount to......</code> 并且无法启动"</p>
 </blockquote>
 <p>该问题是与 <code>selinux</code> 相关的，有一 issue 与该问题相关<a href="https://github.com/coreos/bugs/issues/2340">#2430</a></p>
 <p>查看 <code>/etc/selinux/config</code> ，<code>selinux</code> 状态为 <code>disabled</code> ，在将其设置为 <code>permissive</code> 后重启机器解决了该问题。</p>

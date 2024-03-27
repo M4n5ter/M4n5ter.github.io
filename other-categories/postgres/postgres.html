@@ -201,7 +201,7 @@ $ docker run -d \
 -p 5432:5432 \
 -e POSTGRES_USER=&lt;YOUR USER NAME&gt; \
 -e LANG=zh_CN.utf8 \
--e POSTGRES_INITDB_ARGS=&quot;--locale-provider=icu --icu-locale=zh-CN&quot; \
+-e POSTGRES_INITDB_ARGS="--locale-provider=icu --icu-locale=zh-CN" \
 -e POSTGRES_PASSWORD=&lt;YOUR PASSWORD&gt; \
 postgres:15-alpine -c 'config_file=/etc/postgresql/postgresql.conf'
 </code></pre>
@@ -264,7 +264,7 @@ Swap:             7           0           7
 复制代码
 </code></pre>
 <p>当我们把参数修改成 512MB 的时候，可以看到<code>Sort Method</code>变成了<code>quicksort Memory</code>，变成了内存排序。</p>
-<pre><code class="language-sql">kms=&gt; set work_mem to &quot;512MB&quot;;
+<pre><code class="language-sql">kms=&gt; set work_mem to "512MB";
 SET
 kms=&gt; explain (analyze,buffers) select * from KMS_BUSINESS_HALL_TOTAL  order by buss_query_info;
                                                                 QUERY PLAN                                                                
@@ -282,13 +282,13 @@ kms=&gt; explain (analyze,buffers) select * from KMS_BUSINESS_HALL_TOTAL  order 
 </code></pre>
 <h4 id="maintenance_work_mem"><a class="header" href="#maintenance_work_mem">maintenance_work_mem</a></h4>
 <p>指定维护操作使用的最大内存量，例如（Vacuum、Create Index和Alter Table Add Foreign Key），默认值是 64MB。由于通常正常运行的数据库中不会有大量并发的此类操作，可以设置的较大一些，提高清理和创建索引外键的速度。</p>
-<pre><code class="language-sql">postgres=# set maintenance_work_mem to &quot;64MB&quot;;
+<pre><code class="language-sql">postgres=# set maintenance_work_mem to "64MB";
 SET
 Time: 1.971 ms
 postgres=# create index idx1_test on test(id);
 CREATE INDEX
 Time: 7483.621 ms (00:07.484)
-postgres=# set maintenance_work_mem to &quot;2GB&quot;;
+postgres=# set maintenance_work_mem to "2GB";
 SET
 Time: 0.543 ms
 postgres=# drop index idx1_test;
@@ -363,9 +363,9 @@ Non-sync'ed 8kB writes:
 </ul>
 <p>使用默认值，检查点将在<code>checkpoint_timeout=5min</code>。也就是每 5 分钟触发一次。而<a href="https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE">max_wal_size</a>设置是自动检查点之间增长的最大预写日志记录（WAL）量。默认是 1GB，如果超过了 1GB，则会发生检查点。这是一个软限制。在一个特殊的情况下，比如系统遭遇到短时间的高负载，日志产生几秒种就可以达到 1GB，这个速度已经明显超过了<code>checkpoint_timeout</code> ，<code>pg_wal</code>目录的大小会急剧增加。此时我们可以从日志中看到相关类似的警告。</p>
 <pre><code class="language-sql">LOG:  checkpoints are occurring too frequently (9 seconds apart)
-HINT:  Consider increasing the configuration parameter &quot;max_wal_size&quot;.
+HINT:  Consider increasing the configuration parameter "max_wal_size".
 LOG:  checkpoints are occurring too frequently (2 seconds apart)
-HINT:  Consider increasing the configuration parameter &quot;max_wal_size&quot;.
+HINT:  Consider increasing the configuration parameter "max_wal_size".
 复制代码
 </code></pre>
 <p>所以要合理配置<code>max_wal_size</code>，以避免频繁的进行检查点。一般推荐设置为 16GB 以上，不过具体设置多大还需要和工作负荷相匹配。</p>
@@ -382,7 +382,7 @@ cp ~/.config/navicat/Premium/preferences.json ~/.config/navicat/Premium/preferen
 # Clear data in dconf
 dconf reset -f /com/premiumsoft/navicat-premium/
 # Remove data fields in config file
-sed -i -E 's/,?&quot;([A-Z0-9]+)&quot;:\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json
+sed -i -E 's/,?"([A-Z0-9]+)":\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json
 </code></pre>
 <h2 id="links"><a class="header" href="#links">Links</a></h2>
 <ul>

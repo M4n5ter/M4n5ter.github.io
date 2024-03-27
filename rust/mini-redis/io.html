@@ -203,13 +203,13 @@ use tokio::io::{self, AsyncReadExt};
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut f = File::open("foo.txt").await?;
     let mut buffer = [0; 10];
 
     // read up to 10 bytes
     let n = f.read(&amp;mut buffer[..]).await?;
 
-    println!(&quot;The bytes: {:?}&quot;, &amp;buffer[..n]);
+    println!("The bytes: {:?}", &amp;buffer[..n]);
     Ok(())
 }</code></pre></pre>
 <h3 id="async-fn-read_to_end"><a class="header" href="#async-fn-read_to_end"><code>async fn read_to_end()</code></a></h3>
@@ -219,7 +219,7 @@ use tokio::fs::File;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut f = File::open("foo.txt").await?;
     let mut buffer = Vec::new();
 
     // read the whole file
@@ -233,12 +233,12 @@ use tokio::fs::File;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut file = File::create(&quot;foo.txt&quot;).await?;
+    let mut file = File::create("foo.txt").await?;
 
     // Writes some prefix of the byte string, but not necessarily all of it.
-    let n = file.write(b&quot;some bytes&quot;).await?;
+    let n = file.write(b"some bytes").await?;
 
-    println!(&quot;Wrote the first {} bytes of 'some bytes'.&quot;, n);
+    println!("Wrote the first {} bytes of 'some bytes'.", n);
     Ok(())
 }</code></pre></pre>
 <h3 id="async-fn-write_all"><a class="header" href="#async-fn-write_all"><code>async fn write_all()</code></a></h3>
@@ -248,9 +248,9 @@ use tokio::fs::File;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut file = File::create(&quot;foo.txt&quot;).await?;
+    let mut file = File::create("foo.txt").await?;
 
-    file.write_all(b&quot;some bytes&quot;).await?;
+    file.write_all(b"some bytes").await?;
     Ok(())
 }</code></pre></pre>
 <p>这两个特征都包括许多其他有用的方法。有关完整的方法列表，请参阅API文档。</p>
@@ -261,8 +261,8 @@ use tokio::io;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut reader: &amp;[u8] = b&quot;hello&quot;;
-    let mut file = File::create(&quot;foo.txt&quot;).await?;
+    let mut reader: &amp;[u8] = b"hello";
+    let mut file = File::create("foo.txt").await?;
 
     io::copy(&amp;mut reader, &amp;mut file).await?;
     Ok(())
@@ -287,7 +287,7 @@ use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+    let listener = TcpListener::bind("127.0.0.1:6142").await?;
 
     loop {
         let (mut socket, _) = listener.accept().await?;
@@ -312,13 +312,13 @@ use tokio::net::TcpStream;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let socket = TcpStream::connect(&quot;127.0.0.1:6142&quot;).await?;
+    let socket = TcpStream::connect("127.0.0.1:6142").await?;
     let (mut rd, mut wr) = io::split(socket);
 
     // Write data in the background
     tokio::spawn(async move {
-        wr.write_all(b&quot;hello\r\n&quot;).await?;
-        wr.write_all(b&quot;world\r\n&quot;).await?;
+        wr.write_all(b"hello\r\n").await?;
+        wr.write_all(b"world\r\n").await?;
 
         // 有时候，rust 的类型推断器需要一点点的帮助
         Ok::&lt;_, io::Error&gt;(())
@@ -333,7 +333,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
             break;
         }
 
-        println!(&quot;GOT {:?}&quot;, &amp;buf[..n]);
+        println!("GOT {:?}", &amp;buf[..n]);
     }
 
     Ok(())
@@ -347,7 +347,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     let (mut rd, mut wr) = socket.split();
 
     if io::copy(&amp;mut rd, &amp;mut wr).await.is_err() {
-        eprintln!(&quot;failed to copy&quot;);
+        eprintln!("failed to copy");
     }
 });
 <span class="boring">}</span></code></pre></pre>
@@ -360,7 +360,7 @@ use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+    let listener = TcpListener::bind("127.0.0.1:6142").await?;
 
     loop {
         let (mut socket, _) = listener.accept().await?;
@@ -396,7 +396,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 <pre><code class="language-zsh">yay -S netcat
 echo 你好 | nc 127.0.0.1 6142
 </code></pre>
-<p>让我们分析一下：首先，因为使用了  <code>AsyncRead</code> 和 <code>AsyncWrite</code> ，所以 extension traits （<code>AsyncReadExt</code> 和<code>AsyncWriteExt</code>）必须被引入。 </p>
+<p>让我们分析一下：首先，因为使用了  <code>AsyncRead</code> 和 <code>AsyncWrite</code> ，所以 extension traits （<code>AsyncReadExt</code> 和<code>AsyncWriteExt</code>）必须被引入。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use tokio::io::{self, AsyncReadExt, AsyncWriteExt};

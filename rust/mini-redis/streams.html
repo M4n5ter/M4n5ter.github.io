@@ -192,7 +192,7 @@
                     <h2 id="streams"><a class="header" href="#streams">Streams</a></h2>
 <p>stream 是一种异步的一系列的值。它的异步等效与 Rust 的 <a href="https://doc.rust-lang.org/book/ch13-02-iterators.html"><code>std::iter::Iterator</code></a> 并且通过 <a href="https://docs.rs/futures-core/0.3/futures_core/stream/trait.Stream.html"><code>Stream</code></a> trait 来表示。Streams 能够在 <code>async</code> functions 中被迭代。它们也可以通过适配器被转换。Tokio 在 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html"><code>StreamExt</code></a> trait 上提供了一些场景的适配器。</p>
 <p>Tokio 在一个单独的 crate 提供了 stream 支持：<code>tokio-stream</code> 。</p>
-<pre><code class="language-toml">tokio-stream = &quot;0.1&quot;
+<pre><code class="language-toml">tokio-stream = "0.1"
 </code></pre>
 <blockquote>
 <p>目前，Tokio 的 stream 实用工具存在与 <code>tokio-strean</code> crate 中。一旦 <code>Stream</code> trait 在 Rust 标准库中稳定了，Tokio 的 stream 将会被移动到 <code>tokio</code> crate 。</p>
@@ -206,7 +206,7 @@ async fn main() {
     let mut stream = tokio_stream::iter(&amp;[1, 2, 3]);
 
     while let Some(v) = stream.next().await {
-        println!(&quot;GOT = {:?}&quot;, v);
+        println!("GOT = {:?}", v);
     }
 }</code></pre></pre>
 <p>像迭代器一样，<code>next()</code> 方法返回 <code>Option&lt;T&gt;</code> ，T 是 stream 里的值的类型。接收到 <code>None</code> 表示这个 stream iteration 终止了。</p>
@@ -217,27 +217,27 @@ async fn main() {
 use mini_redis::client;
 
 async fn publish() -&gt; mini_redis::Result&lt;()&gt; {
-    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
+    let mut client = client::connect("127.0.0.1:6379").await?;
 
     // Publish some data
-    client.publish(&quot;numbers&quot;, &quot;1&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;two&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;3&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;four&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;five&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;6&quot;.into()).await?;
+    client.publish("numbers", "1".into()).await?;
+    client.publish("numbers", "two".into()).await?;
+    client.publish("numbers", "3".into()).await?;
+    client.publish("numbers", "four".into()).await?;
+    client.publish("numbers", "five".into()).await?;
+    client.publish("numbers", "6".into()).await?;
     Ok(())
 }
 
 async fn subscribe() -&gt; mini_redis::Result&lt;()&gt; {
-    let client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
-    let subscriber = client.subscribe(vec![&quot;numbers&quot;.to_string()]).await?;
+    let client = client::connect("127.0.0.1:6379").await?;
+    let subscriber = client.subscribe(vec!["numbers".to_string()]).await?;
     let messages = subscriber.into_stream();
 
     tokio::pin!(messages);
 
     while let Some(msg) = messages.next().await {
-        println!(&quot;got = {:?}&quot;, msg);
+        println!("got = {:?}", msg);
     }
 
     Ok(())
@@ -251,14 +251,14 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
 
     subscribe().await?;
 
-    println!(&quot;DONE&quot;);
+    println!("DONE");
 
     Ok(())
 }</code></pre></pre>
-<p>一个任务被生成来发布消息到 Mini-Redis server 上的 &quot;numbers&quot; channel 。然后，在主要的任务中，我们订阅 &quot;numbers&quot; channel 并且打印接收到的消息。</p>
+<p>一个任务被生成来发布消息到 Mini-Redis server 上的 "numbers" channel 。然后，在主要的任务中，我们订阅 "numbers" channel 并且打印接收到的消息。</p>
 <p>订阅之后，我们在返回的 subscriber 上调用 <a href="https://docs.rs/mini-redis/0.4/mini_redis/client/struct.Subscriber.html#method.into_stream"><code>into_stream()</code></a> 。这个方法会消费掉这个 <code>Subscriber</code> ，返回一个能在消息到达的时候生成消息的 stream 。在我们开始迭代消息之前，注意这个 stream 通过<a href="https://docs.rs/tokio/1/tokio/macro.pin.html"><code>tokio::pin!</code></a> 被  <a href="https://doc.rust-lang.org/std/pin/index.html">pin</a> 到了栈上。 在一个 stream 上调用 <code>next()</code> 要求这个 stream 是 <a href="https://doc.rust-lang.org/std/pin/index.html">pinned</a> （这也是上面用 <code>tokio::pin!</code> 的原因）。<code>into_stream()</code> 函数返回一个没有被 pin 的 stream，为了迭代这个 stream ，我们必须显式地 pin 它。</p>
 <blockquote>
-<p>当一个 Rust 的值不再能够在内存中被移动时，这个值就是 &quot;pinned&quot; 。a pinned value 的关键属性是指针可以取到 pinned data 并且调用者可以确信指针是有效的。这个特性被 <code>async/await</code> 用来支持跨 <code>.await</code> 点的借用数据。</p>
+<p>当一个 Rust 的值不再能够在内存中被移动时，这个值就是 "pinned" 。a pinned value 的关键属性是指针可以取到 pinned data 并且调用者可以确信指针是有效的。这个特性被 <code>async/await</code> 用来支持跨 <code>.await</code> 点的借用数据。</p>
 </blockquote>
 <p>如果我们忘记 pin the stream，我们会得到一个像这样的错误：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -284,12 +284,12 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
 <pre><code class="language-zsh">mini-redis-server
 </code></pre>
 <p>然后尝试运行上面的代码。我们将会看到消息被输出到了 STDOUT。</p>
-<pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;two&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;four&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;five&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
+<pre><code class="language-textile">got = Ok(Message { channel: "numbers", content: b"1" })
+got = Ok(Message { channel: "numbers", content: b"two" })
+got = Ok(Message { channel: "numbers", content: b"3" })
+got = Ok(Message { channel: "numbers", content: b"four" })
+got = Ok(Message { channel: "numbers", content: b"five" })
+got = Ok(Message { channel: "numbers", content: b"6" })
 </code></pre>
 <p>由于订阅和发布之间存在竞争，一些早期消息可能会被删除。该程序永远不会退出。只要服务器处于活动状态，对 Mini-Redis 频道的订阅就会保持活动状态。</p>
 <p>让我们看看可以怎么来用 stream 拓展这个程序。</p>
@@ -303,9 +303,9 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
     .take(3);
 <span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到了：</p>
-<pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;two&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
+<pre><code class="language-textile">got = Ok(Message { channel: "numbers", content: b"1" })
+got = Ok(Message { channel: "numbers", content: b"two" })
+got = Ok(Message { channel: "numbers", content: b"3" })
 </code></pre>
 <p>这次程序结束了。</p>
 <p>现在，让我们把 stream 限制为个位数，我们将会通过检查消息的长度来确保此事。我们使用 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter"><code>filter</code></a> adapter 来 drop 任何不匹配先决条件的消息。</p>
@@ -320,9 +320,9 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
     .take(3);
 <span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到：</p>
-<pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
+<pre><code class="language-textile">got = Ok(Message { channel: "numbers", content: b"1" })
+got = Ok(Message { channel: "numbers", content: b"3" })
+got = Ok(Message { channel: "numbers", content: b"6" })
 </code></pre>
 <p>请注意，adapter 的应用顺序很重要。先调用 <code>filter</code> 然后 <code>take</code> 是跟先 <code>take</code> 然后 <code>filter</code> 不一样的（这很好理解，先 <code>take</code> 的话，就会在前三个里找内容是个位数的消息）。</p>
 <p>最后，我们将通过剥离 <code>Ok(Message{...})</code> 部分来整理输出，这通过 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.map"><code>map</code></a> 来完成。因为这是在 <code>filter</code> 之后被应用的，我们能知道消息是 <code>Ok</code>，所以我们可以使用 <code>unwrap()</code> 。</p>
@@ -338,9 +338,9 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
     .take(3);
 <span class="boring">}</span></code></pre></pre>
 <p>现在，输出是：</p>
-<pre><code class="language-textile">got = b&quot;1&quot;
-got = b&quot;3&quot;
-got = b&quot;6&quot;
+<pre><code class="language-textile">got = b"1"
+got = b"3"
+got = b"6"
 </code></pre>
 <p>另一种选择是使用 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter_map"><code>filter_map</code></a> 将 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter"><code>filter</code></a> 和 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.map"><code>map</code></a> 两个步骤组合起来作为一个单次调用。</p>
 <p>在<a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html">这里</a>可以找到更多可用的 adapter。</p>

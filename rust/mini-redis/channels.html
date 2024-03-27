@@ -213,15 +213,15 @@ mv src/main.rs src/bin/server.rs
 #[tokio::main]
 async fn main() {
     // Establish a connection to the server
-    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let mut client = client::connect("127.0.0.1:6379").await.unwrap();
 
     // Spawn two tasks, one gets a key, the other sets a key
     let t1 = tokio::spawn(async {
-        let res = client.get(&quot;hello&quot;).await;
+        let res = client.get("hello").await;
     });
 
     let t2 = tokio::spawn(async {
-        client.set(&quot;foo&quot;, &quot;bar&quot;.into()).await;
+        client.set("foo", "bar".into()).await;
     });
 
     t1.await.unwrap();
@@ -289,19 +289,19 @@ async fn main() {
     let tx2 = tx.clone();
 
     tokio::spawn(async move {
-        tx.send(&quot;sending from first handle&quot;).await;
+        tx.send("sending from first handle").await;
     });
 
     tokio::spawn(async move {
-        tx2.send(&quot;sending from second handle&quot;).await;
+        tx2.send("sending from second handle").await;
     });
 
     while let Some(message) = rx.recv().await {
-        println!(&quot;GOT = {}&quot;, message);
+        println!("GOT = {}", message);
     }
 }</code></pre></pre>
 <p>两条消息都被发送到了单个 <code>Receiver</code> 句柄。在 <code>mpsc</code> channel 中克隆 receiver 是不被允许的。</p>
-<p>当每个 <code>Sender</code> 超出作用域或者因为其他原因被 drop 了，就不再能往这个 channel 发送更多消息了。此时，在 <code>Receiver</code> 上调用 <code>recv</code> 将会返回 <code>None</code>，这意味着所有的 sender 都不在了，channel 被关闭了。 </p>
+<p>当每个 <code>Sender</code> 超出作用域或者因为其他原因被 drop 了，就不再能往这个 channel 发送更多消息了。此时，在 <code>Receiver</code> 上调用 <code>recv</code> 将会返回 <code>None</code>，这意味着所有的 sender 都不在了，channel 被关闭了。</p>
 <p>在我们的场景下，管理 redis connection 的任务知道一旦 channel 被关闭，就得关闭 redis connection，因为 connection 不会再被使用了。</p>
 <h2 id="spawn-manager-task-生成管理者任务"><a class="header" href="#spawn-manager-task-生成管理者任务">Spawn manager task （生成管理者任务）</a></h2>
 <p>接下来，生成一个任务来处理来自 channel 的消息。首先，一个对 redis 的客户端连接会被建立。然后，受到的命令会通过 redis connection 被发送。</p>
@@ -311,7 +311,7 @@ async fn main() {
 // The `move` keyword is used to **move** ownership of `rx` into the task.
 let manager = tokio::spawn(async move {
     // Establish a connection to the server
-    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let mut client = client::connect("127.0.0.1:6379").await.unwrap();
 
     // Start receiving messages
     while let Some(cmd) = rx.recv().await {
@@ -338,7 +338,7 @@ let tx2 = tx.clone();
 // Spawn two tasks, one gets a key, the other sets a key
 let t1 = tokio::spawn(async move {
     let cmd = Command::Get {
-        key: &quot;hello&quot;.to_string(),
+        key: "hello".to_string(),
     };
 
     tx.send(cmd).await.unwrap();
@@ -346,8 +346,8 @@ let t1 = tokio::spawn(async move {
 
 let t2 = tokio::spawn(async move {
     let cmd = Command::Set {
-        key: &quot;foo&quot;.to_string(),
-        val: &quot;bar&quot;.into(),
+        key: "foo".to_string(),
+        val: "bar".into(),
     };
 
     tx2.send(cmd).await.unwrap();
@@ -402,7 +402,7 @@ type Responder&lt;T&gt; = oneshot::Sender&lt;mini_redis::Result&lt;T&gt;&gt;;
 </span>let t1 = tokio::spawn(async move {
     let (resp_tx, resp_rx) = oneshot::channel();
     let cmd = Command::Get {
-        key: &quot;hello&quot;.to_string(),
+        key: "hello".to_string(),
         resp: resp_tx,
     };
 
@@ -411,14 +411,14 @@ type Responder&lt;T&gt; = oneshot::Sender&lt;mini_redis::Result&lt;T&gt;&gt;;
 
     // Await the response
     let res = resp_rx.await;
-    println!(&quot;GOT = {:?}&quot;, res);
+    println!("GOT = {:?}", res);
 });
 
 let t2 = tokio::spawn(async move {
     let (resp_tx, resp_rx) = oneshot::channel();
     let cmd = Command::Set {
-        key: &quot;foo&quot;.to_string(),
-        val: &quot;bar&quot;.into(),
+        key: "foo".to_string(),
+        val: "bar".into(),
         resp: resp_tx,
     };
 
@@ -427,7 +427,7 @@ let t2 = tokio::spawn(async move {
 
     // Await the response
     let res = resp_rx.await;
-    println!(&quot;GOT = {:?}&quot;, res);
+    println!("GOT = {:?}", res);
 });
 <span class="boring">}</span></code></pre></pre>
 <p>在 <code>oneshot::Sender</code> 上的 <code>send</code> 调用是立即完成的，<strong>不需要</strong>一个 <code>.await</code> 。这是因为 <code>oneshot</code> channel 上的 <code>send</code> 总是立即返回 succeed 或者 fail ，而不需要任何形式的等待。</p>

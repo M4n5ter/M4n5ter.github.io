@@ -200,7 +200,7 @@
 <p><a href="https://github.com/zinclabs/zincobserve">ZincObserve</a> （以下简称 ZO）是由 zinclabs 开源的一款日志搜索引擎（他们之前有一款产品叫做 zincsearch，现在已经基本由社区驱动，原因是他们最初的目的是开发一款在日志搜索领域做的最好的软件，现在已经全部精力投入到 ZincObserve了），目的是在 logs,metrics,traces 搜索领域替代 elasticsearch ，我们都知道 elasticsearch 非常笨重，资源消耗极大，而 ZO 专精与日志搜索，所以全文搜索、向量搜索等请移步 meilisearch、zincsearch、elasticsearch、qdrant 等其它软件。</p>
 <p>ZO 使用 Rust 开发（他们家的 zincsearch 是用的 go），性能极高，<strong>存储成本仅仅为 elasticsearch 的 1/140</strong>。目前 ZO 的后端部分已经基本稳定，现在提出的 bugs 基本都是前端问题。虽然 ZO 从版本号来看还没有为生产做好准备，但是鉴于 zincsearch 的优良表现，我们完全可以相信 zinclabs 的能力（毕竟他们创立的目的就是为了开发一款世界上最好的日志搜索软件）。</p>
 <h2 id="将-gin-的日志输出到-zincobserve"><a class="header" href="#将-gin-的日志输出到-zincobserve">将 Gin 的日志输出到 ZincObserve</a></h2>
-<h3 id="zincbserve"><a class="header" href="#zincbserve">zincbserve</a></h3>
+<h3 id="zincobserve-1"><a class="header" href="#zincobserve-1">zincobserve</a></h3>
 <p>ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 <a href="https://github.com/zinclabs/zincobserve/releases">Releases · zinclabs/zincobserve · GitHub</a> 下载</p>
 <pre><code class="language-bash">wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
 tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
@@ -255,11 +255,11 @@ $ ./zincobserve
 <pre><code class="language-go">package main
 
 import (
-    &quot;fmt&quot;
-    &quot;github.com/gin-gonic/gin&quot;
-    &quot;io&quot;
-    &quot;net&quot;
-    &quot;time&quot;
+    "fmt"
+    "github.com/gin-gonic/gin"
+    "io"
+    "net"
+    "time"
 )
 
 // 确保 FluentBit 实现了 io.Writer 接口
@@ -269,7 +269,7 @@ var (
     // DefaultInterval 默认与 fluent-bit 的连接断开后，重连的间隔时间
     DefaultInterval = time.Second
     // Address fluent-bit 的地址
-    Address = &quot;127.0.0.1:5170&quot;
+    Address = "127.0.0.1:5170"
 )
 
 // FluentBit 表示与 fluent-bit 的连接
@@ -298,7 +298,7 @@ func main() {
     go func() {
         for {
             &lt;-fb.intervalTicker
-            if _, err := fb.Write([]byte(&quot;&quot;)); err != nil {
+            if _, err := fb.Write([]byte("")); err != nil {
                 fb.Reconnect()
             }
         }
@@ -309,7 +309,7 @@ func main() {
     // ZO 会根据接收到日志的时间自动添加 _timestamp 字段
     // 这里我们自己指定一个 _timestamp，这样 ZO 会直接使用我们添加的
     r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-        return fmt.Sprintf(`{&quot;_timestamp&quot;:&quot;%d&quot;,&quot;log&quot;:&quot;%s -  %s %s %s %d %s %s %s&quot;}`,
+        return fmt.Sprintf(`{"_timestamp":"%d","log":"%s -  %s %s %s %d %s %s %s"}`,
             param.TimeStamp.UnixNano(),
             param.ClientIP,
             param.Method,
@@ -323,11 +323,11 @@ func main() {
     }))
     r.Use(gin.Recovery())
     // 简单的 ping pong 用来测试
-    r.GET(&quot;/ping&quot;, func(c *gin.Context) {
-        c.String(200, &quot;pong&quot;)
+    r.GET("/ping", func(c *gin.Context) {
+        c.String(200, "pong")
     })
 
-    _ = r.Run(&quot;:8080&quot;)
+    _ = r.Run(":8080")
 }
 
 func (f *FluentBit) Write(b []byte) (n int, err error) {
@@ -338,14 +338,14 @@ func (f *FluentBit) Close() {
 }
 
 func (f *FluentBit) Connect() {
-    conn, _ := net.Dial(&quot;tcp&quot;, f.address)
+    conn, _ := net.Dial("tcp", f.address)
     f.conn = conn
 }
 
 func (f *FluentBit) Reconnect() {
     f.Close()
     f.Connect()
-    _, _ = f.Write([]byte(`{&quot;message&quot;:&quot;reconnect to fluent-bit&quot;}`))
+    _, _ = f.Write([]byte(`{"message":"reconnect to fluent-bit"}`))
 }
 </code></pre>
 <p>这里为 <code>FluentBit</code> 实现的方法，它们的方法对象都是 <code>*FluentBit</code>，原因是在 GO 中都是值传递，如果方法对象是 <code>FluentBit</code> ，那么在调用方法的时候 <code>FluentBit</code> 结构体会被克隆一份然后在克隆出来的<code>FluentBit</code>上执行方法。</p>
@@ -370,7 +370,7 @@ pong
 </code></pre>
 <p>这时 fluent-bit 中新打印了一条:</p>
 <pre><code class="language-textile">[ info] [output:http:http.0] localhost:5080, HTTP status=200
-{&quot;code&quot;:200,&quot;status&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;successful&quot;:1,&quot;failed&quot;:0}]}
+{"code":200,"status":[{"name":"default","successful":1,"failed":0}]}
 </code></pre>
 <p>说明成功了。</p>
 <p>去 ZO WEB 页面看看:</p>
@@ -380,7 +380,7 @@ pong
 <p>上面我们是直接将日志发送到 fluent-bit，再由 fluent-bit 直接发送给 ZO，但是如果有大量不同应用程序的日志需要搜集，那么日志会非常混乱不好管理，这时就需要在发送给 ZO 之前清洗日志了，而 Logstash 就能干这个（fluent-bit 本身也有一定这方面能力），但是 Logstash 也是蛮重量级的，我们不想要消耗这么多资源怎么办？</p>
 <p>go-zero 的作者 kevwan 有开源一个项目，叫做 <a href="https://github.com/kevwan/go-stash">go-stash</a> ，能够从 kafka 摄取数据并加工后发送到 elasticsearch ，并且吞吐量能达到 logstash 的 5倍。</p>
 <p>但是但是吧，Kafka 也是蛮重量级的，如果业务环境中本身没有 kafka ，为了这个特地多加一个 kafka，系统复杂度上去了不说，还有额外运维成本，还有服务器资源成本。那有没有轻量级的替代呢？也有，CNCF的云原生消息系统 <a href="https://nats.io/">NATS</a> 可以替换 kafka，并且 NATS 也能直接和 fluent-bit 联动。</p>
-<h2 id="写一个自己的-go-stash"><a class="header" href="#写一个自己的-go-stash">写一个自己的 &quot;go-stash&quot;</a></h2>
+<h2 id="写一个自己的-go-stash"><a class="header" href="#写一个自己的-go-stash">写一个自己的 "go-stash"</a></h2>
 <p>我们还是需要一个类似于 go-stash 的东西，来加工 fluent-bit 收集的日志，需要能够直接支持从 fluent-bit 接收数据，和从 NATS 接收数据并加工处理后发送到 ZO。</p>
 <p>需求:</p>
 <ol>
@@ -759,7 +759,7 @@ where
 
         self.inner.call(request);
       }
-      State::Limited =&gt; panic!(&quot;service not ready&quot;)
+      State::Limited =&gt; panic!("service not ready")
     }
   }
 }
@@ -906,7 +906,7 @@ where
 <li>Retrying: 等待里层 Service poll_ready 的中间态，如果里层 Service 已经 Ready，则调用里层 Service 的call函数生成 service_future 并跳到 Called(service_future) 状态</li>
 </ul>
 <h3 id="spawnready-中间件"><a class="header" href="#spawnready-中间件">SpawnReady 中间件</a></h3>
-<p>SpawnReady 在官方文档上的介绍是 &quot;Drive a service to readiness on a background task&quot;。如果我们需要尽快察觉到某个 Service 已经 ready，那我们可能会经常去 poll_ready 一下，而 SpawnReady 就是将这件事包装为一个 Service，并且在内部包装一个 task 用于检查内层 Service 是否 ready。假设 executor 里面只有两个 task，那么一个是真正在做事的 task，另一个则是检查前一个 task 是否 ready 的 task。</p>
+<p>SpawnReady 在官方文档上的介绍是 "Drive a service to readiness on a background task"。如果我们需要尽快察觉到某个 Service 已经 ready，那我们可能会经常去 poll_ready 一下，而 SpawnReady 就是将这件事包装为一个 Service，并且在内部包装一个 task 用于检查内层 Service 是否 ready。假设 executor 里面只有两个 task，那么一个是真正在做事的 task，另一个则是检查前一个 task 是否 ready 的 task。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl&lt;S, Req&gt; Service&lt;Req&gt; for SpawnReady&lt;S&gt;
@@ -923,10 +923,10 @@ where
         loop {
             self.inner = match self.inner {
                 Inner::Service(ref mut svc) =&gt; {
-                    if let Poll::Ready(r) = svc.as_mut().expect(&quot;illegal state&quot;).poll_ready(cx) {
+                    if let Poll::Ready(r) = svc.as_mut().expect("illegal state").poll_ready(cx) {
                         return Poll::Ready(r.map_err(Into::into));
                     }
-                    let svc = svc.take().expect(&quot;illegal state&quot;);
+                    let svc = svc.take().expect("illegal state");
                     let rx =   tokio::spawn(svc.ready_oneshot().map_err(Into::into).in_current_span());
                     Inner::Future(rx)
                 }
@@ -988,7 +988,7 @@ where
     fn call(&amp;mut self, req: Req) -&gt; Self::Future {
         assert!(
             self.not_ready.is_empty(),
-            &quot;Steer must wait for all services to be ready. Did you forget to call poll_ready()?&quot;
+            "Steer must wait for all services to be ready. Did you forget to call poll_ready()?"
         );
 ​
         let idx = self.router.pick(&amp;req, &amp;self.services[..]);
@@ -1042,8 +1042,8 @@ cd my-redis
 </code></pre>
 <h3 id="添加依赖"><a class="header" href="#添加依赖">添加依赖</a></h3>
 <p>接下来打开 <code>Cargo.toml</code> 并把下面的内容添加到 <code>[dependencies]</code> 下：</p>
-<pre><code class="language-toml">tokio = { version = &quot;1&quot;, features = [&quot;full&quot;] }
-mini-redis = &quot;0.4&quot;
+<pre><code class="language-toml">tokio = { version = "1", features = ["full"] }
+mini-redis = "0.4"
 </code></pre>
 <h3 id="写代码"><a class="header" href="#写代码">写代码</a></h3>
 <p>然后打开 <code>main.rs</code> 并将文件的内容替换成下面的：</p>
@@ -1052,15 +1052,15 @@ mini-redis = &quot;0.4&quot;
 #[tokio::main]
 async fn main() -&gt; Result&lt;()&gt; {
     // 向 mini-redis 的地址打开一个连接.
-    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
+    let mut client = client::connect("127.0.0.1:6379").await?;
 
     // 设置一个叫 `hello` 的 key，它的内容是 `world`
-    client.set(&quot;hello&quot;, &quot;world&quot;.into()).await?;
+    client.set("hello", "world".into()).await?;
 
     // 去 get 这个 `hello`
-    let result = client.get(&quot;hello&quot;).await?;
+    let result = client.get("hello").await?;
 
-    println!(&quot;从服务端得到了值; result={:?}&quot;, result);
+    println!("从服务端得到了值; result={:?}", result);
 
     Ok(())
 }</code></pre></pre>
@@ -1071,16 +1071,16 @@ async fn main() -&gt; Result&lt;()&gt; {
 <pre><code class="language-zsh">❯ cargo run         
     Finished dev [unoptimized + debuginfo] target(s) in 0.15s
      Running `target/debug/my-redis`
-从服务端得到了值; result=Some(b&quot;world&quot;)
+从服务端得到了值; result=Some(b"world")
 </code></pre>
 <p>这样便是成功了，也算是即将要开始 coding 了！</p>
 <h2 id="看看具体发生什么"><a class="header" href="#看看具体发生什么">看看具体发生什么</a></h2>
 <p>让我们回顾一下刚刚做的事情，代码量不多，但是其实发生了很多事情。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
+</span>let mut client = client::connect("127.0.0.1:6379").await?;
 <span class="boring">}</span></code></pre></pre>
-<p><code>client::connect</code> 函数是由 <code>mini_redis</code> 这个 crate 提供的。它通过<strong>异步</strong>的方式向指定的地址建立一个 TCP 连接。一旦连接成功建立了，将会返回一个 <code>Client</code> handle(中文叫句柄)（这里给它起了个名 &quot;client&quot;）。</p>
+<p><code>client::connect</code> 函数是由 <code>mini_redis</code> 这个 crate 提供的。它通过<strong>异步</strong>的方式向指定的地址建立一个 TCP 连接。一旦连接成功建立了，将会返回一个 <code>Client</code> handle(中文叫句柄)（这里给它起了个名 "client"）。</p>
 <p>即使这个操作是<strong>异步</strong>执行的，但是我们写的这个代码看起来像是<strong>同步</strong>的。通过 <code>.await</code> 操作符来表明这是一个异步操作。</p>
 <h3 id="何为异步编程"><a class="header" href="#何为异步编程">何为异步编程？</a></h3>
 <p>相信看过 <code>The book</code> 或者 <code>Rust course</code> 的大伙都知道，下面就贴原文啦～</p>
@@ -1123,7 +1123,7 @@ pub async fn connect&lt;T: ToSocketAddrs&gt;(addr: T) -&gt; Result&lt;Client&gt;
 <p>如果要真正地去执行这个操作，需要对这个返回值使用 <code>.await</code> 操作符。</p>
 <p>就像下面这样：</p>
 <pre><pre class="playground"><code class="language-rust">async fn say_world() {
-    println!(&quot;world&quot;);
+    println!("world");
 }
 
 #[tokio::main]
@@ -1132,7 +1132,7 @@ async fn main() {
     let op = say_world();
 
     // 这个 println! 会先出现。
-    println!(&quot;hello&quot;);
+    println!("hello");
 
     // 对 `op` 调用 `.await`。
     op.await;
@@ -1158,19 +1158,19 @@ world
 <p>例如以下内容：</p>
 <pre><pre class="playground"><code class="language-rust">#[tokio::main]
 async fn main() {
-    println!(&quot;hello&quot;);
+    println!("hello");
 }</code></pre></pre>
 <p>被转化成：</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
     let mut rt = tokio::runtime::Runtime::new().unwrap();
     rt.block_on(async {
-        println!(&quot;hello&quot;);
+        println!("hello");
     })
 }</code></pre></pre>
 <p><code>tokio runtime</code> 的细节将在后面介绍。</p>
 <h3 id="cargo-features"><a class="header" href="#cargo-features">Cargo features</a></h3>
 <p>在本教程引入 <code>tokio</code> 依赖时，<code>full</code> feature flag 被启用了。</p>
-<pre><code class="language-toml">tokio = { version = &quot;1&quot;, features = [&quot;full&quot;] }
+<pre><code class="language-toml">tokio = { version = "1", features = ["full"] }
 </code></pre>
 <p><code>Tokio</code> 有很多功能（<code>TCP</code>、<code>UDP</code>、<code>Unix sockets</code>、<code>timer</code>、<code>sync utilities</code>、<code>multiple scheduler types</code> 等）。并非所有应用程序都需要所有功能(<code>full</code>)。当尝试优化编译时间或最终应用程序占用空间时，应用程序可以决定只选择它用到的那些功能。</p>
 <p>目前，我们在依赖 <code>tokio</code> 时使用 <code>full</code> feature，来方便 code。</p>
@@ -1185,7 +1185,7 @@ mv src/main.rs examples/hello-redis.rs
 <p>英语水平有限，这小标题只能翻译成这样了 :(</p>
 <p>首先我们的 Redis server 第一件需要做的事情就是<strong>接受入站的 TCP sockets</strong>。用 <strong><code>tokio::net::TcpListener</code></strong> 来完成。</p>
 <blockquote>
-<p>Tokio 的许多类型用了与 Rust 标准库中的等价的同步类型一样的名字。并且 Tokio 使用 <code>async fn</code> 暴露了与 <strong><code>std</code></strong> 相同的 <code>APIs</code> </p>
+<p>Tokio 的许多类型用了与 Rust 标准库中的等价的同步类型一样的名字。并且 Tokio 使用 <code>async fn</code> 暴露了与 <strong><code>std</code></strong> 相同的 <code>APIs</code></p>
 </blockquote>
 <p>一个 <code>TcpListener</code> 绑定在 <strong>6379</strong> 端口，接着 socket 们会在一个 loop 中被接受。每个 socket 都会被处理然后关闭。现在，为门将要读取命令，然后打印它到标准输出，并且回复一个 error。</p>
 <pre><pre class="playground"><code class="language-rust">use mini_redis::{Connection, Frame};
@@ -1194,7 +1194,7 @@ use tokio::net::{TcpListener, TcpStream};
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
@@ -1209,10 +1209,10 @@ async fn process(socket: TcpStream) {
     let mut connection = Connection::new(socket);
 
     if let Some(frame) = connection.read_frame().await.unwrap() {
-        println!(&quot;GOT: {:?}&quot;, frame);
+        println!("GOT: {:?}", frame);
 
         // Respond with an error
-        let response = Frame::Error(&quot;unimplemented&quot;.to_string());
+        let response = Frame::Error("unimplemented".to_string());
         connection.write_frame(&amp;response).await.unwrap();
     }
 }</code></pre></pre>
@@ -1223,10 +1223,10 @@ async fn process(socket: TcpStream) {
 <pre><code class="language-zsh">cargo run --example hello-redis
 </code></pre>
 <p>输出应该得是像下面这样：</p>
-<pre><code class="language-zsh">Error: &quot;unimplemented&quot;
+<pre><code class="language-zsh">Error: "unimplemented"
 </code></pre>
 <p>在跑服务端的那个终端，输出应该是下面这样：</p>
-<pre><code class="language-zsh">GOT: Array([Bulk(b&quot;set&quot;), Bulk(b&quot;hello&quot;), Bulk(b&quot;world&quot;)])
+<pre><code class="language-zsh">GOT: Array([Bulk(b"set"), Bulk(b"hello"), Bulk(b"world")])
 </code></pre>
 <h2 id="concurrency-并发"><a class="header" href="#concurrency-并发">Concurrency （并发）</a></h2>
 <p>我们的 server 有一个问题（除去只回复了错误）。它一次只会处理一个入站请求：当一个连接被接受，我们的 server 停留在 accept loop 里面，直到 <code>response</code> 被完全写入 socket。</p>
@@ -1242,7 +1242,7 @@ async fn process(socket: TcpStream) {
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
@@ -1260,13 +1260,13 @@ async fn main() {
 async fn main() {
     let handle = tokio::spawn(async {
         // 在这里做了一些异步的事情
-        &quot;return value&quot;
+        "return value"
     });
 
     // 又做了一些别的事情
 
     let out = handle.await.unwrap();
-    println!(&quot;GOT {}&quot;, out);
+    println!("GOT {}", out);
 }</code></pre></pre>
 <p><code>.await</code> 会让出当前线程的控制权，并等待 <code>JoinHandle</code> 返回一个 <code>Result</code>。当一个任务在执行期间遇到了一个错误，<code>JoinHandle</code> 将会返回一个 <code>Err</code> ，当任务 panic 又或者是因为 <code>runtime</code> 关闭而被强制取消也会发生前面那个事件。</p>
 <p>Task 是由 scheduler 管理的执行单位。Spawn (生产) 一个任务会把任务提交给 Tokio scheduler来确保任务在有工作要做时执行。生产出来的任务可能会在它们被生产的线程上执行，也有可能会在不一样的 <code>runtime thread</code> 上被执行。任务被生产后也能够在不同线程间移动。</p>
@@ -1274,7 +1274,7 @@ async fn main() {
 <h2 id="static-bound静态生命周期绑定"><a class="header" href="#static-bound静态生命周期绑定"><code>'static</code> bound（静态生命周期绑定）</a></h2>
 <p>当我们在 Tokio runtime 上生成了一个任务，其类型的生命周期必须是 <code>'static</code>。这意味着生成的任务不得包含对任务外部拥有的数据的任何引用。</p>
 <blockquote>
-<p>一个常见的错觉是：<code>'static</code> 总是意味着 &quot;永远存活&quot;，但事实并非如此。仅仅因为一个值是静态的并不意味着你有内存泄漏。想知道更多可以看这里 <a href="https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md#2-if-t-static-then-t-must-be-valid-for-the-entire-program">Common Rust Lifetime Misconceptions</a> 。</p>
+<p>一个常见的错觉是：<code>'static</code> 总是意味着 "永远存活"，但事实并非如此。仅仅因为一个值是静态的并不意味着你有内存泄漏。想知道更多可以看这里 <a href="https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md#2-if-t-static-then-t-must-be-valid-for-the-entire-program">Common Rust Lifetime Misconceptions</a> 。</p>
 </blockquote>
 <p>举个不能被编译通过的例子:D</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::task;
@@ -1284,7 +1284,7 @@ async fn main() {
     let v = vec![1, 2, 3];
 
     task::spawn(async {
-        println!(&quot;Here's a vec: {:?}&quot;, v);
+        println!("Here's a vec: {:?}", v);
     });
 }</code></pre></pre>
 <p>尝试编译它会有如下报错：</p>
@@ -1296,7 +1296,7 @@ async fn main() {
   |
 7 |       task::spawn(async {
   |  _______________________^
-8 | |         println!(&quot;Here's a vec: {:?}&quot;, v);
+8 | |         println!("Here's a vec: {:?}", v);
   | |                                        - `v` is borrowed here
 9 | |     });
   | |_____^ may outlive borrowed value `v`
@@ -1306,14 +1306,14 @@ note: function requires argument type to outlive `'static`
   |
 7 |       task::spawn(async {
   |  _________________^
-8 | |         println!(&quot;Here's a vector: {:?}&quot;, v);
+8 | |         println!("Here's a vector: {:?}", v);
 9 | |     });
   | |_____^
 help: to force the async block to take ownership of `v` (and any other
       referenced variables), use the `move` keyword
   |
 7 |     task::spawn(async move {
-8 |         println!(&quot;Here's a vec: {:?}&quot;, v);
+8 |         println!("Here's a vec: {:?}", v);
 9 |     });
   |
 <span class="boring">}</span></code></pre></pre>
@@ -1324,11 +1324,11 @@ help: to force the async block to take ownership of `v` (and any other
 <blockquote>
 <p>Note that the error message talks about the argument type <em>outliving</em> the <code>'static</code> lifetime. This terminology can be rather confusing because the <code>'static</code> lifetime lasts until the end of the program, so if it outlives it, don't you have a memory leak? The explanation is that it is the <em>type</em>, not the <em>value</em> that must outlive the <code>'static</code> lifetime, and the value may be destroyed before its type is no longer valid.</p>
 <p>When we say that a value is <code>'static</code>, all that means is that it would not be incorrect to keep that value around forever. This is important because the compiler is unable to reason about how long a newly spawned task stays around. We have to make sure that the task is allowed to live forever, so that Tokio can make the task run as long as it needs to.</p>
-<p>The article that the info-box earlier links to uses the terminology &quot;bounded by <code>'static</code>&quot; rather than &quot;its type outlives <code>'static</code>&quot; or &quot;the value is <code>'static</code>&quot; to refer to <code>T: 'static</code>. These all mean the same thing, but are different from &quot;annotated with <code>'static</code>&quot; as in <code>&amp;'static T</code>.</p>
+<p>The article that the info-box earlier links to uses the terminology "bounded by <code>'static</code>" rather than "its type outlives <code>'static</code>" or "the value is <code>'static</code>" to refer to <code>T: 'static</code>. These all mean the same thing, but are different from "annotated with <code>'static</code>" as in <code>&amp;'static T</code>.</p>
 </blockquote>
 <p>留意关于<strong>参数类型</strong>的寿命超过了 <code>’static</code> 生命周期的错误信息。这个术语可能会让人很困惑，因为 <code>'static</code> 生命周期将会一直存在直到程序结束，所以如果比它寿命还长，确定没有内存泄漏吗？ 关于这个的解释是：它是一个类型，而不是一个必须寿命长过 <code>'static</code>' 的值，并且它的值可能会在它的类型失效之前被销毁。</p>
 <p>当我们说一个值是 <code>'static</code> 的时候，这意味着永远留着它常常是正确的。这非常重要，因为编译器无法推断新生成的任务会保留多长时间。我们不得不确保任务被允许一直存活（仅仅是允许，但不是必须），这样 Tokio 就可以让任务运行它实际需要的时间。</p>
-<p>前面的信息框链接到的文章使用术语 <strong>“以 <code>'static</code> 为界”</strong> 而不是 <strong>“其类型的寿命超过 <code>'static</code> ”</strong> 或 <strong>“其值是 <code>'static</code>&quot;</strong> 来指代 <code>T：'static</code>。这些都意味着同一件事，但不同于 <code>&amp;‘static T</code> 中的 <strong>“用 <code>'static</code> 注释”</strong></p>
+<p>前面的信息框链接到的文章使用术语 <strong>“以 <code>'static</code> 为界”</strong> 而不是 <strong>“其类型的寿命超过 <code>'static</code> ”</strong> 或 <strong>“其值是 <code>'static</code>"</strong> 来指代 <code>T：'static</code>。这些都意味着同一件事，但不同于 <code>&amp;‘static T</code> 中的 <strong>“用 <code>'static</code> 注释”</strong></p>
 <p>插一句嘴：上面这块儿我是琢磨了很久，但是还有一些内容没完全明白，看来还是有待提升呐～</p>
 <h2 id="send-bound"><a class="header" href="#send-bound"><code>Send</code> bound</a></h2>
 <p>从 <code>tokio::spawn</code> 生成的任务<strong>必须</strong>实现 <code>Send</code> trait 。这样才能当任务被 <code>.await</code> 后允许 Tokio runtime 在线程之间移动他们。</p>
@@ -1342,16 +1342,16 @@ help: to force the async block to take ownership of `v` (and any other
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
         let (socket, _) = listener.accept().await.unwrap();
-        let a = Rc::new(&quot;Rc does not impl Send&quot;);
+        let a = Rc::new("Rc does not impl Send");
         // 生成一个新任务，socket 的所有权被移动到了这个新任务里面，并在那里被处理。
         tokio::spawn(async move {
             process(socket).await;
-            println!(&quot;{:?}&quot;, a);
+            println!("{:?}", a);
         });
     }
 }</code></pre></pre>
@@ -1367,7 +1367,7 @@ async fn main() {
 note: captured value is not `Send`
    --&gt; src/main.rs:18:30
     |
-18  |             println!(&quot;{:?}&quot;, a);
+18  |             println!("{:?}", a);
     |                              ^ has type `std::rc::Rc&lt;&amp;str&gt;` which is not `Send`
 note: required by a bound in `tokio::spawn`
    --&gt; /home/m4n5ter/.cargo/registry/src/rsproxy.cn-8f6827c7555bfaf8/tokio-1.21.2/src/task/spawn.rs:127:21
@@ -1388,8 +1388,8 @@ async fn main() {
     tokio::spawn(async {
         // The scope forces `rc` to drop before `.await`.
         {
-            let rc = Rc::new(&quot;hello&quot;);
-            println!(&quot;{}&quot;, rc);
+            let rc = Rc::new("hello");
+            println!("{}", rc);
         }
 
         // `rc` is no longer used. It is **not** persisted when
@@ -1404,13 +1404,13 @@ use std::rc::Rc;
 #[tokio::main]
 async fn main() {
     tokio::spawn(async {
-        let rc = Rc::new(&quot;hello&quot;);
+        let rc = Rc::new("hello");
 
         // `rc` is used after `.await`. It must be persisted to
         // the task's state.
         yield_now().await;
 
-        println!(&quot;{}&quot;, rc);
+        println!("{}", rc);
     });
 }</code></pre></pre>
 <p>错误报告：</p>
@@ -1434,13 +1434,13 @@ async fn main() {
 note: future is not `Send` as this value is used across an await
    --&gt; src/main.rs:10:9
     |
-7   |         let rc = Rc::new(&quot;hello&quot;);
+7   |         let rc = Rc::new("hello");
     |             -- has type `std::rc::Rc&lt;&amp;str&gt;` which is not `Send`
 ...
 10  |         yield_now().await;
     |         ^^^^^^^^^^^^^^^^^ await occurs here, with `rc` maybe
     |                           used later
-11  |         println!(&quot;{}&quot;, rc);
+11  |         println!("{}", rc);
 12  |     });
     |     - `rc` is later dropped here
 <span class="boring">}</span></code></pre></pre>
@@ -1453,7 +1453,7 @@ use tokio::net::{TcpListener, TcpStream};
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
@@ -1481,7 +1481,7 @@ async fn process(socket: TcpStream) {
             Set(cmd) =&gt; {
                 // 值被存储为 `Vec&lt;u8&gt;`
                 db.insert(cmd.key().to_string(), cmd.value().to_vec());
-                Frame::Simple(&quot;OK&quot;.to_string())
+                Frame::Simple("OK".to_string())
             }
             Get(cmd) =&gt; {
                 if let Some(value) = db.get(cmd.key()) {
@@ -1493,7 +1493,7 @@ async fn process(socket: TcpStream) {
                     Frame::Null
                 }
             }
-            cmd =&gt; panic!(&quot;unimplemented {:?}&quot;, cmd),
+            cmd =&gt; panic!("unimplemented {:?}", cmd),
         };
 
         // Write the response to the client
@@ -1507,7 +1507,7 @@ async fn process(socket: TcpStream) {
 <pre><code class="language-zsh">cargo run --example hello-redis
 </code></pre>
 <p>出现了如下输出：</p>
-<pre><code class="language-zsh">从服务端得到了值; result=Some(b&quot;world&quot;)
+<pre><code class="language-zsh">从服务端得到了值; result=Some(b"world")
 </code></pre>
 <p>我们现在可以获取和设置值，但是有一个问题：这些值在连接之间不共享。如果另一个套接字连接并尝试获取hello键，它将找不到任何东西。</p>
 <p>在下一节中，我们将为所有套接字实现持久化数据。</p>
@@ -1528,7 +1528,7 @@ async fn process(socket: TcpStream) {
 <h2 id="add-bytes-dependency-添加-bytes-依赖"><a class="header" href="#add-bytes-dependency-添加-bytes-依赖">Add <code>bytes</code> dependency （添加 <code>bytes</code> 依赖）</a></h2>
 <p>与使用 <code>Vec&lt;u8&gt;</code> 不同，Mini-Redis crate 使用了 <a href="https://docs.rs/bytes/1/bytes/struct.Bytes.html"><code>bytes</code></a> crate 中的 <code>Bytes</code> 。使用 <code>Bytes</code> 的目的是为网络编程提供一个健壮的字节数组结构体。<code>Bytes</code> 比 <code>Vec&lt;u8&gt;</code> 多的一个最大的特点是它实现了浅拷贝。换句话说，在 <code>Bytes</code> 实例上调用 <code>clone()</code> 不会拷贝底层的数据。相反，一个 <code>Bytes</code> 实例是一个底层数据的 rc（引用计数器）句柄。<code>Bytes</code> 类型与 <code>Arc&lt;Vec&lt;u8&gt;&gt;</code> 相似，但是多了些附加的功能。</p>
 <p>为了引入 <code>bytes</code> 依赖，把下方的内容添加到你的 <code>Cargo.toml</code> 中的 <code>[dependencies]</code> 部分：</p>
-<pre><code class="language-toml">bytes = &quot;1&quot;
+<pre><code class="language-toml">bytes = "1"
 </code></pre>
 <h2 id="initialize-the-hashmap-初始化-hashmap"><a class="header" href="#initialize-the-hashmap-初始化-hashmap">Initialize the <code>HashMap</code> （初始化 <code>HashMap</code>）</a></h2>
 <p><code>HashMap</code> 将会被跨多任务（并且可能会是多个线程）共享。为了能够做到这点，它将会被 <code>Arc&lt;Mutex&lt;_&gt;&gt;</code> 包裹。</p>
@@ -1548,9 +1548,9 @@ use std::sync::{Arc, Mutex};
 
 #[tokio::main]
 async fn main() {
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
-    println!(&quot;Listening&quot;);
+    println!("Listening");
 
     let db = Arc::new(Mutex::new(HashMap::new()));
 
@@ -1559,7 +1559,7 @@ async fn main() {
         // Clone the handle to the hash map.
         let db = db.clone();
 
-        println!(&quot;Accepted&quot;);
+        println!("Accepted");
         tokio::spawn(async move {
             process(socket, db).await;
         });
@@ -1588,7 +1588,7 @@ async fn process(socket: TcpStream, db: Db) {
             Set(cmd) =&gt; {
                 let mut db = db.lock().unwrap();
                 db.insert(cmd.key().to_string(), cmd.value().clone());
-                Frame::Simple(&quot;OK&quot;.to_string())
+                Frame::Simple("OK".to_string())
             }           
             Get(cmd) =&gt; {
                 let db = db.lock().unwrap();
@@ -1598,7 +1598,7 @@ async fn process(socket: TcpStream, db: Db) {
                     Frame::Null
                 }
             }
-            cmd =&gt; panic!(&quot;unimplemented {:?}&quot;, cmd),
+            cmd =&gt; panic!("unimplemented {:?}", cmd),
         };
 
         // Write the response to the client
@@ -1778,15 +1778,15 @@ mv src/main.rs src/bin/server.rs
 #[tokio::main]
 async fn main() {
     // Establish a connection to the server
-    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let mut client = client::connect("127.0.0.1:6379").await.unwrap();
 
     // Spawn two tasks, one gets a key, the other sets a key
     let t1 = tokio::spawn(async {
-        let res = client.get(&quot;hello&quot;).await;
+        let res = client.get("hello").await;
     });
 
     let t2 = tokio::spawn(async {
-        client.set(&quot;foo&quot;, &quot;bar&quot;.into()).await;
+        client.set("foo", "bar".into()).await;
     });
 
     t1.await.unwrap();
@@ -1854,19 +1854,19 @@ async fn main() {
     let tx2 = tx.clone();
 
     tokio::spawn(async move {
-        tx.send(&quot;sending from first handle&quot;).await;
+        tx.send("sending from first handle").await;
     });
 
     tokio::spawn(async move {
-        tx2.send(&quot;sending from second handle&quot;).await;
+        tx2.send("sending from second handle").await;
     });
 
     while let Some(message) = rx.recv().await {
-        println!(&quot;GOT = {}&quot;, message);
+        println!("GOT = {}", message);
     }
 }</code></pre></pre>
 <p>两条消息都被发送到了单个 <code>Receiver</code> 句柄。在 <code>mpsc</code> channel 中克隆 receiver 是不被允许的。</p>
-<p>当每个 <code>Sender</code> 超出作用域或者因为其他原因被 drop 了，就不再能往这个 channel 发送更多消息了。此时，在 <code>Receiver</code> 上调用 <code>recv</code> 将会返回 <code>None</code>，这意味着所有的 sender 都不在了，channel 被关闭了。 </p>
+<p>当每个 <code>Sender</code> 超出作用域或者因为其他原因被 drop 了，就不再能往这个 channel 发送更多消息了。此时，在 <code>Receiver</code> 上调用 <code>recv</code> 将会返回 <code>None</code>，这意味着所有的 sender 都不在了，channel 被关闭了。</p>
 <p>在我们的场景下，管理 redis connection 的任务知道一旦 channel 被关闭，就得关闭 redis connection，因为 connection 不会再被使用了。</p>
 <h2 id="spawn-manager-task-生成管理者任务"><a class="header" href="#spawn-manager-task-生成管理者任务">Spawn manager task （生成管理者任务）</a></h2>
 <p>接下来，生成一个任务来处理来自 channel 的消息。首先，一个对 redis 的客户端连接会被建立。然后，受到的命令会通过 redis connection 被发送。</p>
@@ -1876,7 +1876,7 @@ async fn main() {
 // The `move` keyword is used to **move** ownership of `rx` into the task.
 let manager = tokio::spawn(async move {
     // Establish a connection to the server
-    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let mut client = client::connect("127.0.0.1:6379").await.unwrap();
 
     // Start receiving messages
     while let Some(cmd) = rx.recv().await {
@@ -1903,7 +1903,7 @@ let tx2 = tx.clone();
 // Spawn two tasks, one gets a key, the other sets a key
 let t1 = tokio::spawn(async move {
     let cmd = Command::Get {
-        key: &quot;hello&quot;.to_string(),
+        key: "hello".to_string(),
     };
 
     tx.send(cmd).await.unwrap();
@@ -1911,8 +1911,8 @@ let t1 = tokio::spawn(async move {
 
 let t2 = tokio::spawn(async move {
     let cmd = Command::Set {
-        key: &quot;foo&quot;.to_string(),
-        val: &quot;bar&quot;.into(),
+        key: "foo".to_string(),
+        val: "bar".into(),
     };
 
     tx2.send(cmd).await.unwrap();
@@ -1967,7 +1967,7 @@ type Responder&lt;T&gt; = oneshot::Sender&lt;mini_redis::Result&lt;T&gt;&gt;;
 </span>let t1 = tokio::spawn(async move {
     let (resp_tx, resp_rx) = oneshot::channel();
     let cmd = Command::Get {
-        key: &quot;hello&quot;.to_string(),
+        key: "hello".to_string(),
         resp: resp_tx,
     };
 
@@ -1976,14 +1976,14 @@ type Responder&lt;T&gt; = oneshot::Sender&lt;mini_redis::Result&lt;T&gt;&gt;;
 
     // Await the response
     let res = resp_rx.await;
-    println!(&quot;GOT = {:?}&quot;, res);
+    println!("GOT = {:?}", res);
 });
 
 let t2 = tokio::spawn(async move {
     let (resp_tx, resp_rx) = oneshot::channel();
     let cmd = Command::Set {
-        key: &quot;foo&quot;.to_string(),
-        val: &quot;bar&quot;.into(),
+        key: "foo".to_string(),
+        val: "bar".into(),
         resp: resp_tx,
     };
 
@@ -1992,7 +1992,7 @@ let t2 = tokio::spawn(async move {
 
     // Await the response
     let res = resp_rx.await;
-    println!(&quot;GOT = {:?}&quot;, res);
+    println!("GOT = {:?}", res);
 });
 <span class="boring">}</span></code></pre></pre>
 <p>在 <code>oneshot::Sender</code> 上的 <code>send</code> 调用是立即完成的，<strong>不需要</strong>一个 <code>.await</code> 。这是因为 <code>oneshot</code> channel 上的 <code>send</code> 总是立即返回 succeed 或者 fail ，而不需要任何形式的等待。</p>
@@ -2048,13 +2048,13 @@ use tokio::io::{self, AsyncReadExt};
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut f = File::open("foo.txt").await?;
     let mut buffer = [0; 10];
 
     // read up to 10 bytes
     let n = f.read(&amp;mut buffer[..]).await?;
 
-    println!(&quot;The bytes: {:?}&quot;, &amp;buffer[..n]);
+    println!("The bytes: {:?}", &amp;buffer[..n]);
     Ok(())
 }</code></pre></pre>
 <h3 id="async-fn-read_to_end"><a class="header" href="#async-fn-read_to_end"><code>async fn read_to_end()</code></a></h3>
@@ -2064,7 +2064,7 @@ use tokio::fs::File;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut f = File::open(&quot;foo.txt&quot;).await?;
+    let mut f = File::open("foo.txt").await?;
     let mut buffer = Vec::new();
 
     // read the whole file
@@ -2078,12 +2078,12 @@ use tokio::fs::File;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut file = File::create(&quot;foo.txt&quot;).await?;
+    let mut file = File::create("foo.txt").await?;
 
     // Writes some prefix of the byte string, but not necessarily all of it.
-    let n = file.write(b&quot;some bytes&quot;).await?;
+    let n = file.write(b"some bytes").await?;
 
-    println!(&quot;Wrote the first {} bytes of 'some bytes'.&quot;, n);
+    println!("Wrote the first {} bytes of 'some bytes'.", n);
     Ok(())
 }</code></pre></pre>
 <h3 id="async-fn-write_all"><a class="header" href="#async-fn-write_all"><code>async fn write_all()</code></a></h3>
@@ -2093,9 +2093,9 @@ use tokio::fs::File;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut file = File::create(&quot;foo.txt&quot;).await?;
+    let mut file = File::create("foo.txt").await?;
 
-    file.write_all(b&quot;some bytes&quot;).await?;
+    file.write_all(b"some bytes").await?;
     Ok(())
 }</code></pre></pre>
 <p>这两个特征都包括许多其他有用的方法。有关完整的方法列表，请参阅API文档。</p>
@@ -2106,8 +2106,8 @@ use tokio::io;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let mut reader: &amp;[u8] = b&quot;hello&quot;;
-    let mut file = File::create(&quot;foo.txt&quot;).await?;
+    let mut reader: &amp;[u8] = b"hello";
+    let mut file = File::create("foo.txt").await?;
 
     io::copy(&amp;mut reader, &amp;mut file).await?;
     Ok(())
@@ -2132,7 +2132,7 @@ use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+    let listener = TcpListener::bind("127.0.0.1:6142").await?;
 
     loop {
         let (mut socket, _) = listener.accept().await?;
@@ -2157,13 +2157,13 @@ use tokio::net::TcpStream;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let socket = TcpStream::connect(&quot;127.0.0.1:6142&quot;).await?;
+    let socket = TcpStream::connect("127.0.0.1:6142").await?;
     let (mut rd, mut wr) = io::split(socket);
 
     // Write data in the background
     tokio::spawn(async move {
-        wr.write_all(b&quot;hello\r\n&quot;).await?;
-        wr.write_all(b&quot;world\r\n&quot;).await?;
+        wr.write_all(b"hello\r\n").await?;
+        wr.write_all(b"world\r\n").await?;
 
         // 有时候，rust 的类型推断器需要一点点的帮助
         Ok::&lt;_, io::Error&gt;(())
@@ -2178,7 +2178,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
             break;
         }
 
-        println!(&quot;GOT {:?}&quot;, &amp;buf[..n]);
+        println!("GOT {:?}", &amp;buf[..n]);
     }
 
     Ok(())
@@ -2192,7 +2192,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
     let (mut rd, mut wr) = socket.split();
 
     if io::copy(&amp;mut rd, &amp;mut wr).await.is_err() {
-        eprintln!(&quot;failed to copy&quot;);
+        eprintln!("failed to copy");
     }
 });
 <span class="boring">}</span></code></pre></pre>
@@ -2205,7 +2205,7 @@ use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() -&gt; io::Result&lt;()&gt; {
-    let listener = TcpListener::bind(&quot;127.0.0.1:6142&quot;).await?;
+    let listener = TcpListener::bind("127.0.0.1:6142").await?;
 
     loop {
         let (mut socket, _) = listener.accept().await?;
@@ -2241,7 +2241,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
 <pre><code class="language-zsh">yay -S netcat
 echo 你好 | nc 127.0.0.1 6142
 </code></pre>
-<p>让我们分析一下：首先，因为使用了  <code>AsyncRead</code> 和 <code>AsyncWrite</code> ，所以 extension traits （<code>AsyncReadExt</code> 和<code>AsyncWriteExt</code>）必须被引入。 </p>
+<p>让我们分析一下：首先，因为使用了  <code>AsyncRead</code> 和 <code>AsyncWrite</code> ，所以 extension traits （<code>AsyncReadExt</code> 和<code>AsyncWriteExt</code>）必须被引入。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
@@ -2407,7 +2407,7 @@ pub async fn read_frame(&amp;mut self)
         // Attempt to read more data from the socket.
         //
         // On success, the number of bytes is returned. `0`
-        // indicates &quot;end of stream&quot;.
+        // indicates "end of stream".
         if 0 == self.stream.read_buf(&amp;mut self.buffer).await? {
             // The remote closed the connection. For this to be
             // a clean shutdown, there should be no data in the
@@ -2416,13 +2416,13 @@ pub async fn read_frame(&amp;mut self)
             if self.buffer.is_empty() {
                 return Ok(None);
             } else {
-                return Err(&quot;connection reset by peer&quot;.into());
+                return Err("connection reset by peer".into());
             }
         }
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<p>让我们来分析一下它。 <code>read_frame</code> 方法操作了一个 loop。首先，<code>self.parse_frame()</code> 被调用。它会尝试从 <code>self.buffer</code> 解析 redis frame。如果 <code>self.buffer</code> 里的数据足够解析出一个 frame，那么这个解析出来的 frame 会从 <code>read_frame()</code> 返回。如果数据不够解析成一个 frame，我们就尝试从 socket 读取更多数据到 buffer。在读取更多数据后循环会重新开始， <code>parse_frame()</code> 会被再次调用，如此往复。这次，如果接收到了足够的数据，解析可能就会成功了。 </p>
+<p>让我们来分析一下它。 <code>read_frame</code> 方法操作了一个 loop。首先，<code>self.parse_frame()</code> 被调用。它会尝试从 <code>self.buffer</code> 解析 redis frame。如果 <code>self.buffer</code> 里的数据足够解析出一个 frame，那么这个解析出来的 frame 会从 <code>read_frame()</code> 返回。如果数据不够解析成一个 frame，我们就尝试从 socket 读取更多数据到 buffer。在读取更多数据后循环会重新开始， <code>parse_frame()</code> 会被再次调用，如此往复。这次，如果接收到了足够的数据，解析可能就会成功了。</p>
 <p>当从 stream 读取的时候，返回了一个 <code>0</code> 表示没有更多数据可以从对端接收了。如果这时候 read buffer 中还留有数据，这表示接收到的是个不完整的 frame 并且对端被意外中断了。这是一个错误条件，我们返回一个 <code>Err</code> 。</p>
 <h3 id="the-buf-trait"><a class="header" href="#the-buf-trait">The <code>Buf</code> trait</a></h3>
 <p>当从 stream 读取的时候， <code>read_buf</code> 被调用了。我们这个版本的 read function 带了一个参数，要求实现 <a href="https://docs.rs/bytes/"><code>bytes</code></a> crate 中的 <a href="https://docs.rs/bytes/1/bytes/trait.BufMut.html"><code>BufMut</code></a>。</p>
@@ -2476,7 +2476,7 @@ pub async fn read_frame(&amp;mut self)
             if self.cursor == 0 {
                 return Ok(None);
             } else {
-                return Err(&quot;connection reset by peer&quot;.into());
+                return Err("connection reset by peer".into());
             }
         } else {
             // Update our cursor
@@ -2592,19 +2592,19 @@ async fn write_frame(&amp;mut self, frame: &amp;Frame)
         Frame::Simple(val) =&gt; {
             self.stream.write_u8(b'+').await?;
             self.stream.write_all(val.as_bytes()).await?;
-            self.stream.write_all(b&quot;\r\n&quot;).await?;
+            self.stream.write_all(b"\r\n").await?;
         }
         Frame::Error(val) =&gt; {
             self.stream.write_u8(b'-').await?;
             self.stream.write_all(val.as_bytes()).await?;
-            self.stream.write_all(b&quot;\r\n&quot;).await?;
+            self.stream.write_all(b"\r\n").await?;
         }
         Frame::Integer(val) =&gt; {
             self.stream.write_u8(b':').await?;
             self.write_decimal(*val).await?;
         }
         Frame::Null =&gt; {
-            self.stream.write_all(b&quot;$-1\r\n&quot;).await?;
+            self.stream.write_all(b"$-1\r\n").await?;
         }
         Frame::Bulk(val) =&gt; {
             let len = val.len();
@@ -2612,7 +2612,7 @@ async fn write_frame(&amp;mut self, frame: &amp;Frame)
             self.stream.write_u8(b'$').await?;
             self.write_decimal(len as u64).await?;
             self.stream.write_all(val).await?;
-            self.stream.write_all(b&quot;\r\n&quot;).await?;
+            self.stream.write_all(b"\r\n").await?;
         }
         Frame::Array(_val) =&gt; unimplemented!(),
     }
@@ -2639,9 +2639,9 @@ async fn write_frame(&amp;mut self, frame: &amp;Frame)
 </span>use tokio::net::TcpStream;
 
 async fn my_async_fn() {
-    println!(&quot;hello from async&quot;);
-    let _socket = TcpStream::connect(&quot;127.0.0.1:3000&quot;).await.unwrap();
-    println!(&quot;async TCP operation complete&quot;);
+    println!("hello from async");
+    let _socket = TcpStream::connect("127.0.0.1:3000").await.unwrap();
+    println!("async TCP operation complete");
 }
 <span class="boring">}</span></code></pre></pre>
 <p>我们调用了这个函数，并且返回了某个值，对这个值调用 <code>.await</code>。</p>
@@ -2698,8 +2698,8 @@ impl Future for Delay {
         -&gt; Poll&lt;&amp;'static str&gt;
     {
         if Instant::now() &gt;= self.when {
-            println!(&quot;Hello world&quot;);
-            Poll::Ready(&quot;done&quot;)
+            println!("Hello world");
+            Poll::Ready("done")
         } else {
             // Ignore this line for now.
             cx.waker().wake_by_ref();
@@ -2714,7 +2714,7 @@ async fn main() {
     let future = Delay { when };
 
     let out = future.await;
-    assert_eq!(out, &quot;done&quot;);
+    assert_eq!(out, "done");
 }</code></pre></pre>
 <h3 id="async-fn-as-a-future-异步函数作为-future"><a class="header" href="#async-fn-as-a-future-异步函数作为-future">Async fn as a Future （异步函数作为 future）</a></h3>
 <p>在 main 函数中，我们实例化一个 future 并对它调用 <code>.await</code> 。在异步函数中，我们可以对任何实现了 <code>Future</code> 的值调用 <code>.await</code> 。相反，调用一个 <code>async</code> function 返回一个实现了 <code>Future</code> 的匿名类型。<code>async fn main()</code> 所生成的 future 类似于：</p>
@@ -2753,7 +2753,7 @@ impl Future for MainFuture {
                 State1(ref mut my_future) =&gt; {
                     match Pin::new(my_future).poll(cx) {
                         Poll::Ready(out) =&gt; {
-                            assert_eq!(out, &quot;done&quot;);
+                            assert_eq!(out, "done");
                             *self = Terminated;
                             return Poll::Ready(());
                         }
@@ -2763,7 +2763,7 @@ impl Future for MainFuture {
                     }
                 }
                 Terminated =&gt; {
-                    panic!(&quot;future polled after completion&quot;)
+                    panic!("future polled after completion")
                 }
             }
         }
@@ -2793,7 +2793,7 @@ fn main() {
         let future = Delay { when };
 
         let out = future.await;
-        assert_eq!(out, &quot;done&quot;);
+        assert_eq!(out, "done");
     });
 
     mini_tokio.run();
@@ -2864,8 +2864,8 @@ impl Future for Delay {
         -&gt; Poll&lt;&amp;'static str&gt;
     {
         if Instant::now() &gt;= self.when {
-            println!(&quot;Hello world&quot;);
-            Poll::Ready(&quot;done&quot;)
+            println!("Hello world");
+            Poll::Ready("done")
         } else {
             // Get a handle to the waker for the current task
             let waker = cx.waker().clone();
@@ -2903,8 +2903,8 @@ impl Future for Delay {
         -&gt; Poll&lt;&amp;'static str&gt;
     {
         if Instant::now() &gt;= self.when {
-            println!(&quot;Hello world&quot;);
-            Poll::Ready(&quot;done&quot;)
+            println!("Hello world");
+            Poll::Ready("done")
         } else {
             // Ignore this line for now.
             cx.waker().wake_by_ref();
@@ -2923,7 +2923,7 @@ impl Future for Delay {
 <p>更多细节可以看  <a href="https://doc.rust-lang.org/book/ch16-04-extensible-concurrency-sync-and-send.html">the Rust book 中相关的章节</a> 。</p>
 </blockquote>
 <p>把下面的依赖加到 <code>Cargo.toml</code> 来获取我们需要的 channel 。</p>
-<pre><code class="language-toml">crossbeam = &quot;0.8&quot;
+<pre><code class="language-toml">crossbeam = "0.8"
 </code></pre>
 <p>然后改 <code>MiniTokio</code> 结构体。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -2964,7 +2964,7 @@ impl Task {
 <span class="boring">}</span></code></pre></pre>
 <p>为了调度任务，<code>Arc</code> 会被 clone 然后通过 channel 发送出去。现在，我们需要将我们的 <code>schedule</code> 函数和 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>std::task::Waker</code></a> 挂钩。标注版酷提供了一个低层次 API ，通过 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html">manual vtable construction</a> （手动构造 vtable，vtable 能够产生晚绑定行为，只有在运行时才知道调用的是什么函数，例如调用 vtable 中的 A，然后会把 A 映射的函数指针 *B 拿出来执行）来做这件事。这个方案为实现者提供了最大程度的灵活性，但是要求一大堆 unsafe 样板代码。与直接使用 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html"><code>RawWakerVTable</code></a> 相反，我们将会使用  <a href="https://docs.rs/futures/"><code>futures</code></a> crate 提供的 <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>ArcWake</code></a> trait，它允许我们通过实现一个简单的 trait 来暴露我们的 <code>Task</code> 结构体作为一个 waker 。</p>
 <p>把下面的依赖加入到 <code>Cargo.toml</code>。</p>
-<pre><code class="language-toml">futures = &quot;0.3&quot;
+<pre><code class="language-toml">futures = "0.3"
 </code></pre>
 <p>然后实现  <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>futures::task::ArcWake</code></a> 。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -3205,26 +3205,26 @@ async fn main() {
     let (tx2, rx2) = oneshot::channel();
 
     tokio::spawn(async {
-        let _ = tx1.send(&quot;one&quot;);
+        let _ = tx1.send("one");
     });
 
     tokio::spawn(async {
-        let _ = tx2.send(&quot;two&quot;);
+        let _ = tx2.send("two");
     });
 
     tokio::select! {
         val = rx1 =&gt; {
-            println!(&quot;rx1 completed first with {:?}&quot;, val);
+            println!("rx1 completed first with {:?}", val);
         }
         val = rx2 =&gt; {
-            println!(&quot;rx2 completed first with {:?}&quot;, val);
+            println!("rx2 completed first with {:?}", val);
         }
     }
 }</code></pre></pre>
 <p>使用了两个 oneshot channel，它俩中的任何一个都可以第一个完成。<code>select!</code> 语句会在这两个 channel 上 await ，并且绑定 <code>val</code> 到任务的返回值上。当 <code>tx1</code> 或 <code>tx2</code> 完成，相关联的 block 会被执行。</p>
 <p><strong>没有</strong>完成的分支会被直接 drop 掉。在这个例子中，计算会 await 在每个 channel 的 <code>oneshot::Receiver</code> 上。没有完成的 <code>oneshot::Receiver</code> 会被丢弃。</p>
 <h3 id="cancellation"><a class="header" href="#cancellation">Cancellation</a></h3>
-<p>在异步 Rust 中，取消表现为 drop 一个 future。回想一下 &quot;<a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a>&quot;，异步 Rust 操作通过 future 实现，并且 future 是惰性的。只有 future 被 poll 了，才会有新的进展。如果 future 被 drop 了，那么相关联的状态也会被 drop ，也就是说不会再有新的进展了。</p>
+<p>在异步 Rust 中，取消表现为 drop 一个 future。回想一下 "<a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a>"，异步 Rust 操作通过 future 实现，并且 future 是惰性的。只有 future 被 poll 了，才会有新的进展。如果 future 被 drop 了，那么相关联的状态也会被 drop ，也就是说不会再有新的进展了。</p>
 <p>也就是说，有时异步操作会产生后台任务或启动在后台运行的其他操作。举个例子，再上面的示例中，一个任务被创建用来在背后发送消息，一般来说，任务将会执行一些计算来生成值。</p>
 <p>Futures 或者其它类型可以实现 <code>Drop</code> 来清理背后的资源。Tokio 的 <code>oneshot::Receiver</code> 通过往 <code>Sender</code> 发送一个关闭信号来实现 <code>Drop</code> 。这个收到关闭信号的 sender 会通过 drop 来中断正在执行的操作。</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::sync::oneshot;
@@ -3253,15 +3253,15 @@ async fn main() {
     });
 
     tokio::spawn(async {
-        let _ = tx2.send(&quot;two&quot;);
+        let _ = tx2.send("two");
     });
 
     tokio::select! {
         val = rx1 =&gt; {
-            println!(&quot;rx1 completed first with {:?}&quot;, val);
+            println!("rx1 completed first with {:?}", val);
         }
         val = rx2 =&gt; {
-            println!(&quot;rx2 completed first with {:?}&quot;, val);
+            println!("rx2 completed first with {:?}", val);
         }
     }
 }</code></pre></pre>
@@ -3282,12 +3282,12 @@ impl Future for MySelect {
 
     fn poll(mut self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;()&gt; {
         if let Poll::Ready(val) = Pin::new(&amp;mut self.rx1).poll(cx) {
-            println!(&quot;rx1 completed first with {:?}&quot;, val);
+            println!("rx1 completed first with {:?}", val);
             return Poll::Ready(());
         }
 
         if let Poll::Ready(val) = Pin::new(&amp;mut self.rx2).poll(cx) {
-            println!(&quot;rx2 completed first with {:?}&quot;, val);
+            println!("rx2 completed first with {:?}", val);
             return Poll::Ready(());
         }
 
@@ -3333,15 +3333,15 @@ async fn main() {
 
     // Spawn a task that sends a message over the oneshot
     tokio::spawn(async move {
-        tx.send(&quot;done&quot;).unwrap();
+        tx.send("done").unwrap();
     });
 
     tokio::select! {
-        socket = TcpStream::connect(&quot;localhost:3465&quot;) =&gt; {
-            println!(&quot;Socket connected {:?}&quot;, socket);
+        socket = TcpStream::connect("localhost:3465") =&gt; {
+            println!("Socket connected {:?}", socket);
         }
         msg = rx =&gt; {
-            println!(&quot;received message first {:?}&quot;, msg);
+            println!("received message first {:?}", msg);
         }
     }
 }</code></pre></pre>
@@ -3358,7 +3358,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
         tx.send(()).unwrap();
     });
 
-    let mut listener = TcpListener::bind(&quot;localhost:3465&quot;).await?;
+    let mut listener = TcpListener::bind("localhost:3465").await?;
 
     tokio::select! {
         _ = async {
@@ -3371,7 +3371,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
             Ok::&lt;_, io::Error&gt;(())
         } =&gt; {}
         _ = rx =&gt; {
-            println!(&quot;terminating accept loop&quot;);
+            println!("terminating accept loop");
         }
     }
 
@@ -3395,7 +3395,7 @@ async fn main() {
         res2 = computation2() =&gt; res2,
     };
 
-    println!(&quot;Got = {}&quot;, out);
+    println!("Got = {}", out);
 }</code></pre></pre>
 <p>因为这个，它要求<strong>每个</strong>分支的 <code>&lt;handler&gt;</code> 表达式计算出同样的类型。如果 <code>select!</code> 的输出不被需要，一个不错的实践是让表达式返回 <code>()</code></p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
@@ -3408,7 +3408,7 @@ use std::io;
 async fn main() -&gt; io::Result&lt;()&gt; {
     // [setup `rx` oneshot channel]
 
-    let listener = TcpListener::bind(&quot;localhost:3465&quot;).await?;
+    let listener = TcpListener::bind("localhost:3465").await?;
 
     tokio::select! {
         res = async {
@@ -3423,7 +3423,7 @@ async fn main() -&gt; io::Result&lt;()&gt; {
             res?;
         }
         _ = rx =&gt; {
-            println!(&quot;terminating accept loop&quot;);
+            println!("terminating accept loop");
         }
     }
 
@@ -3450,13 +3450,13 @@ async fn main() {
 
     tokio::select! {
         Some(v) = rx1.recv() =&gt; {
-            println!(&quot;Got {:?} from rx1&quot;, v);
+            println!("Got {:?} from rx1", v);
         }
         Some(v) = rx2.recv() =&gt; {
-            println!(&quot;Got {:?} from rx2&quot;, v);
+            println!("Got {:?} from rx2", v);
         }
         else =&gt; {
-            println!(&quot;Both channels closed&quot;);
+            println!("Both channels closed");
         }
     }
 }</code></pre></pre>
@@ -3512,14 +3512,14 @@ async fn main() {
 
     tokio::select! {
         _ = rx1 =&gt; {
-            out.push_str(&quot;rx1 completed&quot;);
+            out.push_str("rx1 completed");
         }
         _ = rx2 =&gt; {
-            out.push_str(&quot;rx2 completed&quot;);
+            out.push_str("rx2 completed");
         }
     }
 
-    println!(&quot;{}&quot;, out);
+    println!("{}", out);
 }</code></pre></pre>
 <h2 id="loops"><a class="header" href="#loops">Loops</a></h2>
 <p><code>select!</code> 宏经常被用在循环中。这一部分将会通过几个示例来展示在循环中使用 <code>select!</code> 宏的常见方式。我们通过 select 多个 channels 开始：</p>
@@ -3539,10 +3539,10 @@ async fn main() {
             else =&gt; { break }
         };
 
-        println!(&quot;Got {:?}&quot;, msg);
+        println!("Got {:?}", msg);
     }
 
-    println!(&quot;All channels have been closed.&quot;);
+    println!("All channels have been closed.");
 }</code></pre></pre>
 <p>这个例子在三个 channel 的 rx 上select。当从任意一个 channel 中接收到一条消息，会将其打印到 STDOUT 。当有一条 channel close 了， <code>recv()</code> 会返回 <code>None</code> ，通过使用模式匹配，<code>select!</code> 宏会继续在剩余的 channels 上等待。当所有的 channel 都 close 了，这里的 <code>else</code> 分支会被计算，并且循环会终止。</p>
 <p><code>select!</code> 宏随机选中分支来先检查一下是否就绪。当多个 channel 挂起了它们的 value，一个随机的 channel 会被选中，并从它上面接收值。这是为了处理 receive loop 处理消息的速度比消息被推进 channel 的速度慢的情况，意味着 channel 开始被填满了。如果 <code>select!</code> <strong>没有</strong>随机选中一个分支来第一个检查，那么每次循环在迭代的时候， <code>rx1</code> 都会被第一个检查，如果 <code>rx1</code> 总是持有新消息，那么剩余的 channel 永远都不会被检查。</p>
@@ -3575,7 +3575,7 @@ async fn main() {
 }</code></pre></pre>
 <p>请注意，与在 <code>select!</code> 宏内调用 <code>action()</code> 不同，它在循环<strong>外部</strong>被调用。<code>action()</code> 的返回值被分配到了 <code>operation</code> 且<strong>没有</strong>调用 <code>.await</code> 。然后我们对 <code>operation</code> 调用了 <code>tokio::pin!</code> 。</p>
 <p>在 <code>select!</code> 循环内，与传入 <code>operation</code> 不同，我们传入了 <code>&amp;mut operation</code> 。这个 <code>operation</code> 变量正在跟踪执行中的异步操作。每次循环迭代使用这个相同的 operation 而不是来一次新的 <code>action()</code> 调用。</p>
-<p><code>select!</code> 的另一个分支从 channel 接收消息，如果消息是一个偶数，我们就结束循环。否则，再次开始 <code>select!</code> </p>
+<p><code>select!</code> 的另一个分支从 channel 接收消息，如果消息是一个偶数，我们就结束循环。否则，再次开始 <code>select!</code></p>
 <p>这是我们第一次使用 <code>tokio::pin!</code> ，我们还没打算深挖这它的细节。只需要注意，对一个引用进行 <code>.await</code> 调用，这个被引用的值必须被 pin 或者实现了 <code>Unpin</code> 。</p>
 <p>如果我们移除 <code>tokio::pin!</code> 这一行，并且尝试编译，我们会得到以下错误：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -3601,7 +3601,7 @@ async fn main() {
            which is required by
            `&amp;mut impl std::future::Future: std::future::Future`
 <span class="boring">}</span></code></pre></pre>
-<p>尽管我们已经在 <a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a> 了解了 <code>Future</code> ，但是这个错误对我们来说仍然不是很清晰。如果你在尝试对一个<strong>reference</strong> 调用 <code>.await</code> 时碰到了这样的一个关于 &quot; <code>Future</code> 没有实现... &quot; 的错误，那么这个 future 可能需要被 pin 。</p>
+<p>尽管我们已经在 <a href="https://m4n5ter.github.io/rust/mini-redis/async_in_depth.html">Async in depth</a> 了解了 <code>Future</code> ，但是这个错误对我们来说仍然不是很清晰。如果你在尝试对一个<strong>reference</strong> 调用 <code>.await</code> 时碰到了这样的一个关于 " <code>Future</code> 没有实现... " 的错误，那么这个 future 可能需要被 pin 。</p>
 <p>从 <a href="https://doc.rust-lang.org/std/pin/index.html">standard library</a> 阅读更多关于 <a href="https://doc.rust-lang.org/std/pin/index.html"><code>Pin</code></a> 的细节。</p>
 <h3 id="modifying-a-branch"><a class="header" href="#modifying-a-branch">Modifying a branch</a></h3>
 <p>让我们看一个稍微复杂一些的 loop。我们有：</p>
@@ -3658,7 +3658,7 @@ async fn main() {
                 done = true;
 
                 if let Some(v) = res {
-                    println!(&quot;GOT = {}&quot;, v);
+                    println!("GOT = {}", v);
                     return;
                 }
             }
@@ -3681,14 +3681,14 @@ async fn main() {
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 <span class="boring">}</span></code></pre></pre>
 <p>当尝试在 <code>operation</code> 已经完成<strong>之后</strong>使用它时，这个错误发生了。一般来说，当使用 <code>.await</code> ，这个被 await 的值就被消费掉了。在这个例子中，我们 await 了一个引用，这意味着 <code>operation</code> 在它完成后仍然存在。</p>
-<p>为了避免这个 panic，如果 <code>operation</code> 已经完成，我们必须小心地禁用第一条分支。这里的 <code>done</code> 变量被用来跟踪 <code>operation</code> 是否完成。一个 <code>select!</code> 分支可能会包含一个 <strong>precondition</strong> （先决条件），这个先决条件会在 <code>select!</code> await 当前分支<strong>之前</strong>被检查（虽然顺序上它被写在后面，但是不影响它是一个 &quot;先决条件&quot;）。如果先决条件计算出了 <code>false</code> 那么该分支会被禁用。<code>done</code> 变量被初始化为 <code>false</code> 。当 <code>operation</code> 完成，<code>done</code> 会被设置为 <code>true</code> ，这样在下次循环迭代的时候将会禁用 <code>operation</code> 分支。当一个偶数消息从 channel 被接收，<code>operation</code> 会被重置，并且 <code>done</code> 会被设置为 <code>false</code> 。</p>
+<p>为了避免这个 panic，如果 <code>operation</code> 已经完成，我们必须小心地禁用第一条分支。这里的 <code>done</code> 变量被用来跟踪 <code>operation</code> 是否完成。一个 <code>select!</code> 分支可能会包含一个 <strong>precondition</strong> （先决条件），这个先决条件会在 <code>select!</code> await 当前分支<strong>之前</strong>被检查（虽然顺序上它被写在后面，但是不影响它是一个 "先决条件"）。如果先决条件计算出了 <code>false</code> 那么该分支会被禁用。<code>done</code> 变量被初始化为 <code>false</code> 。当 <code>operation</code> 完成，<code>done</code> 会被设置为 <code>true</code> ，这样在下次循环迭代的时候将会禁用 <code>operation</code> 分支。当一个偶数消息从 channel 被接收，<code>operation</code> 会被重置，并且 <code>done</code> 会被设置为 <code>false</code> 。</p>
 <h2 id="per-task-concurrency"><a class="header" href="#per-task-concurrency">Per-task concurrency</a></h2>
 <p><code>tokio::spawn</code> 和 <code>select!</code> 都能够运行并发的异步操作。然而，运行并发操作的策略有所不同。<code>tokio::spawn</code> 函数携带一个异步操作，并且生成一个新的任务去运行它。一个任务是 Tokio runtime 调度的对象。两个不同的任务会被 Tokio 独立调度，它们可能会同时运行在不同的操作系统线程上。正因如此，一个被生成的任务和被生成的线程具有相同的限制：不能有借用！</p>
 <p><code>select!</code> 宏会在<strong>同一个任务</strong>中并发运行所有的分支。因为所有的 <code>select!</code> 分支都在同一个任务中被执行，它们永远不可能<strong>同时</strong>被运行。<code>select!</code> 宏会在单个任务上多路复用异步操作。</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="streams"><a class="header" href="#streams">Streams</a></h2>
 <p>stream 是一种异步的一系列的值。它的异步等效与 Rust 的 <a href="https://doc.rust-lang.org/book/ch13-02-iterators.html"><code>std::iter::Iterator</code></a> 并且通过 <a href="https://docs.rs/futures-core/0.3/futures_core/stream/trait.Stream.html"><code>Stream</code></a> trait 来表示。Streams 能够在 <code>async</code> functions 中被迭代。它们也可以通过适配器被转换。Tokio 在 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html"><code>StreamExt</code></a> trait 上提供了一些场景的适配器。</p>
 <p>Tokio 在一个单独的 crate 提供了 stream 支持：<code>tokio-stream</code> 。</p>
-<pre><code class="language-toml">tokio-stream = &quot;0.1&quot;
+<pre><code class="language-toml">tokio-stream = "0.1"
 </code></pre>
 <blockquote>
 <p>目前，Tokio 的 stream 实用工具存在与 <code>tokio-strean</code> crate 中。一旦 <code>Stream</code> trait 在 Rust 标准库中稳定了，Tokio 的 stream 将会被移动到 <code>tokio</code> crate 。</p>
@@ -3702,7 +3702,7 @@ async fn main() {
     let mut stream = tokio_stream::iter(&amp;[1, 2, 3]);
 
     while let Some(v) = stream.next().await {
-        println!(&quot;GOT = {:?}&quot;, v);
+        println!("GOT = {:?}", v);
     }
 }</code></pre></pre>
 <p>像迭代器一样，<code>next()</code> 方法返回 <code>Option&lt;T&gt;</code> ，T 是 stream 里的值的类型。接收到 <code>None</code> 表示这个 stream iteration 终止了。</p>
@@ -3713,27 +3713,27 @@ async fn main() {
 use mini_redis::client;
 
 async fn publish() -&gt; mini_redis::Result&lt;()&gt; {
-    let mut client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
+    let mut client = client::connect("127.0.0.1:6379").await?;
 
     // Publish some data
-    client.publish(&quot;numbers&quot;, &quot;1&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;two&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;3&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;four&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;five&quot;.into()).await?;
-    client.publish(&quot;numbers&quot;, &quot;6&quot;.into()).await?;
+    client.publish("numbers", "1".into()).await?;
+    client.publish("numbers", "two".into()).await?;
+    client.publish("numbers", "3".into()).await?;
+    client.publish("numbers", "four".into()).await?;
+    client.publish("numbers", "five".into()).await?;
+    client.publish("numbers", "6".into()).await?;
     Ok(())
 }
 
 async fn subscribe() -&gt; mini_redis::Result&lt;()&gt; {
-    let client = client::connect(&quot;127.0.0.1:6379&quot;).await?;
-    let subscriber = client.subscribe(vec![&quot;numbers&quot;.to_string()]).await?;
+    let client = client::connect("127.0.0.1:6379").await?;
+    let subscriber = client.subscribe(vec!["numbers".to_string()]).await?;
     let messages = subscriber.into_stream();
 
     tokio::pin!(messages);
 
     while let Some(msg) = messages.next().await {
-        println!(&quot;got = {:?}&quot;, msg);
+        println!("got = {:?}", msg);
     }
 
     Ok(())
@@ -3747,14 +3747,14 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
 
     subscribe().await?;
 
-    println!(&quot;DONE&quot;);
+    println!("DONE");
 
     Ok(())
 }</code></pre></pre>
-<p>一个任务被生成来发布消息到 Mini-Redis server 上的 &quot;numbers&quot; channel 。然后，在主要的任务中，我们订阅 &quot;numbers&quot; channel 并且打印接收到的消息。</p>
+<p>一个任务被生成来发布消息到 Mini-Redis server 上的 "numbers" channel 。然后，在主要的任务中，我们订阅 "numbers" channel 并且打印接收到的消息。</p>
 <p>订阅之后，我们在返回的 subscriber 上调用 <a href="https://docs.rs/mini-redis/0.4/mini_redis/client/struct.Subscriber.html#method.into_stream"><code>into_stream()</code></a> 。这个方法会消费掉这个 <code>Subscriber</code> ，返回一个能在消息到达的时候生成消息的 stream 。在我们开始迭代消息之前，注意这个 stream 通过<a href="https://docs.rs/tokio/1/tokio/macro.pin.html"><code>tokio::pin!</code></a> 被  <a href="https://doc.rust-lang.org/std/pin/index.html">pin</a> 到了栈上。 在一个 stream 上调用 <code>next()</code> 要求这个 stream 是 <a href="https://doc.rust-lang.org/std/pin/index.html">pinned</a> （这也是上面用 <code>tokio::pin!</code> 的原因）。<code>into_stream()</code> 函数返回一个没有被 pin 的 stream，为了迭代这个 stream ，我们必须显式地 pin 它。</p>
 <blockquote>
-<p>当一个 Rust 的值不再能够在内存中被移动时，这个值就是 &quot;pinned&quot; 。a pinned value 的关键属性是指针可以取到 pinned data 并且调用者可以确信指针是有效的。这个特性被 <code>async/await</code> 用来支持跨 <code>.await</code> 点的借用数据。</p>
+<p>当一个 Rust 的值不再能够在内存中被移动时，这个值就是 "pinned" 。a pinned value 的关键属性是指针可以取到 pinned data 并且调用者可以确信指针是有效的。这个特性被 <code>async/await</code> 用来支持跨 <code>.await</code> 点的借用数据。</p>
 </blockquote>
 <p>如果我们忘记 pin the stream，我们会得到一个像这样的错误：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -3780,12 +3780,12 @@ async fn main() -&gt; mini_redis::Result&lt;()&gt; {
 <pre><code class="language-zsh">mini-redis-server
 </code></pre>
 <p>然后尝试运行上面的代码。我们将会看到消息被输出到了 STDOUT。</p>
-<pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;two&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;four&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;five&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
+<pre><code class="language-textile">got = Ok(Message { channel: "numbers", content: b"1" })
+got = Ok(Message { channel: "numbers", content: b"two" })
+got = Ok(Message { channel: "numbers", content: b"3" })
+got = Ok(Message { channel: "numbers", content: b"four" })
+got = Ok(Message { channel: "numbers", content: b"five" })
+got = Ok(Message { channel: "numbers", content: b"6" })
 </code></pre>
 <p>由于订阅和发布之间存在竞争，一些早期消息可能会被删除。该程序永远不会退出。只要服务器处于活动状态，对 Mini-Redis 频道的订阅就会保持活动状态。</p>
 <p>让我们看看可以怎么来用 stream 拓展这个程序。</p>
@@ -3799,9 +3799,9 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
     .take(3);
 <span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到了：</p>
-<pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;two&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
+<pre><code class="language-textile">got = Ok(Message { channel: "numbers", content: b"1" })
+got = Ok(Message { channel: "numbers", content: b"two" })
+got = Ok(Message { channel: "numbers", content: b"3" })
 </code></pre>
 <p>这次程序结束了。</p>
 <p>现在，让我们把 stream 限制为个位数，我们将会通过检查消息的长度来确保此事。我们使用 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter"><code>filter</code></a> adapter 来 drop 任何不匹配先决条件的消息。</p>
@@ -3816,9 +3816,9 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
     .take(3);
 <span class="boring">}</span></code></pre></pre>
 <p>再次运行程序，我们得到：</p>
-<pre><code class="language-textile">got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;1&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;3&quot; })
-got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
+<pre><code class="language-textile">got = Ok(Message { channel: "numbers", content: b"1" })
+got = Ok(Message { channel: "numbers", content: b"3" })
+got = Ok(Message { channel: "numbers", content: b"6" })
 </code></pre>
 <p>请注意，adapter 的应用顺序很重要。先调用 <code>filter</code> 然后 <code>take</code> 是跟先 <code>take</code> 然后 <code>filter</code> 不一样的（这很好理解，先 <code>take</code> 的话，就会在前三个里找内容是个位数的消息）。</p>
 <p>最后，我们将通过剥离 <code>Ok(Message{...})</code> 部分来整理输出，这通过 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.map"><code>map</code></a> 来完成。因为这是在 <code>filter</code> 之后被应用的，我们能知道消息是 <code>Ok</code>，所以我们可以使用 <code>unwrap()</code> 。</p>
@@ -3834,9 +3834,9 @@ got = Ok(Message { channel: &quot;numbers&quot;, content: b&quot;6&quot; })
     .take(3);
 <span class="boring">}</span></code></pre></pre>
 <p>现在，输出是：</p>
-<pre><code class="language-textile">got = b&quot;1&quot;
-got = b&quot;3&quot;
-got = b&quot;6&quot;
+<pre><code class="language-textile">got = b"1"
+got = b"3"
+got = b"6"
 </code></pre>
 <p>另一种选择是使用 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter_map"><code>filter_map</code></a> 将 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.filter"><code>filter</code></a> 和 <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html#method.map"><code>map</code></a> 两个步骤组合起来作为一个单次调用。</p>
 <p>在<a href="https://docs.rs/tokio-stream/0.1/tokio_stream/trait.StreamExt.html">这里</a>可以找到更多可用的 adapter。</p>
@@ -3952,7 +3952,7 @@ pacman -Qqe (列出200个包)
 列出自动安装的包（-d,depends作为依赖项）  
 pacman -Qqd (列出616个)
 
-列出孤立的包（-t不再被依赖的&quot;作为依赖项安装的包&quot;）  
+列出孤立的包（-t不再被依赖的"作为依赖项安装的包"）  
 pacman -Qqdt (列出35个)  
 注意：通常这些是可以妥妥的删除的。(sudo pacman -Qqdt | sudo pacman -Rs -)
 </code></pre>
@@ -4041,19 +4041,19 @@ sudo pacman -Qdt |wc -l
 <p>  Operations:</p>
 <div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
 <tr><td><strong>-d, --dryrun</strong></td><td>perform a dry run, only finding candidate packages.</td><td>执行干运行，只找到候选包。</td></tr>
-<tr><td><strong>-m, --move <dir></strong></td><td>move candidate packages to &quot;dir&quot;.</td><td>将候选包裹移到“dir”。</td></tr>
+<tr><td><strong>-m, --move <dir></strong></td><td>move candidate packages to "dir".</td><td>将候选包裹移到“dir”。</td></tr>
 <tr><td><strong>-r, --remove</strong></td><td>remove candidate packages.</td><td>删除候选包。</td></tr>
 </tbody></table>
 </div>
 <p>  Options:</p>
 <div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
-<tr><td>-a, --arch <arch></td><td>scan for &quot;arch&quot; (default: all architectures).</td><td>扫描“arch”（默认：所有架构）。</td></tr>
-<tr><td>-c, --cachedir <dir></td><td>scan &quot;dir&quot; for packages. can be used more than once.</td><td>扫描“dir”包。 可以使用不止一次。</td></tr>
+<tr><td>-a, --arch <arch></td><td>scan for "arch" (default: all architectures).</td><td>扫描“arch”（默认：所有架构）。</td></tr>
+<tr><td>-c, --cachedir <dir></td><td>scan "dir" for packages. can be used more than once.</td><td>扫描“dir”包。 可以使用不止一次。</td></tr>
 <tr><td></td><td>(default: read from /etc/pacman.conf).</td><td>（默认：从/etc/pacman.conf中读取）。</td></tr>
 <tr><td>-f, --force</td><td>apply force to mv(1) and rm(1) operations.</td><td>对mv（1）和rm（1）操作施加强制。</td></tr>
 <tr><td>-h, --help</td><td>display this help message and exit.</td><td>显示此帮助消息并退出。</td></tr>
-<tr><td>-i, --ignore <pkgs></td><td>ignore &quot;pkgs&quot;, comma-separated. Alternatively, specify &quot;-&quot; to read package names from stdin, newline-delimited.</td><td>忽略“pkgs”，以逗号分隔。 或者，指定“ - ”以从stdin读取包名称，换行符分隔。</td></tr>
-<tr><td><strong>-k, --keep <num></strong></td><td>keep &quot;num&quot; of each package in the cache (default: 3).</td><td>保留缓存中每个包的“num”（默认值：3）。</td></tr>
+<tr><td>-i, --ignore <pkgs></td><td>ignore "pkgs", comma-separated. Alternatively, specify "-" to read package names from stdin, newline-delimited.</td><td>忽略“pkgs”，以逗号分隔。 或者，指定“ - ”以从stdin读取包名称，换行符分隔。</td></tr>
+<tr><td><strong>-k, --keep <num></strong></td><td>keep "num" of each package in the cache (default: 3).</td><td>保留缓存中每个包的“num”（默认值：3）。</td></tr>
 <tr><td>--nocolor</td><td>remove color from output.</td><td>从输出中删除颜色。</td></tr>
 <tr><td>-q, --quiet</td><td>minimize output</td><td>最小化输出</td></tr>
 <tr><td><strong>-u, --uninstalled</strong></td><td>target uninstalled packages.</td><td>目标已卸载的软件包。</td></tr>
@@ -4171,15 +4171,15 @@ Jun 23 17:18:33 tompc pacman[7079]: upgraded chromium (75.0.3770.90-3 -&gt; 75.0
 <h2 id="emoji-支持"><a class="header" href="#emoji-支持">emoji 支持</a></h2>
 <pre><code class="language-shell">#!/bin/sh
 set -e
-if [[ $(id -u) -ne 0 ]] ; then echo &quot;请使用 root 用户执行本脚本&quot; ; exit 1 ; fi
-echo &quot;开始设置 Noto Emoji font...&quot;
+if [[ $(id -u) -ne 0 ]] ; then echo "请使用 root 用户执行本脚本" ; exit 1 ; fi
+echo "开始设置 Noto Emoji font..."
 # 1 - 安装  noto-fonts-emoji 包
 pacman -S noto-fonts-emoji --needed
 # pacman -S powerline-fonts --needed
-echo &quot;推荐的系统字体: inconsolata regular (ttf-inconsolata 或 powerline-fonts)&quot;
+echo "推荐的系统字体: inconsolata regular (ttf-inconsolata 或 powerline-fonts)"
 # 2 - 添加字体配置到 /etc/fonts/conf.d/01-notosans.conf
-echo '&lt;?xml version=&quot;1.0&quot;?&gt;
-&lt;!DOCTYPE fontconfig SYSTEM &quot;fonts.dtd&quot;&gt;
+echo '&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE fontconfig SYSTEM "fonts.dtd"&gt;
 &lt;fontconfig&gt;
  &lt;alias&gt;
    &lt;family&gt;sans-serif&lt;/family&gt;
@@ -4215,7 +4215,7 @@ echo '&lt;?xml version=&quot;1.0&quot;?&gt;
 ' &gt; /etc/fonts/local.conf
 # 3 - 通过 fc-cache 更新字体缓存
 fc-cache
-echo &quot;Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Chrome. 如果没什么变化说明你的字体本身已经包含 emoji.&quot;
+echo "Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Chrome. 如果没什么变化说明你的字体本身已经包含 emoji."
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="一致性哈希"><a class="header" href="#一致性哈希">一致性哈希</a></h2>
 <h3 id="常用场景"><a class="header" href="#常用场景">常用场景</a></h3>
@@ -4245,9 +4245,9 @@ echo &quot;Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Ch
 <pre><code class="language-go">package consistenthash
 
 import (
- &quot;fmt&quot;
- &quot;sort&quot;
- &quot;sync&quot;
+ "fmt"
+ "sort"
+ "sync"
 )
 
 type PlaceHolder struct{}
@@ -4316,7 +4316,7 @@ func (ch *ConsistentHash) AddWithVirtualNodes(node any, virtualNodeNum uint64) {
  defer ch.lock.Unlock()
  for i := uint64(0); i &lt; virtualNodeNum; i++ {
   // 生成虚拟节点的哈希值
-  hash := ch.hashFn([]byte(fmt.Sprintf(&quot;%s#%d&quot;, nodeStr, i)))
+  hash := ch.hashFn([]byte(fmt.Sprintf("%s#%d", nodeStr, i)))
   // 将虚拟节点添加到哈希环上
   ch.ring[hash] = nodeStr
   // 因为 map 不可排序, 所以需要记录所有的虚拟节点
@@ -4364,7 +4364,7 @@ func (ch *ConsistentHash) RemoveWithVirtualNodes(node any) {
 
 // Get 获取 key 对应的节点
 //
-// 如果哈希环为空, 则返回 &quot;&quot; 和 false
+// 如果哈希环为空, 则返回 "" 和 false
 func (ch *ConsistentHash) Get(key any) (string, bool) {
  ch.lock.RLock()
  defer ch.lock.RUnlock()
@@ -4380,7 +4380,7 @@ func (ch *ConsistentHash) Get(key any) (string, bool) {
 func (ch *ConsistentHash) search(hash uint64) (string, bool) {
  // 如果哈希环为空, 则返回空字符串
  if len(ch.ring) == 0 {
-  return &quot;&quot;, false
+  return "", false
  }
 
  // 如果 hash 在 ring 上直接命中，则直接返回对应 node
@@ -4403,8 +4403,8 @@ func (ch *ConsistentHash) search(hash uint64) (string, bool) {
 package consistenthash
 
 import (
-    &quot;github.com/cespare/xxhash&quot;
-    &quot;github.com/spaolacci/murmur3&quot;
+    "github.com/cespare/xxhash"
+    "github.com/spaolacci/murmur3"
 )
 
 func murmur3Sum64(data []byte) uint64 {
@@ -4419,15 +4419,15 @@ func xxhashSum64(data []byte) uint64 {
 <pre><code class="language-go">package consistenthash
 
 import (
-    &quot;fmt&quot;
-    &quot;reflect&quot;
-    &quot;strconv&quot;
+    "fmt"
+    "reflect"
+    "strconv"
 )
 
 // Repr 将节点转换为字符串
 func Repr(v any) string {
     if v == nil {
-        return &quot;&quot;
+        return ""
     }
 
     // 如果是 func (v *Type) String() string，我们不能使用 Elem()
@@ -4579,18 +4579,18 @@ nc -lp 6666 -e /bin/bash
 ❯ mkcert -install
 The local CA is already installed in the system trust store! 👍The local CA is already installed in the Firefox and/or Chrome/Chromium trust store! 👍
 ~ ·········································································································································  10:46:34
-❯ mkcert example.com &quot;*.example.com&quot; example.test localhost 127.0.0.1 ::1
+❯ mkcert example.com "*.example.com" example.test localhost 127.0.0.1 ::1
 
-Created a new certificate valid for the following names 📜 - &quot;example.com&quot;
- - &quot;*.example.com&quot;
- - &quot;example.test&quot;
- - &quot;localhost&quot;
- - &quot;127.0.0.1&quot;
- - &quot;::1&quot;
+Created a new certificate valid for the following names 📜 - "example.com"
+ - "*.example.com"
+ - "example.test"
+ - "localhost"
+ - "127.0.0.1"
+ - "::1"
 
 Reminder: X.509 wildcards only go one level deep, so this won't match a.b.example.com ℹ️
 
-The certificate is at &quot;./example.com+5.pem&quot; and the key at &quot;./example.com+5-key.pem&quot; ✅
+The certificate is at "./example.com+5.pem" and the key at "./example.com+5-key.pem" ✅
 It will expire on 30 January 2025 🗓
 
 ~ ·········································································································································  10:47:37
@@ -4609,7 +4609,7 @@ Ncat: Failed SSL connection from 127.0.0.1: error:00000000:lib(0):func(0):reason
 <p><code>mkcert</code>  自动生成并安装一个本地 CA 到 root stores，并且生成 locally-trusted 证书。<code>mkcert</code> 不会自动使用证书来配置服务器，不过，这取决于你。</p>
 <h2 id="安装-1"><a class="header" href="#安装-1">安装</a></h2>
 <blockquote>
-<p>Warning: <code>mkcert</code>  自动生成的 <code>rootCA-key.pem</code> 文件提供了完整的能力来拦截你机器上的安全请求。请不要分享它。 </p>
+<p>Warning: <code>mkcert</code>  自动生成的 <code>rootCA-key.pem</code> 文件提供了完整的能力来拦截你机器上的安全请求。请不要分享它。</p>
 </blockquote>
 <h3 id="macos"><a class="header" href="#macos">macOS</a></h3>
 <pre><code class="language-zsh">brew install mkcert
@@ -4630,10 +4630,10 @@ sudo zypper install mozilla-nss-tools
 </code></pre>
 <p>或者从源码构建（要求 Go 1.13+）</p>
 <pre><code class="language-zsh">git clone https://github.com/FiloSottile/mkcert &amp;&amp; cd mkcert
-go build -ldflags &quot;-X main.Version=$(git describe --tags)&quot;
+go build -ldflags "-X main.Version=$(git describe --tags)"
 </code></pre>
 <p>又或者使用 <a href="https://github.com/FiloSottile/mkcert/releases">预构建的二进制文件</a>。</p>
-<pre><code class="language-zsh">curl -JLO &quot;https://dl.filippo.io/mkcert/latest?for=linux/amd64&quot;
+<pre><code class="language-zsh">curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 chmod +x mkcert-v*-linux-amd64
 sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
 </code></pre>
@@ -4683,7 +4683,7 @@ scoop install mkcert
 <p>Java（当 <code>JAVA_HOME</code> 被设置时）</p>
 </li>
 </ul>
-<p>为了把 local root CA 装到这些 root stores 中，你可以设置 <code>TRUST_STORES</code> 环境变量到一个逗号分隔的 list。有这些选项：&quot;system&quot;,&quot;java&quot; 和 &quot;nss&quot;（包括了 Firefox）。</p>
+<p>为了把 local root CA 装到这些 root stores 中，你可以设置 <code>TRUST_STORES</code> 环境变量到一个逗号分隔的 list。有这些选项："system","java" 和 "nss"（包括了 Firefox）。</p>
 <h2 id="高级-topics"><a class="header" href="#高级-topics">高级 topics</a></h2>
 <hr />
 <h3 id="高级选项"><a class="header" href="#高级选项">高级选项</a></h3>
@@ -4697,7 +4697,7 @@ scoop install mkcert
         生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
 
     -pkcs12
-        生成一个 &quot;.p12&quot; PKCS #12 文件，也可以被识别为 &quot;.pfx&quot; 文件,
+        生成一个 ".p12" PKCS #12 文件，也可以被识别为 ".pfx" 文件,
         包含 cert 和 key for legacy applications.
 
     -csr CSR
@@ -4721,7 +4721,7 @@ scoop install mkcert
 <p>对于 Android ，你得安装这个 CA 然后在应用程序的开发版本中启用 user roots。可以看一看这个 <a href="https://stackoverflow.com/a/22040887/749014">StackOverflow 回答</a> 。</p>
 <h3 id="用-nodejs-来使用这个-root"><a class="header" href="#用-nodejs-来使用这个-root">用 Node.js 来使用这个 root</a></h3>
 <p>Node 不使用 system root store，所以它不会自动接受 <code>mkcert</code> 证书。相反，你得设置 <a href="https://nodejs.org/api/cli.html#cli_node_extra_ca_certs_file"><code>NODE_EXTRA_CA_CERTS</code></a> 环境变量。</p>
-<pre><code class="language-zsh">export NODE_EXTRA_CA_CERTS=&quot;$(mkcert -CAROOT)/rootCA.pem&quot;
+<pre><code class="language-zsh">export NODE_EXTRA_CA_CERTS="$(mkcert -CAROOT)/rootCA.pem"
 </code></pre>
 <h3 id="改变-ca-文件的位置"><a class="header" href="#改变-ca-文件的位置">改变 CA 文件的位置</a></h3>
 <p>CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般来说你不会想去关注它的位置，因为它会被自动装载。但是你可以通过 <code>mkcert -CAROOT</code> 来打印这个目录位置。</p>
@@ -4746,7 +4746,7 @@ scoop install mkcert
 <div style="break-before: page; page-break-before: always;"></div><h2 id="aria2"><a class="header" href="#aria2">aria2</a></h2>
 <h3 id="aria2-配置"><a class="header" href="#aria2-配置">aria2 配置</a></h3>
 <pre><code class="language-zsh"># 找个地方放 aria2，这里的路径都能按自己需求改，不必跟我保持一致
-sudo echo &quot;Aria2&quot; &gt; /etc/hostname
+sudo echo "Aria2" &gt; /etc/hostname
 sudo adduser Aria2
 su - Aria2
 mkdir -p ~/.aria2
@@ -4907,7 +4907,7 @@ $ docker run -d \
 -p 5432:5432 \
 -e POSTGRES_USER=&lt;YOUR USER NAME&gt; \
 -e LANG=zh_CN.utf8 \
--e POSTGRES_INITDB_ARGS=&quot;--locale-provider=icu --icu-locale=zh-CN&quot; \
+-e POSTGRES_INITDB_ARGS="--locale-provider=icu --icu-locale=zh-CN" \
 -e POSTGRES_PASSWORD=&lt;YOUR PASSWORD&gt; \
 postgres:15-alpine -c 'config_file=/etc/postgresql/postgresql.conf'
 </code></pre>
@@ -4970,7 +4970,7 @@ Swap:             7           0           7
 复制代码
 </code></pre>
 <p>当我们把参数修改成 512MB 的时候，可以看到<code>Sort Method</code>变成了<code>quicksort Memory</code>，变成了内存排序。</p>
-<pre><code class="language-sql">kms=&gt; set work_mem to &quot;512MB&quot;;
+<pre><code class="language-sql">kms=&gt; set work_mem to "512MB";
 SET
 kms=&gt; explain (analyze,buffers) select * from KMS_BUSINESS_HALL_TOTAL  order by buss_query_info;
                                                                 QUERY PLAN                                                                
@@ -4988,13 +4988,13 @@ kms=&gt; explain (analyze,buffers) select * from KMS_BUSINESS_HALL_TOTAL  order 
 </code></pre>
 <h4 id="maintenance_work_mem"><a class="header" href="#maintenance_work_mem">maintenance_work_mem</a></h4>
 <p>指定维护操作使用的最大内存量，例如（Vacuum、Create Index和Alter Table Add Foreign Key），默认值是 64MB。由于通常正常运行的数据库中不会有大量并发的此类操作，可以设置的较大一些，提高清理和创建索引外键的速度。</p>
-<pre><code class="language-sql">postgres=# set maintenance_work_mem to &quot;64MB&quot;;
+<pre><code class="language-sql">postgres=# set maintenance_work_mem to "64MB";
 SET
 Time: 1.971 ms
 postgres=# create index idx1_test on test(id);
 CREATE INDEX
 Time: 7483.621 ms (00:07.484)
-postgres=# set maintenance_work_mem to &quot;2GB&quot;;
+postgres=# set maintenance_work_mem to "2GB";
 SET
 Time: 0.543 ms
 postgres=# drop index idx1_test;
@@ -5069,9 +5069,9 @@ Non-sync'ed 8kB writes:
 </ul>
 <p>使用默认值，检查点将在<code>checkpoint_timeout=5min</code>。也就是每 5 分钟触发一次。而<a href="https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE">max_wal_size</a>设置是自动检查点之间增长的最大预写日志记录（WAL）量。默认是 1GB，如果超过了 1GB，则会发生检查点。这是一个软限制。在一个特殊的情况下，比如系统遭遇到短时间的高负载，日志产生几秒种就可以达到 1GB，这个速度已经明显超过了<code>checkpoint_timeout</code> ，<code>pg_wal</code>目录的大小会急剧增加。此时我们可以从日志中看到相关类似的警告。</p>
 <pre><code class="language-sql">LOG:  checkpoints are occurring too frequently (9 seconds apart)
-HINT:  Consider increasing the configuration parameter &quot;max_wal_size&quot;.
+HINT:  Consider increasing the configuration parameter "max_wal_size".
 LOG:  checkpoints are occurring too frequently (2 seconds apart)
-HINT:  Consider increasing the configuration parameter &quot;max_wal_size&quot;.
+HINT:  Consider increasing the configuration parameter "max_wal_size".
 复制代码
 </code></pre>
 <p>所以要合理配置<code>max_wal_size</code>，以避免频繁的进行检查点。一般推荐设置为 16GB 以上，不过具体设置多大还需要和工作负荷相匹配。</p>
@@ -5088,7 +5088,7 @@ cp ~/.config/navicat/Premium/preferences.json ~/.config/navicat/Premium/preferen
 # Clear data in dconf
 dconf reset -f /com/premiumsoft/navicat-premium/
 # Remove data fields in config file
-sed -i -E 's/,?&quot;([A-Z0-9]+)&quot;:\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json
+sed -i -E 's/,?"([A-Z0-9]+)":\{([^\}]+)},?//g' ~/.config/navicat/Premium/preferences.json
 </code></pre>
 <h2 id="links"><a class="header" href="#links">Links</a></h2>
 <ul>
@@ -5179,15 +5179,15 @@ x-minio-common: &amp;minio-common
  # set your minio version
  image: quay.io/minio/minio:RELEASE.2022-10-15T19-57-03Z
  restart: unless-stopped
- command: server --console-address &quot;:9001&quot; http://minio{1...4}/data{1...2}
+ command: server --console-address ":9001" http://minio{1...4}/data{1...2}
  expose:
- - &quot;9000&quot;
- - &quot;9001&quot;
+ - "9000"
+ - "9001"
  environment:
  MINIO_ROOT_USER: &lt;YOUR MINIO ROOT USER&gt;
  MINIO_ROOT_PASSWORD: &lt;YOUR MINIO ROOT PASSWORD&gt;
  healthcheck:
- test: [&quot;CMD&quot;, &quot;curl&quot;, &quot;-f&quot;, &quot;http://localhost:9000/minio/health/live&quot;]
+ test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
  interval: 30s
  timeout: 20s
  retries: 3 
@@ -5225,8 +5225,8 @@ nginx:
  volumes:
  - ./nginx.conf:/etc/nginx/nginx.conf:ro
  ports:
- - &quot;9000:9000&quot;
- - &quot;80:80&quot;
+ - "9000:9000"
+ - "80:80"
  depends_on:
  - minio1
  - minio2
@@ -5297,7 +5297,7 @@ http {
         # 允许跨域
         add_header Access-Control-Allow-Origin * always;
         add_header Access-Control-Allow-Headers *;
-        add_header Access-Control-Allow-Methods &quot;GET, POST, PUT, OPTIONS&quot;;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, OPTIONS";
         add_header Access-Control-Allow-Methods *;
 
          location / {
@@ -5309,7 +5309,7 @@ http {
                proxy_connect_timeout 300;
                # 默认是 HTTP/1, keepalive 需要 HTTP/1.1
                proxy_http_version 1.1;
-               proxy_set_header Connection &quot;&quot;;
+               proxy_set_header Connection "";
                chunked_transfer_encoding off;
                 proxy_pass http://localhost:9003;
         }
@@ -5339,10 +5339,10 @@ $ docker-compose up -d
 <pre><code>git add .
 </code></pre>
 <p><strong>4. 提交更改</strong></p>
-<pre><code>git commit -m &quot;&lt;message&gt;&quot;
+<pre><code>git commit -m "&lt;message&gt;"
 </code></pre>
 <p>如果要添加对跟踪文件所做的所有更改并提交。</p>
-<pre><code>git commit -a -m &quot;&lt;message&gt;&quot;
+<pre><code>git commit -a -m "&lt;message&gt;"
 </code></pre>
 <p><strong>5.从暂存区删除一个文件</strong></p>
 <pre><code>git reset &lt;file&gt;
@@ -5427,7 +5427,7 @@ $ docker-compose up -d
 <pre><code>git stash
 </code></pre>
 <p>您还可以将消息添加到存储中。</p>
-<pre><code>git stash save &quot;&lt;message&gt;&quot;
+<pre><code>git stash save "&lt;message&gt;"
 </code></pre>
 <p><strong>27. 列出存储</strong></p>
 <pre><code>git stash list
@@ -5498,12 +5498,12 @@ croc 2151-school-biscuit-snow
 <p><code>croc</code> 仅仅告诉我，去另一条计算机上执行 <code>croc 2151-school-biscuit-snow</code>。在没有查看任何详细文档的情况下，以这种方式完成了一次文件传输，这让我感到非常惊讶——文件提供方没有指出要将文件发送到哪儿，文件接收方也没有提供要从哪儿接收文件，仅凭 <code>croc</code> 给出的 <code>2151-school-biscuit-snow</code> code 就得到了文件。</p>
 <p>为了弄明白 <code>croc send</code> 的默认行为（文档比较简单，并没有给出相关说明），让我们看下 <code>croc</code> 的源码（写这篇文章时的提交是 <a href="https://github.com/schollz/croc/commit/cd6eb1ba53ec36a27cf8a2ac5a8b700be3e83ce3"><code>cd6eb1ba53ec36a27cf8a2ac5a8b700be3e83ce3</code></a>），在路径 <code>croc/src/cli/cli.go lines: 196~200</code>:</p>
 <pre><code class="language-go">    if crocOptions.RelayAddress != models.DEFAULT_RELAY {
-        crocOptions.RelayAddress6 = &quot;&quot;
+        crocOptions.RelayAddress6 = ""
     } else if crocOptions.RelayAddress6 != models.DEFAULT_RELAY6 {
-        crocOptions.RelayAddress = &quot;&quot;
+        crocOptions.RelayAddress = ""
     }
 </code></pre>
-<p><code>models.DEFAULT_RELAY</code> 和 <code>models.DEFAULT_RELAY6</code> 的内容分别是 <code>&quot;croc.schollz.com&quot;</code> 和 <code>&quot;croc6.schollz.com&quot;</code> 。</p>
+<p><code>models.DEFAULT_RELAY</code> 和 <code>models.DEFAULT_RELAY6</code> 的内容分别是 <code>"croc.schollz.com"</code> 和 <code>"croc6.schollz.com"</code> 。</p>
 <p>从这就能看出 <code>relay</code> 并不是真正意义上的无服务器，仍然需要需要一台发送者和接收者都能发现的中继服务器，而 schollz 本人提供了默认的中继服务器。</p>
 <p>中继服务器不需要提供真实的服务，正如其名，它仅仅只是负责中继（写到这时我并没有详细阅读 <code>croc</code> 源码，我猜测应该是像 <code>P2P</code> 一样使用类似 NAT hole punching 的技术来让端对端彼此能够发现彼此）。</p>
 <p><code>croc</code> 也提供了指定 <code>relay</code> 的参数，具体细节可以通过在<strong>命令/子命令</strong>后添加 <code>--help</code> 来查看。</p>
@@ -5521,7 +5521,7 @@ croc 2151-school-biscuit-snow
                 return
             }
             if _, err := conn2.Write(b1); err != nil {
-                log.Errorf(&quot;write error on channel 1: %v&quot;, err)
+                log.Errorf("write error on channel 1: %v", err)
             }
 
             case b2 := &lt;-chan2:
@@ -5529,7 +5529,7 @@ croc 2151-school-biscuit-snow
                 return
             }
             if _, err := conn1.Write(b2); err != nil {
-                log.Errorf(&quot;write error on channel 2: %v&quot;, err)
+                log.Errorf("write error on channel 2: %v", err)
             }
         }
     }
@@ -5593,13 +5593,13 @@ Auth | {CertificateVerify*}
 <p>建立其他握手参数（例如，客户端是否经过认证，应用层协议支持等）。</p>
 <h3 id="认证"><a class="header" href="#认证">认证</a></h3>
 <p>认证服务器（以及可选的客户端认证），并提供密钥确认和握手完整性。</p>
-<p>而 TLS 1.3 的握手过程中，密钥交换阶段是最重要的。在密钥交换阶段，客户端发送 ClientHello 消息，该消息包含一个随机数（ClientHello.random）；它提供的协议版本；一系列对称密码/HKDF哈希对；<strong>&quot;key_share&quot;</strong> 扩展中的一组 Diffie-Hellman 密钥共享，或者 &quot;pre_shared_key&quot; 扩展中的一组预共享密钥标签，或者两者都有；可能还有其他扩展。为了与中间件兼容，可能还存在其他字段和/或消息。</p>
-<p>服务器处理 ClientHello 并确定连接的适当加密参数。然后，它用自己的 ServerHello 进行响应，该响应指示协商的连接参数。 <strong>ClientHello 和 ServerHello 的组合决定了共享密钥。如果正在使用 (EC)DHE 密钥建立，那么 ServerHello 将包含一个 &quot;key_share&quot; 扩展，其中包含服务器的临时 <a href="https://zhuanlan.zhihu.com/p/599518034">Diffie-Hellman</a>(阅读本文需要了解DH密钥交换) 共享</strong>；服务器的共享必须与客户端的某个共享在同一组。如果正在使用 PSK 密钥建立，那么 ServerHello 将包含一个 &quot;pre_shared_key&quot; 扩展，指示选择了客户端提供的哪个 PSK。请注意，实现可以同时使用 (EC)DHE 和 PSK，在这种情况下，两个扩展都将被提供。</p>
+<p>而 TLS 1.3 的握手过程中，密钥交换阶段是最重要的。在密钥交换阶段，客户端发送 ClientHello 消息，该消息包含一个随机数（ClientHello.random）；它提供的协议版本；一系列对称密码/HKDF哈希对；<strong>"key_share"</strong> 扩展中的一组 Diffie-Hellman 密钥共享，或者 "pre_shared_key" 扩展中的一组预共享密钥标签，或者两者都有；可能还有其他扩展。为了与中间件兼容，可能还存在其他字段和/或消息。</p>
+<p>服务器处理 ClientHello 并确定连接的适当加密参数。然后，它用自己的 ServerHello 进行响应，该响应指示协商的连接参数。 <strong>ClientHello 和 ServerHello 的组合决定了共享密钥。如果正在使用 (EC)DHE 密钥建立，那么 ServerHello 将包含一个 "key_share" 扩展，其中包含服务器的临时 <a href="https://zhuanlan.zhihu.com/p/599518034">Diffie-Hellman</a>(阅读本文需要了解DH密钥交换) 共享</strong>；服务器的共享必须与客户端的某个共享在同一组。如果正在使用 PSK 密钥建立，那么 ServerHello 将包含一个 "pre_shared_key" 扩展，指示选择了客户端提供的哪个 PSK。请注意，实现可以同时使用 (EC)DHE 和 PSK，在这种情况下，两个扩展都将被提供。</p>
 <h2 id="reality-是如何工作的"><a class="header" href="#reality-是如何工作的">REALITY 是如何工作的</a></h2>
 <h3 id="reality-中的密钥"><a class="header" href="#reality-中的密钥">REALITY 中的密钥</a></h3>
 <ul>
 <li>
-<p>Auth Key 是由客户端临时生成的 ECDHE（一种基于椭圆曲线的 DH 密钥交换协议，也是 DHKE） 密钥对和服务端配置中的 REALITY 密钥对进行 X25519 算法计算得到的，而不是使用 TLS 1.3 握手中的密钥交换得到的。而 Auth Key 用来加密和解密藏在 ClientHello sessionId 中的 shortId，同时还被用来&quot;签名&quot; REALITY 生成的自签证书。</p>
+<p>Auth Key 是由客户端临时生成的 ECDHE（一种基于椭圆曲线的 DH 密钥交换协议，也是 DHKE） 密钥对和服务端配置中的 REALITY 密钥对进行 X25519 算法计算得到的，而不是使用 TLS 1.3 握手中的密钥交换得到的。而 Auth Key 用来加密和解密藏在 ClientHello sessionId 中的 shortId，同时还被用来"签名" REALITY 生成的自签证书。</p>
 </li>
 <li>
 <p>客户端临时生成的 ECDHE 密钥对既用来生成 Auth Key，又用来与服务端临时生成的 ECDHE 密钥对进行 TLS 1.3 中的 key share。</p>
@@ -5699,29 +5699,29 @@ Auth | {CertificateVerify*}
 </ul>
 <h3 id="调整内核参数"><a class="header" href="#调整内核参数">调整内核参数</a></h3>
 <p>这里我主要介绍第二种方式。在 linux 中会出现 <code>Out of Memory: Killed process 12345 (postgres).</code> 这种情况的原因就是 linux 内核支持 memory overcommit，overcommit 就是内核允许进程过量使用内存，比如在只有 1G 内存可用的环境中进程申请了 1.1G。</p>
-<p>而 linux overcommit 的默认内核策略是允许进程少量 overcommit，拒绝大量 overcommit，即试探性的允许 overcommit。这个内核参数是 <code>vm.overcommit_memory</code>，默认值是 <code>0</code>。<code>1</code> 表示 &quot;Always overcommit&quot;，总是允许 overcommit。最后一个值是 <code>2</code>，也是一般我们需要的模式，&quot;Don't overcommit&quot; ，这个模式将会直接拒绝 overcommit，它可以有效减少发生 OOM 的概率，但绝不是不会发生。</p>
+<p>而 linux overcommit 的默认内核策略是允许进程少量 overcommit，拒绝大量 overcommit，即试探性的允许 overcommit。这个内核参数是 <code>vm.overcommit_memory</code>，默认值是 <code>0</code>。<code>1</code> 表示 "Always overcommit"，总是允许 overcommit。最后一个值是 <code>2</code>，也是一般我们需要的模式，"Don't overcommit" ，这个模式将会直接拒绝 overcommit，它可以有效减少发生 OOM 的概率，但绝不是不会发生。</p>
 <pre><code class="language-bash"># 查看 vm.overcommit_memory 的当前值
 $ sysctl vm.overcommit_memory
 # 更改为 2
 $ sysctl -w vm.overcommit_memory=2
 # 在 /etc/sysctl.conf 中放置等效条目，来持久化该配置
-$ echo &quot;vm.overcommit_memory=2&quot; &gt;&gt; /etc/sysctl.conf
+$ echo "vm.overcommit_memory=2" &gt;&gt; /etc/sysctl.conf
 </code></pre>
 <p>如果配置了 <code>vm.overcommit_memory=2</code>，那么通常希望也配置 <code>vm.overcommit_ratio</code> ，这个参数的单位是百分比。配置它的原因是，“Don't overcommit” 这个模式不允许 commit 超过 <code>swap</code> + <strong>一个可配置的基于物理内存的百分比的量</strong>（默认值是 50），而这个可配置的量就是 <code>vm.overcommit_ratio</code>，至于配置方法同上文的 bash 内容。</p>
 <p><a href="https://www.kernel.org/doc/Documentation/vm/overcommit-accounting">关于这两个参数的 kernal 文档</a></p>
 <h3 id="较危险的方法"><a class="header" href="#较危险的方法">较危险的方法</a></h3>
 <p>当然，还有一种方法可以直接让内核的 <code>OOM killer</code> 不会把我们的进程当做目标，那就是配置 <code>/proc/&lt;PID&gt;/oom_score_adj</code>，<code>&lt;PID&gt;</code> 表示相应进程的 ID。<code>echo -1000 &gt; /proc/&lt;PID&gt;/oom_score_adj</code>将我们的进程的 oom_score_adj 设置为 -1000，表示让 <code>OOM killer</code> 不要把这个进程当做目标。原理是每个进程都会根据实施情况被打上一个<code>oom_score</code> 分数，当系统的内存不够用时 <code>OOM killer</code> 会寻找 <code>/proc/&lt;PID&gt;/oom_score</code> 高的进程并将其杀死。 而打分时 <code>oom_score_adj</code> 的值会直接影响 <code>oom_score</code> 的值，<code>oom_score_adj</code> 的范围是 <code>-1000 ~ 1000</code> ，当 <code>oom_score_adj</code> 的值越低，<code>oom_score</code> 被打的分也就会越低。设置 <code>oom_score_ajd</code> 为 <code>-1000</code> 时 <code>OOM killer</code> 就永远不会光顾这个进程了。</p>
-<p>这个方法危险的原因则是，当 <code>OOM killer</code> 永远不会去杀死一个进程，而这个进程又需要大量内存资源时，当内存不够用，<code>OOM killer</code> 会去杀死其它分高的进程，这是十分危险的。 </p>
+<p>这个方法危险的原因则是，当 <code>OOM killer</code> 永远不会去杀死一个进程，而这个进程又需要大量内存资源时，当内存不够用，<code>OOM killer</code> 会去杀死其它分高的进程，这是十分危险的。</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="docker-proxy"><a class="header" href="#docker-proxy">Docker Proxy</a></h2>
-<p>安装 <code>linkerd2</code> 到 <code>k3d</code>时拉取谷歌 gcr 仓库的内容时发现使用 <code>proxychains</code> 或者 <code>export https_proxy=&quot;....&quot;</code> <code>export http_proxy=&quot;....&quot;</code> 均无法成功让 docker 用上代理，最终通过向 docker 的 service 文件 <code>[Service]</code> 块添加环境变量解决。</p>
-<pre><code class="language-text">Environment=&quot;HTTP_PROXY=http://127.0.0.1:10808&quot;
-Environment=&quot;HTTPS_PROXY=http://127.0.0.1:10808&quot;
-Environment=&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp&quot;
+<p>安装 <code>linkerd2</code> 到 <code>k3d</code>时拉取谷歌 gcr 仓库的内容时发现使用 <code>proxychains</code> 或者 <code>export https_proxy="...."</code> <code>export http_proxy="...."</code> 均无法成功让 docker 用上代理，最终通过向 docker 的 service 文件 <code>[Service]</code> 块添加环境变量解决。</p>
+<pre><code class="language-text">Environment="HTTP_PROXY=http://127.0.0.1:10808"
+Environment="HTTPS_PROXY=http://127.0.0.1:10808"
+Environment="NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
 </code></pre>
 <p><code>NO_PROXY</code> 表示后面这些地址不需要使用代理，这在希望从私有仓库拉取镜像的时候会有用，将仓库地址追加到后面就行。</p>
 <h2 id="error-creating-overlay-mount-to"><a class="header" href="#error-creating-overlay-mount-to">error creating overlay mount to...</a></h2>
 <blockquote>
-<p>&quot;强制关机后再次重启机器后发现一些 docker 容器出现了 <code>error creating overlay mount to......</code> 并且无法启动&quot;</p>
+<p>"强制关机后再次重启机器后发现一些 docker 容器出现了 <code>error creating overlay mount to......</code> 并且无法启动"</p>
 </blockquote>
 <p>该问题是与 <code>selinux</code> 相关的，有一 issue 与该问题相关<a href="https://github.com/coreos/bugs/issues/2340">#2430</a></p>
 <p>查看 <code>/etc/selinux/config</code> ，<code>selinux</code> 状态为 <code>disabled</code> ，在将其设置为 <code>permissive</code> 后重启机器解决了该问题。</p>
@@ -5733,26 +5733,26 @@ Environment=&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp
 <p>“强制关机后 <code>mysql</code> （指物理机上部署，非容器）怎么启动不了了？！”</p>
 </blockquote>
 <p>这个报错是由于强制关机导致 <code>mysql</code> <code>pid</code> 文件丢失，查看 <code>mysql</code> 配置文件，找到 <code>pid</code> 文件位置，创建 <code>pid</code> 文件所在的目录并 <code>chown mysql:mysql &lt;目录&gt;</code>即可</p>
-<h2 id="error-fatal-error-please-read-security-section-of-the-manual-to-find-out-how-to-run-mysqld-as-root"><a class="header" href="#error-fatal-error-please-read-security-section-of-the-manual-to-find-out-how-to-run-mysqld-as-root">[ERROR] Fatal error: Please read &quot;Security&quot; section of the manual to find out how to run mysqld as root</a></h2>
+<h2 id="error-fatal-error-please-read-security-section-of-the-manual-to-find-out-how-to-run-mysqld-as-root"><a class="header" href="#error-fatal-error-please-read-security-section-of-the-manual-to-find-out-how-to-run-mysqld-as-root">[ERROR] Fatal error: Please read "Security" section of the manual to find out how to run mysqld as root</a></h2>
 <pre><code class="language-bash"># 指定用户来启动 mysqld
 mysqld --user=&lt;USER&gt; 
 </code></pre>
 <h2 id="备份脚本例子"><a class="header" href="#备份脚本例子">备份脚本例子</a></h2>
 <pre><code class="language-zsh">#!/bin/bash
-mysql_user=&quot;xxxx&quot;
-mysql_password=&quot;xxxx&quot;
-mysql_host=&quot;xxxx&quot;
-mysql_port=&quot;xxxx&quot;
+mysql_user="xxxx"
+mysql_password="xxxx"
+mysql_host="xxxx"
+mysql_port="xxxx"
 backup_dir=/opt/mysql_backup
 
 dt=`date +'%Y%m%d_%H%M'`
-echo &quot;Backup Begin Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
+echo "Backup Begin Date:" $(date +"%Y-%m-%d %H:%M:%S")
 
 # 备份全部数据库
 mysqldump -h$mysql_host -P$mysql_port -u$mysql_user -p$mysql_password -R -E --all-databases --single-transaction &gt; $backup_dir/mysql_backup_$dt.sql
 
 find $backup_dir -mtime +7 -type f -name '*.sql' -exec rm -rf {} \;
-echo &quot;Backup Succeed Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
+echo "Backup Succeed Date:" $(date +"%Y-%m-%d %H:%M:%S")
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="unable-to-create-internal-queue-for-xxx-error-unable-to-create-queue-level-for-xxx-with-cfg-"><a class="header" href="#unable-to-create-internal-queue-for-xxx-error-unable-to-create-queue-level-for-xxx-with-cfg-">Unable to create internal queue for XXX Error: Unable to create queue level for XXX with cfg ...</a></h2>
 <p>按 <a href="https://github.com/go-gitea/gitea/issues/18917#issuecomment-1052342880">#18917 中的一条回复</a> 中，发现没有 <code>LOCK</code> 文件，然后删除了 <code>data/queues/common</code> 后解决了该问题。</p>
@@ -5783,7 +5783,7 @@ echo &quot;Backup Succeed Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
    proxy_connect_timeout 300;
    # Default is HTTP/1, keepalive is only enabled in HTTP/1.1
    proxy_http_version 1.1;
-   proxy_set_header Connection &quot;&quot;;
+   proxy_set_header Connection "";
    chunked_transfer_encoding off;
 
    proxy_pass http://localhost:9000; # If you are using docker-compose this would be the hostname i.e. minio
@@ -5797,13 +5797,13 @@ echo &quot;Backup Succeed Date:&quot; $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)
 <p>For HTTP, the proxy_http_version directive should be set to “1.1” and the “Connection” header field should be cleared</p>
 </blockquote>
 <pre><code class="language-nginx">proxy_http_version 1.1;
-proxy_set_header Connection &quot;&quot;;
+proxy_set_header Connection "";
 </code></pre>
 <h3 id="解决跨域"><a class="header" href="#解决跨域">解决跨域</a></h3>
 <pre><code class="language-nginx">location /api {
     add_header Access-Control-Allow-Origin * always;
     add_header Access-Control-Allow-Headers *;
-    add_header Access-Control-Allow-Methods &quot;GET, POST, PUT, OPTIONS&quot;;
+    add_header Access-Control-Allow-Methods "GET, POST, PUT, OPTIONS";
     proxy_pass https://baidu.com;
 }
 </code></pre>
@@ -5824,7 +5824,7 @@ location /abc/d {...}
 <p>rfc793 是 1981 年的文件了，一些内容与目前实际情况有所不同</p>
 <h2 id="meilisearch"><a class="header" href="#meilisearch">Meilisearch</a></h2>
 <p><a href="https://github.com/meilisearch/meilisearch/discussions/2070">Experimental feature: auto-batching · Discussion #2070 · meilisearch/meilisearch · GitHub</a></p>
-<p>开启自动批处理 <code>--enable-auto-batching</code> 来提升索引速度。 </p>
+<p>开启自动批处理 <code>--enable-auto-batching</code> 来提升索引速度。</p>
 
                     <!-- 暂时关闭评论 -->
                     <!--<div id="giscus-container"></div>-->

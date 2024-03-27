@@ -196,18 +196,18 @@
 ❯ mkcert -install
 The local CA is already installed in the system trust store! 👍The local CA is already installed in the Firefox and/or Chrome/Chromium trust store! 👍
 ~ ·········································································································································  10:46:34
-❯ mkcert example.com &quot;*.example.com&quot; example.test localhost 127.0.0.1 ::1
+❯ mkcert example.com "*.example.com" example.test localhost 127.0.0.1 ::1
 
-Created a new certificate valid for the following names 📜 - &quot;example.com&quot;
- - &quot;*.example.com&quot;
- - &quot;example.test&quot;
- - &quot;localhost&quot;
- - &quot;127.0.0.1&quot;
- - &quot;::1&quot;
+Created a new certificate valid for the following names 📜 - "example.com"
+ - "*.example.com"
+ - "example.test"
+ - "localhost"
+ - "127.0.0.1"
+ - "::1"
 
 Reminder: X.509 wildcards only go one level deep, so this won't match a.b.example.com ℹ️
 
-The certificate is at &quot;./example.com+5.pem&quot; and the key at &quot;./example.com+5-key.pem&quot; ✅
+The certificate is at "./example.com+5.pem" and the key at "./example.com+5-key.pem" ✅
 It will expire on 30 January 2025 🗓
 
 ~ ·········································································································································  10:47:37
@@ -226,7 +226,7 @@ Ncat: Failed SSL connection from 127.0.0.1: error:00000000:lib(0):func(0):reason
 <p><code>mkcert</code>  自动生成并安装一个本地 CA 到 root stores，并且生成 locally-trusted 证书。<code>mkcert</code> 不会自动使用证书来配置服务器，不过，这取决于你。</p>
 <h2 id="安装"><a class="header" href="#安装">安装</a></h2>
 <blockquote>
-<p>Warning: <code>mkcert</code>  自动生成的 <code>rootCA-key.pem</code> 文件提供了完整的能力来拦截你机器上的安全请求。请不要分享它。 </p>
+<p>Warning: <code>mkcert</code>  自动生成的 <code>rootCA-key.pem</code> 文件提供了完整的能力来拦截你机器上的安全请求。请不要分享它。</p>
 </blockquote>
 <h3 id="macos"><a class="header" href="#macos">macOS</a></h3>
 <pre><code class="language-zsh">brew install mkcert
@@ -247,10 +247,10 @@ sudo zypper install mozilla-nss-tools
 </code></pre>
 <p>或者从源码构建（要求 Go 1.13+）</p>
 <pre><code class="language-zsh">git clone https://github.com/FiloSottile/mkcert &amp;&amp; cd mkcert
-go build -ldflags &quot;-X main.Version=$(git describe --tags)&quot;
+go build -ldflags "-X main.Version=$(git describe --tags)"
 </code></pre>
 <p>又或者使用 <a href="https://github.com/FiloSottile/mkcert/releases">预构建的二进制文件</a>。</p>
-<pre><code class="language-zsh">curl -JLO &quot;https://dl.filippo.io/mkcert/latest?for=linux/amd64&quot;
+<pre><code class="language-zsh">curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 chmod +x mkcert-v*-linux-amd64
 sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
 </code></pre>
@@ -300,7 +300,7 @@ scoop install mkcert
 <p>Java（当 <code>JAVA_HOME</code> 被设置时）</p>
 </li>
 </ul>
-<p>为了把 local root CA 装到这些 root stores 中，你可以设置 <code>TRUST_STORES</code> 环境变量到一个逗号分隔的 list。有这些选项：&quot;system&quot;,&quot;java&quot; 和 &quot;nss&quot;（包括了 Firefox）。</p>
+<p>为了把 local root CA 装到这些 root stores 中，你可以设置 <code>TRUST_STORES</code> 环境变量到一个逗号分隔的 list。有这些选项："system","java" 和 "nss"（包括了 Firefox）。</p>
 <h2 id="高级-topics"><a class="header" href="#高级-topics">高级 topics</a></h2>
 <hr />
 <h3 id="高级选项"><a class="header" href="#高级选项">高级选项</a></h3>
@@ -314,7 +314,7 @@ scoop install mkcert
         生成使用一个 ECDSA （一种椭圆曲线签名算法）key 来生成证书.
 
     -pkcs12
-        生成一个 &quot;.p12&quot; PKCS #12 文件，也可以被识别为 &quot;.pfx&quot; 文件,
+        生成一个 ".p12" PKCS #12 文件，也可以被识别为 ".pfx" 文件,
         包含 cert 和 key for legacy applications.
 
     -csr CSR
@@ -338,7 +338,7 @@ scoop install mkcert
 <p>对于 Android ，你得安装这个 CA 然后在应用程序的开发版本中启用 user roots。可以看一看这个 <a href="https://stackoverflow.com/a/22040887/749014">StackOverflow 回答</a> 。</p>
 <h3 id="用-nodejs-来使用这个-root"><a class="header" href="#用-nodejs-来使用这个-root">用 Node.js 来使用这个 root</a></h3>
 <p>Node 不使用 system root store，所以它不会自动接受 <code>mkcert</code> 证书。相反，你得设置 <a href="https://nodejs.org/api/cli.html#cli_node_extra_ca_certs_file"><code>NODE_EXTRA_CA_CERTS</code></a> 环境变量。</p>
-<pre><code class="language-zsh">export NODE_EXTRA_CA_CERTS=&quot;$(mkcert -CAROOT)/rootCA.pem&quot;
+<pre><code class="language-zsh">export NODE_EXTRA_CA_CERTS="$(mkcert -CAROOT)/rootCA.pem"
 </code></pre>
 <h3 id="改变-ca-文件的位置"><a class="header" href="#改变-ca-文件的位置">改变 CA 文件的位置</a></h3>
 <p>CA 证书和它的 key 被存储在用户家目录的一个文件夹中。一般来说你不会想去关注它的位置，因为它会被自动装载。但是你可以通过 <code>mkcert -CAROOT</code> 来打印这个目录位置。</p>

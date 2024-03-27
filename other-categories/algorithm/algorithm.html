@@ -217,9 +217,9 @@
 <pre><code class="language-go">package consistenthash
 
 import (
- &quot;fmt&quot;
- &quot;sort&quot;
- &quot;sync&quot;
+ "fmt"
+ "sort"
+ "sync"
 )
 
 type PlaceHolder struct{}
@@ -288,7 +288,7 @@ func (ch *ConsistentHash) AddWithVirtualNodes(node any, virtualNodeNum uint64) {
  defer ch.lock.Unlock()
  for i := uint64(0); i &lt; virtualNodeNum; i++ {
   // 生成虚拟节点的哈希值
-  hash := ch.hashFn([]byte(fmt.Sprintf(&quot;%s#%d&quot;, nodeStr, i)))
+  hash := ch.hashFn([]byte(fmt.Sprintf("%s#%d", nodeStr, i)))
   // 将虚拟节点添加到哈希环上
   ch.ring[hash] = nodeStr
   // 因为 map 不可排序, 所以需要记录所有的虚拟节点
@@ -336,7 +336,7 @@ func (ch *ConsistentHash) RemoveWithVirtualNodes(node any) {
 
 // Get 获取 key 对应的节点
 //
-// 如果哈希环为空, 则返回 &quot;&quot; 和 false
+// 如果哈希环为空, 则返回 "" 和 false
 func (ch *ConsistentHash) Get(key any) (string, bool) {
  ch.lock.RLock()
  defer ch.lock.RUnlock()
@@ -352,7 +352,7 @@ func (ch *ConsistentHash) Get(key any) (string, bool) {
 func (ch *ConsistentHash) search(hash uint64) (string, bool) {
  // 如果哈希环为空, 则返回空字符串
  if len(ch.ring) == 0 {
-  return &quot;&quot;, false
+  return "", false
  }
 
  // 如果 hash 在 ring 上直接命中，则直接返回对应 node
@@ -375,8 +375,8 @@ func (ch *ConsistentHash) search(hash uint64) (string, bool) {
 package consistenthash
 
 import (
-    &quot;github.com/cespare/xxhash&quot;
-    &quot;github.com/spaolacci/murmur3&quot;
+    "github.com/cespare/xxhash"
+    "github.com/spaolacci/murmur3"
 )
 
 func murmur3Sum64(data []byte) uint64 {
@@ -391,15 +391,15 @@ func xxhashSum64(data []byte) uint64 {
 <pre><code class="language-go">package consistenthash
 
 import (
-    &quot;fmt&quot;
-    &quot;reflect&quot;
-    &quot;strconv&quot;
+    "fmt"
+    "reflect"
+    "strconv"
 )
 
 // Repr 将节点转换为字符串
 func Repr(v any) string {
     if v == nil {
-        return &quot;&quot;
+        return ""
     }
 
     // 如果是 func (v *Type) String() string，我们不能使用 Elem()

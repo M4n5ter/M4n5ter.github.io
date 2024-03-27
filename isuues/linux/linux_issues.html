@@ -197,19 +197,19 @@
 </ul>
 <h3 id="调整内核参数"><a class="header" href="#调整内核参数">调整内核参数</a></h3>
 <p>这里我主要介绍第二种方式。在 linux 中会出现 <code>Out of Memory: Killed process 12345 (postgres).</code> 这种情况的原因就是 linux 内核支持 memory overcommit，overcommit 就是内核允许进程过量使用内存，比如在只有 1G 内存可用的环境中进程申请了 1.1G。</p>
-<p>而 linux overcommit 的默认内核策略是允许进程少量 overcommit，拒绝大量 overcommit，即试探性的允许 overcommit。这个内核参数是 <code>vm.overcommit_memory</code>，默认值是 <code>0</code>。<code>1</code> 表示 &quot;Always overcommit&quot;，总是允许 overcommit。最后一个值是 <code>2</code>，也是一般我们需要的模式，&quot;Don't overcommit&quot; ，这个模式将会直接拒绝 overcommit，它可以有效减少发生 OOM 的概率，但绝不是不会发生。</p>
+<p>而 linux overcommit 的默认内核策略是允许进程少量 overcommit，拒绝大量 overcommit，即试探性的允许 overcommit。这个内核参数是 <code>vm.overcommit_memory</code>，默认值是 <code>0</code>。<code>1</code> 表示 "Always overcommit"，总是允许 overcommit。最后一个值是 <code>2</code>，也是一般我们需要的模式，"Don't overcommit" ，这个模式将会直接拒绝 overcommit，它可以有效减少发生 OOM 的概率，但绝不是不会发生。</p>
 <pre><code class="language-bash"># 查看 vm.overcommit_memory 的当前值
 $ sysctl vm.overcommit_memory
 # 更改为 2
 $ sysctl -w vm.overcommit_memory=2
 # 在 /etc/sysctl.conf 中放置等效条目，来持久化该配置
-$ echo &quot;vm.overcommit_memory=2&quot; &gt;&gt; /etc/sysctl.conf
+$ echo "vm.overcommit_memory=2" &gt;&gt; /etc/sysctl.conf
 </code></pre>
 <p>如果配置了 <code>vm.overcommit_memory=2</code>，那么通常希望也配置 <code>vm.overcommit_ratio</code> ，这个参数的单位是百分比。配置它的原因是，“Don't overcommit” 这个模式不允许 commit 超过 <code>swap</code> + <strong>一个可配置的基于物理内存的百分比的量</strong>（默认值是 50），而这个可配置的量就是 <code>vm.overcommit_ratio</code>，至于配置方法同上文的 bash 内容。</p>
 <p><a href="https://www.kernel.org/doc/Documentation/vm/overcommit-accounting">关于这两个参数的 kernal 文档</a></p>
 <h3 id="较危险的方法"><a class="header" href="#较危险的方法">较危险的方法</a></h3>
 <p>当然，还有一种方法可以直接让内核的 <code>OOM killer</code> 不会把我们的进程当做目标，那就是配置 <code>/proc/&lt;PID&gt;/oom_score_adj</code>，<code>&lt;PID&gt;</code> 表示相应进程的 ID。<code>echo -1000 &gt; /proc/&lt;PID&gt;/oom_score_adj</code>将我们的进程的 oom_score_adj 设置为 -1000，表示让 <code>OOM killer</code> 不要把这个进程当做目标。原理是每个进程都会根据实施情况被打上一个<code>oom_score</code> 分数，当系统的内存不够用时 <code>OOM killer</code> 会寻找 <code>/proc/&lt;PID&gt;/oom_score</code> 高的进程并将其杀死。 而打分时 <code>oom_score_adj</code> 的值会直接影响 <code>oom_score</code> 的值，<code>oom_score_adj</code> 的范围是 <code>-1000 ~ 1000</code> ，当 <code>oom_score_adj</code> 的值越低，<code>oom_score</code> 被打的分也就会越低。设置 <code>oom_score_ajd</code> 为 <code>-1000</code> 时 <code>OOM killer</code> 就永远不会光顾这个进程了。</p>
-<p>这个方法危险的原因则是，当 <code>OOM killer</code> 永远不会去杀死一个进程，而这个进程又需要大量内存资源时，当内存不够用，<code>OOM killer</code> 会去杀死其它分高的进程，这是十分危险的。 </p>
+<p>这个方法危险的原因则是，当 <code>OOM killer</code> 永远不会去杀死一个进程，而这个进程又需要大量内存资源时，当内存不够用，<code>OOM killer</code> 会去杀死其它分高的进程，这是十分危险的。</p>
 
                     <!-- 暂时关闭评论 -->
                     <!--<div id="giscus-container"></div>-->

@@ -205,12 +205,12 @@ croc 2151-school-biscuit-snow
 <p><code>croc</code> 仅仅告诉我，去另一条计算机上执行 <code>croc 2151-school-biscuit-snow</code>。在没有查看任何详细文档的情况下，以这种方式完成了一次文件传输，这让我感到非常惊讶——文件提供方没有指出要将文件发送到哪儿，文件接收方也没有提供要从哪儿接收文件，仅凭 <code>croc</code> 给出的 <code>2151-school-biscuit-snow</code> code 就得到了文件。</p>
 <p>为了弄明白 <code>croc send</code> 的默认行为（文档比较简单，并没有给出相关说明），让我们看下 <code>croc</code> 的源码（写这篇文章时的提交是 <a href="https://github.com/schollz/croc/commit/cd6eb1ba53ec36a27cf8a2ac5a8b700be3e83ce3"><code>cd6eb1ba53ec36a27cf8a2ac5a8b700be3e83ce3</code></a>），在路径 <code>croc/src/cli/cli.go lines: 196~200</code>:</p>
 <pre><code class="language-go">    if crocOptions.RelayAddress != models.DEFAULT_RELAY {
-        crocOptions.RelayAddress6 = &quot;&quot;
+        crocOptions.RelayAddress6 = ""
     } else if crocOptions.RelayAddress6 != models.DEFAULT_RELAY6 {
-        crocOptions.RelayAddress = &quot;&quot;
+        crocOptions.RelayAddress = ""
     }
 </code></pre>
-<p><code>models.DEFAULT_RELAY</code> 和 <code>models.DEFAULT_RELAY6</code> 的内容分别是 <code>&quot;croc.schollz.com&quot;</code> 和 <code>&quot;croc6.schollz.com&quot;</code> 。</p>
+<p><code>models.DEFAULT_RELAY</code> 和 <code>models.DEFAULT_RELAY6</code> 的内容分别是 <code>"croc.schollz.com"</code> 和 <code>"croc6.schollz.com"</code> 。</p>
 <p>从这就能看出 <code>relay</code> 并不是真正意义上的无服务器，仍然需要需要一台发送者和接收者都能发现的中继服务器，而 schollz 本人提供了默认的中继服务器。</p>
 <p>中继服务器不需要提供真实的服务，正如其名，它仅仅只是负责中继（写到这时我并没有详细阅读 <code>croc</code> 源码，我猜测应该是像 <code>P2P</code> 一样使用类似 NAT hole punching 的技术来让端对端彼此能够发现彼此）。</p>
 <p><code>croc</code> 也提供了指定 <code>relay</code> 的参数，具体细节可以通过在<strong>命令/子命令</strong>后添加 <code>--help</code> 来查看。</p>
@@ -228,7 +228,7 @@ croc 2151-school-biscuit-snow
                 return
             }
             if _, err := conn2.Write(b1); err != nil {
-                log.Errorf(&quot;write error on channel 1: %v&quot;, err)
+                log.Errorf("write error on channel 1: %v", err)
             }
 
             case b2 := &lt;-chan2:
@@ -236,7 +236,7 @@ croc 2151-school-biscuit-snow
                 return
             }
             if _, err := conn1.Write(b2); err != nil {
-                log.Errorf(&quot;write error on channel 2: %v&quot;, err)
+                log.Errorf("write error on channel 2: %v", err)
             }
         }
     }

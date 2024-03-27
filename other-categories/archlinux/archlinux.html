@@ -210,7 +210,7 @@ pacman -Qqe (列出200个包)
 列出自动安装的包（-d,depends作为依赖项）  
 pacman -Qqd (列出616个)
 
-列出孤立的包（-t不再被依赖的&quot;作为依赖项安装的包&quot;）  
+列出孤立的包（-t不再被依赖的"作为依赖项安装的包"）  
 pacman -Qqdt (列出35个)  
 注意：通常这些是可以妥妥的删除的。(sudo pacman -Qqdt | sudo pacman -Rs -)
 </code></pre>
@@ -299,19 +299,19 @@ sudo pacman -Qdt |wc -l
 <p>  Operations:</p>
 <div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
 <tr><td><strong>-d, --dryrun</strong></td><td>perform a dry run, only finding candidate packages.</td><td>执行干运行，只找到候选包。</td></tr>
-<tr><td><strong>-m, --move <dir></strong></td><td>move candidate packages to &quot;dir&quot;.</td><td>将候选包裹移到“dir”。</td></tr>
+<tr><td><strong>-m, --move <dir></strong></td><td>move candidate packages to "dir".</td><td>将候选包裹移到“dir”。</td></tr>
 <tr><td><strong>-r, --remove</strong></td><td>remove candidate packages.</td><td>删除候选包。</td></tr>
 </tbody></table>
 </div>
 <p>  Options:</p>
 <div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
-<tr><td>-a, --arch <arch></td><td>scan for &quot;arch&quot; (default: all architectures).</td><td>扫描“arch”（默认：所有架构）。</td></tr>
-<tr><td>-c, --cachedir <dir></td><td>scan &quot;dir&quot; for packages. can be used more than once.</td><td>扫描“dir”包。 可以使用不止一次。</td></tr>
+<tr><td>-a, --arch <arch></td><td>scan for "arch" (default: all architectures).</td><td>扫描“arch”（默认：所有架构）。</td></tr>
+<tr><td>-c, --cachedir <dir></td><td>scan "dir" for packages. can be used more than once.</td><td>扫描“dir”包。 可以使用不止一次。</td></tr>
 <tr><td></td><td>(default: read from /etc/pacman.conf).</td><td>（默认：从/etc/pacman.conf中读取）。</td></tr>
 <tr><td>-f, --force</td><td>apply force to mv(1) and rm(1) operations.</td><td>对mv（1）和rm（1）操作施加强制。</td></tr>
 <tr><td>-h, --help</td><td>display this help message and exit.</td><td>显示此帮助消息并退出。</td></tr>
-<tr><td>-i, --ignore <pkgs></td><td>ignore &quot;pkgs&quot;, comma-separated. Alternatively, specify &quot;-&quot; to read package names from stdin, newline-delimited.</td><td>忽略“pkgs”，以逗号分隔。 或者，指定“ - ”以从stdin读取包名称，换行符分隔。</td></tr>
-<tr><td><strong>-k, --keep <num></strong></td><td>keep &quot;num&quot; of each package in the cache (default: 3).</td><td>保留缓存中每个包的“num”（默认值：3）。</td></tr>
+<tr><td>-i, --ignore <pkgs></td><td>ignore "pkgs", comma-separated. Alternatively, specify "-" to read package names from stdin, newline-delimited.</td><td>忽略“pkgs”，以逗号分隔。 或者，指定“ - ”以从stdin读取包名称，换行符分隔。</td></tr>
+<tr><td><strong>-k, --keep <num></strong></td><td>keep "num" of each package in the cache (default: 3).</td><td>保留缓存中每个包的“num”（默认值：3）。</td></tr>
 <tr><td>--nocolor</td><td>remove color from output.</td><td>从输出中删除颜色。</td></tr>
 <tr><td>-q, --quiet</td><td>minimize output</td><td>最小化输出</td></tr>
 <tr><td><strong>-u, --uninstalled</strong></td><td>target uninstalled packages.</td><td>目标已卸载的软件包。</td></tr>
@@ -429,15 +429,15 @@ Jun 23 17:18:33 tompc pacman[7079]: upgraded chromium (75.0.3770.90-3 -&gt; 75.0
 <h2 id="emoji-支持"><a class="header" href="#emoji-支持">emoji 支持</a></h2>
 <pre><code class="language-shell">#!/bin/sh
 set -e
-if [[ $(id -u) -ne 0 ]] ; then echo &quot;请使用 root 用户执行本脚本&quot; ; exit 1 ; fi
-echo &quot;开始设置 Noto Emoji font...&quot;
+if [[ $(id -u) -ne 0 ]] ; then echo "请使用 root 用户执行本脚本" ; exit 1 ; fi
+echo "开始设置 Noto Emoji font..."
 # 1 - 安装  noto-fonts-emoji 包
 pacman -S noto-fonts-emoji --needed
 # pacman -S powerline-fonts --needed
-echo &quot;推荐的系统字体: inconsolata regular (ttf-inconsolata 或 powerline-fonts)&quot;
+echo "推荐的系统字体: inconsolata regular (ttf-inconsolata 或 powerline-fonts)"
 # 2 - 添加字体配置到 /etc/fonts/conf.d/01-notosans.conf
-echo '&lt;?xml version=&quot;1.0&quot;?&gt;
-&lt;!DOCTYPE fontconfig SYSTEM &quot;fonts.dtd&quot;&gt;
+echo '&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE fontconfig SYSTEM "fonts.dtd"&gt;
 &lt;fontconfig&gt;
  &lt;alias&gt;
    &lt;family&gt;sans-serif&lt;/family&gt;
@@ -473,7 +473,7 @@ echo '&lt;?xml version=&quot;1.0&quot;?&gt;
 ' &gt; /etc/fonts/local.conf
 # 3 - 通过 fc-cache 更新字体缓存
 fc-cache
-echo &quot;Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Chrome. 如果没什么变化说明你的字体本身已经包含 emoji.&quot;
+echo "Noto Emoji Font 安装成功! 你可能需要重启应用，比如 Chrome. 如果没什么变化说明你的字体本身已经包含 emoji."
 </code></pre>
 
                     <!-- 暂时关闭评论 -->

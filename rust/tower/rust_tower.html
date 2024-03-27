@@ -532,7 +532,7 @@ where
 
         self.inner.call(request);
       }
-      State::Limited =&gt; panic!(&quot;service not ready&quot;)
+      State::Limited =&gt; panic!("service not ready")
     }
   }
 }
@@ -679,7 +679,7 @@ where
 <li>Retrying: 等待里层 Service poll_ready 的中间态，如果里层 Service 已经 Ready，则调用里层 Service 的call函数生成 service_future 并跳到 Called(service_future) 状态</li>
 </ul>
 <h3 id="spawnready-中间件"><a class="header" href="#spawnready-中间件">SpawnReady 中间件</a></h3>
-<p>SpawnReady 在官方文档上的介绍是 &quot;Drive a service to readiness on a background task&quot;。如果我们需要尽快察觉到某个 Service 已经 ready，那我们可能会经常去 poll_ready 一下，而 SpawnReady 就是将这件事包装为一个 Service，并且在内部包装一个 task 用于检查内层 Service 是否 ready。假设 executor 里面只有两个 task，那么一个是真正在做事的 task，另一个则是检查前一个 task 是否 ready 的 task。</p>
+<p>SpawnReady 在官方文档上的介绍是 "Drive a service to readiness on a background task"。如果我们需要尽快察觉到某个 Service 已经 ready，那我们可能会经常去 poll_ready 一下，而 SpawnReady 就是将这件事包装为一个 Service，并且在内部包装一个 task 用于检查内层 Service 是否 ready。假设 executor 里面只有两个 task，那么一个是真正在做事的 task，另一个则是检查前一个 task 是否 ready 的 task。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl&lt;S, Req&gt; Service&lt;Req&gt; for SpawnReady&lt;S&gt;
@@ -696,10 +696,10 @@ where
         loop {
             self.inner = match self.inner {
                 Inner::Service(ref mut svc) =&gt; {
-                    if let Poll::Ready(r) = svc.as_mut().expect(&quot;illegal state&quot;).poll_ready(cx) {
+                    if let Poll::Ready(r) = svc.as_mut().expect("illegal state").poll_ready(cx) {
                         return Poll::Ready(r.map_err(Into::into));
                     }
-                    let svc = svc.take().expect(&quot;illegal state&quot;);
+                    let svc = svc.take().expect("illegal state");
                     let rx =   tokio::spawn(svc.ready_oneshot().map_err(Into::into).in_current_span());
                     Inner::Future(rx)
                 }
@@ -761,7 +761,7 @@ where
     fn call(&amp;mut self, req: Req) -&gt; Self::Future {
         assert!(
             self.not_ready.is_empty(),
-            &quot;Steer must wait for all services to be ready. Did you forget to call poll_ready()?&quot;
+            "Steer must wait for all services to be ready. Did you forget to call poll_ready()?"
         );
 ​
         let idx = self.router.pick(&amp;req, &amp;self.services[..]);

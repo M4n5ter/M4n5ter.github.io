@@ -206,7 +206,7 @@
 <h2 id="add-bytes-dependency-添加-bytes-依赖"><a class="header" href="#add-bytes-dependency-添加-bytes-依赖">Add <code>bytes</code> dependency （添加 <code>bytes</code> 依赖）</a></h2>
 <p>与使用 <code>Vec&lt;u8&gt;</code> 不同，Mini-Redis crate 使用了 <a href="https://docs.rs/bytes/1/bytes/struct.Bytes.html"><code>bytes</code></a> crate 中的 <code>Bytes</code> 。使用 <code>Bytes</code> 的目的是为网络编程提供一个健壮的字节数组结构体。<code>Bytes</code> 比 <code>Vec&lt;u8&gt;</code> 多的一个最大的特点是它实现了浅拷贝。换句话说，在 <code>Bytes</code> 实例上调用 <code>clone()</code> 不会拷贝底层的数据。相反，一个 <code>Bytes</code> 实例是一个底层数据的 rc（引用计数器）句柄。<code>Bytes</code> 类型与 <code>Arc&lt;Vec&lt;u8&gt;&gt;</code> 相似，但是多了些附加的功能。</p>
 <p>为了引入 <code>bytes</code> 依赖，把下方的内容添加到你的 <code>Cargo.toml</code> 中的 <code>[dependencies]</code> 部分：</p>
-<pre><code class="language-toml">bytes = &quot;1&quot;
+<pre><code class="language-toml">bytes = "1"
 </code></pre>
 <h2 id="initialize-the-hashmap-初始化-hashmap"><a class="header" href="#initialize-the-hashmap-初始化-hashmap">Initialize the <code>HashMap</code> （初始化 <code>HashMap</code>）</a></h2>
 <p><code>HashMap</code> 将会被跨多任务（并且可能会是多个线程）共享。为了能够做到这点，它将会被 <code>Arc&lt;Mutex&lt;_&gt;&gt;</code> 包裹。</p>
@@ -226,9 +226,9 @@ use std::sync::{Arc, Mutex};
 
 #[tokio::main]
 async fn main() {
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
-    println!(&quot;Listening&quot;);
+    println!("Listening");
 
     let db = Arc::new(Mutex::new(HashMap::new()));
 
@@ -237,7 +237,7 @@ async fn main() {
         // Clone the handle to the hash map.
         let db = db.clone();
 
-        println!(&quot;Accepted&quot;);
+        println!("Accepted");
         tokio::spawn(async move {
             process(socket, db).await;
         });
@@ -266,7 +266,7 @@ async fn process(socket: TcpStream, db: Db) {
             Set(cmd) =&gt; {
                 let mut db = db.lock().unwrap();
                 db.insert(cmd.key().to_string(), cmd.value().clone());
-                Frame::Simple(&quot;OK&quot;.to_string())
+                Frame::Simple("OK".to_string())
             }           
             Get(cmd) =&gt; {
                 let db = db.lock().unwrap();
@@ -276,7 +276,7 @@ async fn process(socket: TcpStream, db: Db) {
                     Frame::Null
                 }
             }
-            cmd =&gt; panic!(&quot;unimplemented {:?}&quot;, cmd),
+            cmd =&gt; panic!("unimplemented {:?}", cmd),
         };
 
         // Write the response to the client

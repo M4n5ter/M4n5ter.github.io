@@ -200,7 +200,7 @@ mv src/main.rs examples/hello-redis.rs
 <p>英语水平有限，这小标题只能翻译成这样了 :(</p>
 <p>首先我们的 Redis server 第一件需要做的事情就是<strong>接受入站的 TCP sockets</strong>。用 <strong><code>tokio::net::TcpListener</code></strong> 来完成。</p>
 <blockquote>
-<p>Tokio 的许多类型用了与 Rust 标准库中的等价的同步类型一样的名字。并且 Tokio 使用 <code>async fn</code> 暴露了与 <strong><code>std</code></strong> 相同的 <code>APIs</code> </p>
+<p>Tokio 的许多类型用了与 Rust 标准库中的等价的同步类型一样的名字。并且 Tokio 使用 <code>async fn</code> 暴露了与 <strong><code>std</code></strong> 相同的 <code>APIs</code></p>
 </blockquote>
 <p>一个 <code>TcpListener</code> 绑定在 <strong>6379</strong> 端口，接着 socket 们会在一个 loop 中被接受。每个 socket 都会被处理然后关闭。现在，为门将要读取命令，然后打印它到标准输出，并且回复一个 error。</p>
 <pre><pre class="playground"><code class="language-rust">use mini_redis::{Connection, Frame};
@@ -209,7 +209,7 @@ use tokio::net::{TcpListener, TcpStream};
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
@@ -224,10 +224,10 @@ async fn process(socket: TcpStream) {
     let mut connection = Connection::new(socket);
 
     if let Some(frame) = connection.read_frame().await.unwrap() {
-        println!(&quot;GOT: {:?}&quot;, frame);
+        println!("GOT: {:?}", frame);
 
         // Respond with an error
-        let response = Frame::Error(&quot;unimplemented&quot;.to_string());
+        let response = Frame::Error("unimplemented".to_string());
         connection.write_frame(&amp;response).await.unwrap();
     }
 }</code></pre></pre>
@@ -238,10 +238,10 @@ async fn process(socket: TcpStream) {
 <pre><code class="language-zsh">cargo run --example hello-redis
 </code></pre>
 <p>输出应该得是像下面这样：</p>
-<pre><code class="language-zsh">Error: &quot;unimplemented&quot;
+<pre><code class="language-zsh">Error: "unimplemented"
 </code></pre>
 <p>在跑服务端的那个终端，输出应该是下面这样：</p>
-<pre><code class="language-zsh">GOT: Array([Bulk(b&quot;set&quot;), Bulk(b&quot;hello&quot;), Bulk(b&quot;world&quot;)])
+<pre><code class="language-zsh">GOT: Array([Bulk(b"set"), Bulk(b"hello"), Bulk(b"world")])
 </code></pre>
 <h2 id="concurrency-并发"><a class="header" href="#concurrency-并发">Concurrency （并发）</a></h2>
 <p>我们的 server 有一个问题（除去只回复了错误）。它一次只会处理一个入站请求：当一个连接被接受，我们的 server 停留在 accept loop 里面，直到 <code>response</code> 被完全写入 socket。</p>
@@ -257,7 +257,7 @@ async fn process(socket: TcpStream) {
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
@@ -275,13 +275,13 @@ async fn main() {
 async fn main() {
     let handle = tokio::spawn(async {
         // 在这里做了一些异步的事情
-        &quot;return value&quot;
+        "return value"
     });
 
     // 又做了一些别的事情
 
     let out = handle.await.unwrap();
-    println!(&quot;GOT {}&quot;, out);
+    println!("GOT {}", out);
 }</code></pre></pre>
 <p><code>.await</code> 会让出当前线程的控制权，并等待 <code>JoinHandle</code> 返回一个 <code>Result</code>。当一个任务在执行期间遇到了一个错误，<code>JoinHandle</code> 将会返回一个 <code>Err</code> ，当任务 panic 又或者是因为 <code>runtime</code> 关闭而被强制取消也会发生前面那个事件。</p>
 <p>Task 是由 scheduler 管理的执行单位。Spawn (生产) 一个任务会把任务提交给 Tokio scheduler来确保任务在有工作要做时执行。生产出来的任务可能会在它们被生产的线程上执行，也有可能会在不一样的 <code>runtime thread</code> 上被执行。任务被生产后也能够在不同线程间移动。</p>
@@ -289,7 +289,7 @@ async fn main() {
 <h2 id="static-bound静态生命周期绑定"><a class="header" href="#static-bound静态生命周期绑定"><code>'static</code> bound（静态生命周期绑定）</a></h2>
 <p>当我们在 Tokio runtime 上生成了一个任务，其类型的生命周期必须是 <code>'static</code>。这意味着生成的任务不得包含对任务外部拥有的数据的任何引用。</p>
 <blockquote>
-<p>一个常见的错觉是：<code>'static</code> 总是意味着 &quot;永远存活&quot;，但事实并非如此。仅仅因为一个值是静态的并不意味着你有内存泄漏。想知道更多可以看这里 <a href="https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md#2-if-t-static-then-t-must-be-valid-for-the-entire-program">Common Rust Lifetime Misconceptions</a> 。</p>
+<p>一个常见的错觉是：<code>'static</code> 总是意味着 "永远存活"，但事实并非如此。仅仅因为一个值是静态的并不意味着你有内存泄漏。想知道更多可以看这里 <a href="https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md#2-if-t-static-then-t-must-be-valid-for-the-entire-program">Common Rust Lifetime Misconceptions</a> 。</p>
 </blockquote>
 <p>举个不能被编译通过的例子:D</p>
 <pre><pre class="playground"><code class="language-rust">use tokio::task;
@@ -299,7 +299,7 @@ async fn main() {
     let v = vec![1, 2, 3];
 
     task::spawn(async {
-        println!(&quot;Here's a vec: {:?}&quot;, v);
+        println!("Here's a vec: {:?}", v);
     });
 }</code></pre></pre>
 <p>尝试编译它会有如下报错：</p>
@@ -311,7 +311,7 @@ async fn main() {
   |
 7 |       task::spawn(async {
   |  _______________________^
-8 | |         println!(&quot;Here's a vec: {:?}&quot;, v);
+8 | |         println!("Here's a vec: {:?}", v);
   | |                                        - `v` is borrowed here
 9 | |     });
   | |_____^ may outlive borrowed value `v`
@@ -321,14 +321,14 @@ note: function requires argument type to outlive `'static`
   |
 7 |       task::spawn(async {
   |  _________________^
-8 | |         println!(&quot;Here's a vector: {:?}&quot;, v);
+8 | |         println!("Here's a vector: {:?}", v);
 9 | |     });
   | |_____^
 help: to force the async block to take ownership of `v` (and any other
       referenced variables), use the `move` keyword
   |
 7 |     task::spawn(async move {
-8 |         println!(&quot;Here's a vec: {:?}&quot;, v);
+8 |         println!("Here's a vec: {:?}", v);
 9 |     });
   |
 <span class="boring">}</span></code></pre></pre>
@@ -339,11 +339,11 @@ help: to force the async block to take ownership of `v` (and any other
 <blockquote>
 <p>Note that the error message talks about the argument type <em>outliving</em> the <code>'static</code> lifetime. This terminology can be rather confusing because the <code>'static</code> lifetime lasts until the end of the program, so if it outlives it, don't you have a memory leak? The explanation is that it is the <em>type</em>, not the <em>value</em> that must outlive the <code>'static</code> lifetime, and the value may be destroyed before its type is no longer valid.</p>
 <p>When we say that a value is <code>'static</code>, all that means is that it would not be incorrect to keep that value around forever. This is important because the compiler is unable to reason about how long a newly spawned task stays around. We have to make sure that the task is allowed to live forever, so that Tokio can make the task run as long as it needs to.</p>
-<p>The article that the info-box earlier links to uses the terminology &quot;bounded by <code>'static</code>&quot; rather than &quot;its type outlives <code>'static</code>&quot; or &quot;the value is <code>'static</code>&quot; to refer to <code>T: 'static</code>. These all mean the same thing, but are different from &quot;annotated with <code>'static</code>&quot; as in <code>&amp;'static T</code>.</p>
+<p>The article that the info-box earlier links to uses the terminology "bounded by <code>'static</code>" rather than "its type outlives <code>'static</code>" or "the value is <code>'static</code>" to refer to <code>T: 'static</code>. These all mean the same thing, but are different from "annotated with <code>'static</code>" as in <code>&amp;'static T</code>.</p>
 </blockquote>
 <p>留意关于<strong>参数类型</strong>的寿命超过了 <code>’static</code> 生命周期的错误信息。这个术语可能会让人很困惑，因为 <code>'static</code> 生命周期将会一直存在直到程序结束，所以如果比它寿命还长，确定没有内存泄漏吗？ 关于这个的解释是：它是一个类型，而不是一个必须寿命长过 <code>'static</code>' 的值，并且它的值可能会在它的类型失效之前被销毁。</p>
 <p>当我们说一个值是 <code>'static</code> 的时候，这意味着永远留着它常常是正确的。这非常重要，因为编译器无法推断新生成的任务会保留多长时间。我们不得不确保任务被允许一直存活（仅仅是允许，但不是必须），这样 Tokio 就可以让任务运行它实际需要的时间。</p>
-<p>前面的信息框链接到的文章使用术语 <strong>“以 <code>'static</code> 为界”</strong> 而不是 <strong>“其类型的寿命超过 <code>'static</code> ”</strong> 或 <strong>“其值是 <code>'static</code>&quot;</strong> 来指代 <code>T：'static</code>。这些都意味着同一件事，但不同于 <code>&amp;‘static T</code> 中的 <strong>“用 <code>'static</code> 注释”</strong></p>
+<p>前面的信息框链接到的文章使用术语 <strong>“以 <code>'static</code> 为界”</strong> 而不是 <strong>“其类型的寿命超过 <code>'static</code> ”</strong> 或 <strong>“其值是 <code>'static</code>"</strong> 来指代 <code>T：'static</code>。这些都意味着同一件事，但不同于 <code>&amp;‘static T</code> 中的 <strong>“用 <code>'static</code> 注释”</strong></p>
 <p>插一句嘴：上面这块儿我是琢磨了很久，但是还有一些内容没完全明白，看来还是有待提升呐～</p>
 <h2 id="send-bound"><a class="header" href="#send-bound"><code>Send</code> bound</a></h2>
 <p>从 <code>tokio::spawn</code> 生成的任务<strong>必须</strong>实现 <code>Send</code> trait 。这样才能当任务被 <code>.await</code> 后允许 Tokio runtime 在线程之间移动他们。</p>
@@ -357,16 +357,16 @@ help: to force the async block to take ownership of `v` (and any other
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
         let (socket, _) = listener.accept().await.unwrap();
-        let a = Rc::new(&quot;Rc does not impl Send&quot;);
+        let a = Rc::new("Rc does not impl Send");
         // 生成一个新任务，socket 的所有权被移动到了这个新任务里面，并在那里被处理。
         tokio::spawn(async move {
             process(socket).await;
-            println!(&quot;{:?}&quot;, a);
+            println!("{:?}", a);
         });
     }
 }</code></pre></pre>
@@ -382,7 +382,7 @@ async fn main() {
 note: captured value is not `Send`
    --&gt; src/main.rs:18:30
     |
-18  |             println!(&quot;{:?}&quot;, a);
+18  |             println!("{:?}", a);
     |                              ^ has type `std::rc::Rc&lt;&amp;str&gt;` which is not `Send`
 note: required by a bound in `tokio::spawn`
    --&gt; /home/m4n5ter/.cargo/registry/src/rsproxy.cn-8f6827c7555bfaf8/tokio-1.21.2/src/task/spawn.rs:127:21
@@ -403,8 +403,8 @@ async fn main() {
     tokio::spawn(async {
         // The scope forces `rc` to drop before `.await`.
         {
-            let rc = Rc::new(&quot;hello&quot;);
-            println!(&quot;{}&quot;, rc);
+            let rc = Rc::new("hello");
+            println!("{}", rc);
         }
 
         // `rc` is no longer used. It is **not** persisted when
@@ -419,13 +419,13 @@ use std::rc::Rc;
 #[tokio::main]
 async fn main() {
     tokio::spawn(async {
-        let rc = Rc::new(&quot;hello&quot;);
+        let rc = Rc::new("hello");
 
         // `rc` is used after `.await`. It must be persisted to
         // the task's state.
         yield_now().await;
 
-        println!(&quot;{}&quot;, rc);
+        println!("{}", rc);
     });
 }</code></pre></pre>
 <p>错误报告：</p>
@@ -449,13 +449,13 @@ async fn main() {
 note: future is not `Send` as this value is used across an await
    --&gt; src/main.rs:10:9
     |
-7   |         let rc = Rc::new(&quot;hello&quot;);
+7   |         let rc = Rc::new("hello");
     |             -- has type `std::rc::Rc&lt;&amp;str&gt;` which is not `Send`
 ...
 10  |         yield_now().await;
     |         ^^^^^^^^^^^^^^^^^ await occurs here, with `rc` maybe
     |                           used later
-11  |         println!(&quot;{}&quot;, rc);
+11  |         println!("{}", rc);
 12  |     });
     |     - `rc` is later dropped here
 <span class="boring">}</span></code></pre></pre>
@@ -468,7 +468,7 @@ use tokio::net::{TcpListener, TcpStream};
 #[tokio::main]
 async fn main() {
     // 绑定 listener 到一个地址
-    let listener = TcpListener::bind(&quot;127.0.0.1:6379&quot;).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
         // 解构出来的第二个 item 包含一个新 connection 的一对 IP 和 port，这里将其忽略了
@@ -496,7 +496,7 @@ async fn process(socket: TcpStream) {
             Set(cmd) =&gt; {
                 // 值被存储为 `Vec&lt;u8&gt;`
                 db.insert(cmd.key().to_string(), cmd.value().to_vec());
-                Frame::Simple(&quot;OK&quot;.to_string())
+                Frame::Simple("OK".to_string())
             }
             Get(cmd) =&gt; {
                 if let Some(value) = db.get(cmd.key()) {
@@ -508,7 +508,7 @@ async fn process(socket: TcpStream) {
                     Frame::Null
                 }
             }
-            cmd =&gt; panic!(&quot;unimplemented {:?}&quot;, cmd),
+            cmd =&gt; panic!("unimplemented {:?}", cmd),
         };
 
         // Write the response to the client
@@ -522,7 +522,7 @@ async fn process(socket: TcpStream) {
 <pre><code class="language-zsh">cargo run --example hello-redis
 </code></pre>
 <p>出现了如下输出：</p>
-<pre><code class="language-zsh">从服务端得到了值; result=Some(b&quot;world&quot;)
+<pre><code class="language-zsh">从服务端得到了值; result=Some(b"world")
 </code></pre>
 <p>我们现在可以获取和设置值，但是有一个问题：这些值在连接之间不共享。如果另一个套接字连接并尝试获取hello键，它将找不到任何东西。</p>
 <p>在下一节中，我们将为所有套接字实现持久化数据。</p>

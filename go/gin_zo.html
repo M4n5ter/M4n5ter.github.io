@@ -193,7 +193,7 @@
 <p><a href="https://github.com/zinclabs/zincobserve">ZincObserve</a> （以下简称 ZO）是由 zinclabs 开源的一款日志搜索引擎（他们之前有一款产品叫做 zincsearch，现在已经基本由社区驱动，原因是他们最初的目的是开发一款在日志搜索领域做的最好的软件，现在已经全部精力投入到 ZincObserve了），目的是在 logs,metrics,traces 搜索领域替代 elasticsearch ，我们都知道 elasticsearch 非常笨重，资源消耗极大，而 ZO 专精与日志搜索，所以全文搜索、向量搜索等请移步 meilisearch、zincsearch、elasticsearch、qdrant 等其它软件。</p>
 <p>ZO 使用 Rust 开发（他们家的 zincsearch 是用的 go），性能极高，<strong>存储成本仅仅为 elasticsearch 的 1/140</strong>。目前 ZO 的后端部分已经基本稳定，现在提出的 bugs 基本都是前端问题。虽然 ZO 从版本号来看还没有为生产做好准备，但是鉴于 zincsearch 的优良表现，我们完全可以相信 zinclabs 的能力（毕竟他们创立的目的就是为了开发一款世界上最好的日志搜索软件）。</p>
 <h2 id="将-gin-的日志输出到-zincobserve"><a class="header" href="#将-gin-的日志输出到-zincobserve">将 Gin 的日志输出到 ZincObserve</a></h2>
-<h3 id="zincbserve"><a class="header" href="#zincbserve">zincbserve</a></h3>
+<h3 id="zincobserve-1"><a class="header" href="#zincobserve-1">zincobserve</a></h3>
 <p>ZO 支持 win/linux/mac/docker/k8s ，这里我直接从 <a href="https://github.com/zinclabs/zincobserve/releases">Releases · zinclabs/zincobserve · GitHub</a> 下载</p>
 <pre><code class="language-bash">wget https://github.com/zinclabs/zincobserve/releases/download/v0.4.1/zincobserve-v0.4.1-linux-amd64.tar.gz
 tar zxvf zincobserve-v0.4.1-linux-amd64.tar.gz
@@ -248,11 +248,11 @@ $ ./zincobserve
 <pre><code class="language-go">package main
 
 import (
-    &quot;fmt&quot;
-    &quot;github.com/gin-gonic/gin&quot;
-    &quot;io&quot;
-    &quot;net&quot;
-    &quot;time&quot;
+    "fmt"
+    "github.com/gin-gonic/gin"
+    "io"
+    "net"
+    "time"
 )
 
 // 确保 FluentBit 实现了 io.Writer 接口
@@ -262,7 +262,7 @@ var (
     // DefaultInterval 默认与 fluent-bit 的连接断开后，重连的间隔时间
     DefaultInterval = time.Second
     // Address fluent-bit 的地址
-    Address = &quot;127.0.0.1:5170&quot;
+    Address = "127.0.0.1:5170"
 )
 
 // FluentBit 表示与 fluent-bit 的连接
@@ -291,7 +291,7 @@ func main() {
     go func() {
         for {
             &lt;-fb.intervalTicker
-            if _, err := fb.Write([]byte(&quot;&quot;)); err != nil {
+            if _, err := fb.Write([]byte("")); err != nil {
                 fb.Reconnect()
             }
         }
@@ -302,7 +302,7 @@ func main() {
     // ZO 会根据接收到日志的时间自动添加 _timestamp 字段
     // 这里我们自己指定一个 _timestamp，这样 ZO 会直接使用我们添加的
     r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-        return fmt.Sprintf(`{&quot;_timestamp&quot;:&quot;%d&quot;,&quot;log&quot;:&quot;%s -  %s %s %s %d %s %s %s&quot;}`,
+        return fmt.Sprintf(`{"_timestamp":"%d","log":"%s -  %s %s %s %d %s %s %s"}`,
             param.TimeStamp.UnixNano(),
             param.ClientIP,
             param.Method,
@@ -316,11 +316,11 @@ func main() {
     }))
     r.Use(gin.Recovery())
     // 简单的 ping pong 用来测试
-    r.GET(&quot;/ping&quot;, func(c *gin.Context) {
-        c.String(200, &quot;pong&quot;)
+    r.GET("/ping", func(c *gin.Context) {
+        c.String(200, "pong")
     })
 
-    _ = r.Run(&quot;:8080&quot;)
+    _ = r.Run(":8080")
 }
 
 func (f *FluentBit) Write(b []byte) (n int, err error) {
@@ -331,14 +331,14 @@ func (f *FluentBit) Close() {
 }
 
 func (f *FluentBit) Connect() {
-    conn, _ := net.Dial(&quot;tcp&quot;, f.address)
+    conn, _ := net.Dial("tcp", f.address)
     f.conn = conn
 }
 
 func (f *FluentBit) Reconnect() {
     f.Close()
     f.Connect()
-    _, _ = f.Write([]byte(`{&quot;message&quot;:&quot;reconnect to fluent-bit&quot;}`))
+    _, _ = f.Write([]byte(`{"message":"reconnect to fluent-bit"}`))
 }
 </code></pre>
 <p>这里为 <code>FluentBit</code> 实现的方法，它们的方法对象都是 <code>*FluentBit</code>，原因是在 GO 中都是值传递，如果方法对象是 <code>FluentBit</code> ，那么在调用方法的时候 <code>FluentBit</code> 结构体会被克隆一份然后在克隆出来的<code>FluentBit</code>上执行方法。</p>
@@ -363,7 +363,7 @@ pong
 </code></pre>
 <p>这时 fluent-bit 中新打印了一条:</p>
 <pre><code class="language-textile">[ info] [output:http:http.0] localhost:5080, HTTP status=200
-{&quot;code&quot;:200,&quot;status&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;successful&quot;:1,&quot;failed&quot;:0}]}
+{"code":200,"status":[{"name":"default","successful":1,"failed":0}]}
 </code></pre>
 <p>说明成功了。</p>
 <p>去 ZO WEB 页面看看:</p>
@@ -373,7 +373,7 @@ pong
 <p>上面我们是直接将日志发送到 fluent-bit，再由 fluent-bit 直接发送给 ZO，但是如果有大量不同应用程序的日志需要搜集，那么日志会非常混乱不好管理，这时就需要在发送给 ZO 之前清洗日志了，而 Logstash 就能干这个（fluent-bit 本身也有一定这方面能力），但是 Logstash 也是蛮重量级的，我们不想要消耗这么多资源怎么办？</p>
 <p>go-zero 的作者 kevwan 有开源一个项目，叫做 <a href="https://github.com/kevwan/go-stash">go-stash</a> ，能够从 kafka 摄取数据并加工后发送到 elasticsearch ，并且吞吐量能达到 logstash 的 5倍。</p>
 <p>但是但是吧，Kafka 也是蛮重量级的，如果业务环境中本身没有 kafka ，为了这个特地多加一个 kafka，系统复杂度上去了不说，还有额外运维成本，还有服务器资源成本。那有没有轻量级的替代呢？也有，CNCF的云原生消息系统 <a href="https://nats.io/">NATS</a> 可以替换 kafka，并且 NATS 也能直接和 fluent-bit 联动。</p>
-<h2 id="写一个自己的-go-stash"><a class="header" href="#写一个自己的-go-stash">写一个自己的 &quot;go-stash&quot;</a></h2>
+<h2 id="写一个自己的-go-stash"><a class="header" href="#写一个自己的-go-stash">写一个自己的 "go-stash"</a></h2>
 <p>我们还是需要一个类似于 go-stash 的东西，来加工 fluent-bit 收集的日志，需要能够直接支持从 fluent-bit 接收数据，和从 NATS 接收数据并加工处理后发送到 ZO。</p>
 <p>需求:</p>
 <ol>

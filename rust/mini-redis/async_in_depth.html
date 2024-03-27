@@ -198,9 +198,9 @@
 </span>use tokio::net::TcpStream;
 
 async fn my_async_fn() {
-    println!(&quot;hello from async&quot;);
-    let _socket = TcpStream::connect(&quot;127.0.0.1:3000&quot;).await.unwrap();
-    println!(&quot;async TCP operation complete&quot;);
+    println!("hello from async");
+    let _socket = TcpStream::connect("127.0.0.1:3000").await.unwrap();
+    println!("async TCP operation complete");
 }
 <span class="boring">}</span></code></pre></pre>
 <p>我们调用了这个函数，并且返回了某个值，对这个值调用 <code>.await</code>。</p>
@@ -257,8 +257,8 @@ impl Future for Delay {
         -&gt; Poll&lt;&amp;'static str&gt;
     {
         if Instant::now() &gt;= self.when {
-            println!(&quot;Hello world&quot;);
-            Poll::Ready(&quot;done&quot;)
+            println!("Hello world");
+            Poll::Ready("done")
         } else {
             // Ignore this line for now.
             cx.waker().wake_by_ref();
@@ -273,7 +273,7 @@ async fn main() {
     let future = Delay { when };
 
     let out = future.await;
-    assert_eq!(out, &quot;done&quot;);
+    assert_eq!(out, "done");
 }</code></pre></pre>
 <h3 id="async-fn-as-a-future-异步函数作为-future"><a class="header" href="#async-fn-as-a-future-异步函数作为-future">Async fn as a Future （异步函数作为 future）</a></h3>
 <p>在 main 函数中，我们实例化一个 future 并对它调用 <code>.await</code> 。在异步函数中，我们可以对任何实现了 <code>Future</code> 的值调用 <code>.await</code> 。相反，调用一个 <code>async</code> function 返回一个实现了 <code>Future</code> 的匿名类型。<code>async fn main()</code> 所生成的 future 类似于：</p>
@@ -312,7 +312,7 @@ impl Future for MainFuture {
                 State1(ref mut my_future) =&gt; {
                     match Pin::new(my_future).poll(cx) {
                         Poll::Ready(out) =&gt; {
-                            assert_eq!(out, &quot;done&quot;);
+                            assert_eq!(out, "done");
                             *self = Terminated;
                             return Poll::Ready(());
                         }
@@ -322,7 +322,7 @@ impl Future for MainFuture {
                     }
                 }
                 Terminated =&gt; {
-                    panic!(&quot;future polled after completion&quot;)
+                    panic!("future polled after completion")
                 }
             }
         }
@@ -352,7 +352,7 @@ fn main() {
         let future = Delay { when };
 
         let out = future.await;
-        assert_eq!(out, &quot;done&quot;);
+        assert_eq!(out, "done");
     });
 
     mini_tokio.run();
@@ -423,8 +423,8 @@ impl Future for Delay {
         -&gt; Poll&lt;&amp;'static str&gt;
     {
         if Instant::now() &gt;= self.when {
-            println!(&quot;Hello world&quot;);
-            Poll::Ready(&quot;done&quot;)
+            println!("Hello world");
+            Poll::Ready("done")
         } else {
             // Get a handle to the waker for the current task
             let waker = cx.waker().clone();
@@ -462,8 +462,8 @@ impl Future for Delay {
         -&gt; Poll&lt;&amp;'static str&gt;
     {
         if Instant::now() &gt;= self.when {
-            println!(&quot;Hello world&quot;);
-            Poll::Ready(&quot;done&quot;)
+            println!("Hello world");
+            Poll::Ready("done")
         } else {
             // Ignore this line for now.
             cx.waker().wake_by_ref();
@@ -482,7 +482,7 @@ impl Future for Delay {
 <p>更多细节可以看  <a href="https://doc.rust-lang.org/book/ch16-04-extensible-concurrency-sync-and-send.html">the Rust book 中相关的章节</a> 。</p>
 </blockquote>
 <p>把下面的依赖加到 <code>Cargo.toml</code> 来获取我们需要的 channel 。</p>
-<pre><code class="language-toml">crossbeam = &quot;0.8&quot;
+<pre><code class="language-toml">crossbeam = "0.8"
 </code></pre>
 <p>然后改 <code>MiniTokio</code> 结构体。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -523,7 +523,7 @@ impl Task {
 <span class="boring">}</span></code></pre></pre>
 <p>为了调度任务，<code>Arc</code> 会被 clone 然后通过 channel 发送出去。现在，我们需要将我们的 <code>schedule</code> 函数和 <a href="https://doc.rust-lang.org/std/task/struct.Waker.html"><code>std::task::Waker</code></a> 挂钩。标注版酷提供了一个低层次 API ，通过 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html">manual vtable construction</a> （手动构造 vtable，vtable 能够产生晚绑定行为，只有在运行时才知道调用的是什么函数，例如调用 vtable 中的 A，然后会把 A 映射的函数指针 *B 拿出来执行）来做这件事。这个方案为实现者提供了最大程度的灵活性，但是要求一大堆 unsafe 样板代码。与直接使用 <a href="https://doc.rust-lang.org/std/task/struct.RawWakerVTable.html"><code>RawWakerVTable</code></a> 相反，我们将会使用  <a href="https://docs.rs/futures/"><code>futures</code></a> crate 提供的 <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>ArcWake</code></a> trait，它允许我们通过实现一个简单的 trait 来暴露我们的 <code>Task</code> 结构体作为一个 waker 。</p>
 <p>把下面的依赖加入到 <code>Cargo.toml</code>。</p>
-<pre><code class="language-toml">futures = &quot;0.3&quot;
+<pre><code class="language-toml">futures = "0.3"
 </code></pre>
 <p>然后实现  <a href="https://docs.rs/futures/0.3/futures/task/trait.ArcWake.html"><code>futures::task::ArcWake</code></a> 。</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
