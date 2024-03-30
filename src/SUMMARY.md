@@ -32,6 +32,7 @@
   - [archlinux](./other-categories/archlinux/archlinux.md)
   - [algorithm](./other-categories/algorithm/algorithm.md)
   - [nmap-netcat(nc)](./other-categories/nc/nc.md)
+  - [mq](./other-categories/mq/mq.md)
   - [mkcert](./other-categories/mkcert/mkcert.md)
   - [aria2](./other-categories/aria2/aria2.md)
   - [postgres](./other-categories/postgres/postgres.md)
