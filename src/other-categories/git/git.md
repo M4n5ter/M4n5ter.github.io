@@ -1,5 +1,23 @@
 # Git 基本操作
 
+## 强制 Git 在任何地方都使用固定的行结束符
+
+以 LF 为例(默认情况下 Unix like 都是 LF，Windows 为 CRLF)：
+
+```bash
+git config core.eol lf
+git config core.autocrlf input
+
+git config --global core.eol lf
+git config --global core.autocrlf input
+```
+
+
+
+
+
+## Git 常见用法
+
 下面介绍常见的 git 使用姿势：
 
 **1.初始化本地仓库**
