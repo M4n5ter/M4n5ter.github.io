@@ -12,7 +12,17 @@ git config --global core.eol lf
 git config --global core.autocrlf input
 ```
 
+如果需要的话，使用正确的行结束符重建当前仓库所有的文件：
+```bash
+git checkout-index --force --all
+```
 
+上面的操作仍然会导致一些文件的行结束符没按预期工作，请从本地副本中删除所有内容并更新它们。
+
+```bash
+git rm --cached -r .
+git reset --hard
+```
 
 
 
