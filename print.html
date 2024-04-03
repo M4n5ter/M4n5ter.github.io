@@ -5588,6 +5588,15 @@ http {
 $ docker-compose up -d
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="git-基本操作"><a class="header" href="#git-基本操作">Git 基本操作</a></h1>
+<h2 id="强制-git-在任何地方都使用固定的行结束符"><a class="header" href="#强制-git-在任何地方都使用固定的行结束符">强制 Git 在任何地方都使用固定的行结束符</a></h2>
+<p>以 LF 为例(默认情况下 Unix like 都是 LF，Windows 为 CRLF)：</p>
+<pre><code class="language-bash">git config core.eol lf
+git config core.autocrlf input
+
+git config --global core.eol lf
+git config --global core.autocrlf input
+</code></pre>
+<h2 id="git-常见用法"><a class="header" href="#git-常见用法">Git 常见用法</a></h2>
 <p>下面介绍常见的 git 使用姿势：</p>
 <p><strong>1.初始化本地仓库</strong></p>
 <pre><code>git init &lt;directory&gt;
