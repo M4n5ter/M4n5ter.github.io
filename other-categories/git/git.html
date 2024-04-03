@@ -198,6 +198,13 @@ git config core.autocrlf input
 git config --global core.eol lf
 git config --global core.autocrlf input
 </code></pre>
+<p>如果需要的话，使用正确的行结束符重建当前仓库所有的文件：</p>
+<pre><code class="language-bash">git checkout-index --force --all
+</code></pre>
+<p>上面的操作仍然会导致一些文件的行结束符没按预期工作，请从本地副本中删除所有内容并更新它们。</p>
+<pre><code class="language-bash">git rm --cached -r .
+git reset --hard
+</code></pre>
 <h2 id="git-常见用法"><a class="header" href="#git-常见用法">Git 常见用法</a></h2>
 <p>下面介绍常见的 git 使用姿势：</p>
 <p><strong>1.初始化本地仓库</strong></p>
