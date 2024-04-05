@@ -32,6 +32,7 @@
   
   - [archlinux](./other-categories/archlinux/archlinux.md)
   - [algorithm](./other-categories/algorithm/algorithm.md)
+  - [database](./other-categories/database/db_cache.md)
   - [nmap-netcat(nc)](./other-categories/nc/nc.md)
   - [mq](./other-categories/mq/mq.md)
   - [mkcert](./other-categories/mkcert/mkcert.md)
@@ -42,7 +43,7 @@
   - [git](./other-categories/git/git.md)
   - [croc](./other-categories/croc/croc.md)
   - [REALITY](./other-categories/reality/reality.md)
-
+  
 - [Blockchain](./blockchain/blockchain.md)
   
   - [fundamentals](./blockchain/fundamentals.md)
